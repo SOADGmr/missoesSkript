@@ -1,5 +1,5 @@
 # =============================================================================
-# DESERTSKY - CORE PRINCIPAL (V4.3 - PERSISTÊNCIA & ANTI-CHEAT)
+# DESERTSKY - CORE PRINCIPAL (V5.1 - SINCRONIA & PERSISTÊNCIA & ANTI-CHEAT)
 # Caminho: /plugins/Skript/scripts/Jobs/core/Core.sk
 # =============================================================================
 
@@ -12,12 +12,49 @@ on script load:
     send "&a[DesertSky-Core] &fSistema pronto e variáveis carregadas." to console
 
 # =============================================================================
-# DEFESA GLOBAL ANTI-CHEAT (METADATA)
-# Marca qualquer bloco colocado por jogadores na memória temporária do servidor.
-# Isso impede que eles coloquem minérios/madeiras para quebrar de novo nas missões.
+# DEFESA GLOBAL ANTI-CHEAT E INTERCEPTADORES
 # =============================================================================
 on place:
     set metadata "desertsky_placed" of event-block to true
+
+# [NOVO] Interceptador de Comandos Nativos do JobsReborn
+# Usamos 'full command' para evitar bugs de parsing com a palavra 'arguments'
+on command:
+    set {_cmd} to command
+    if {_cmd} is "jobs":
+        set {_full} to full command
+        set {_args::*} to {_full} split at " "
+        
+        # Como o comando completo é "jobs leave minerador", os índices são:
+        # {_args::1} = "jobs"
+        # {_args::2} = "leave" ou "fire" ou "leaveall"
+        # {_args::3} = "minerador"
+        
+        # Se ele usar /jobs leave <profissao> ou /jobs fire <profissao>
+        if {_args::2} is "leave" or "fire":
+            if {_args::3} is set:
+                set {_job} to {_args::3} in lowercase
+                set {_uuid} to uuid of player
+                
+                # Formata a memória do Skript
+                delete {nivel::%{_job}%::%{_uuid}%}
+                delete {diaria::%{_job}%::%{_uuid}%::*}
+                delete {missao::semanal::%player%::%{_job}%::*}
+                
+                send "&c&l[SINDICATO] &7O teu histórico na profissão de &f%{_job}% &7foi apagado."
+                
+        # Se ele usar /jobs leaveall
+        else if {_args::2} is "leaveall":
+            set {_uuid} to uuid of player
+            set {_todas::*} to "minerador", "lenhador", "escavador", "fazendeiro", "pescador", "construtor", "bruxo" and "mago"
+            
+            loop {_todas::*}:
+                set {_job} to loop-value
+                delete {nivel::%{_job}%::%{_uuid}%}
+                delete {diaria::%{_job}%::%{_uuid}%::*}
+                delete {missao::semanal::%player%::%{_job}%::*}
+                
+            send "&c&l[SINDICATO] &7Cortaste os teus laços com todos os trabalhos."
 
 # Função para garantir que o nível é lido corretamente de qualquer fonte
 function getPlayerLevel(p: player) :: number:
@@ -54,10 +91,6 @@ function checkJob(p: player, job: text) :: boolean:
     if {_current_job} contains {_job}:
         return true
     return false
-
-function getJobLevel(p: player, job: text) :: number:
-    set {_lvl} to placeholder "%%jobsr_user_level_%{_job}%%%" from {_p}
-    return ({_lvl} parsed as number)
 
 function getStatusMissao(p: player, id: integer) :: text:
     set {_status} to {missao::status::%{_id}%::%uuid of {_p}%}
@@ -116,7 +149,9 @@ function concluirMissaoPrincipal(p: player, id: integer, job: text, proximo_nive
     
     # Atualiza base de dados
     set {missao::%{_job}%::%{_id}%::%{_uuid}%::status} to "concluida"
-    set {nivel::%{_job}%::%{_uuid}%} to {_proximo_nivel}
+    
+    # USA A NOVA FUNÇÃO DE ADAPTADOR PARA SINCRONIZAR
+    setNivelJob({_p}, {_job}, {_proximo_nivel})
     
     # Retrocompatibilidade com Explorador Base
     if {_job} is "explorador":
@@ -132,7 +167,7 @@ function concluirMissaoPrincipal(p: player, id: integer, job: text, proximo_nive
     send "" to {_p}
 
 # =============================================================================
-# --- 7. API DE NÍVEIS E PROFISSÕES (V5.0) ---
+# --- 7. API DE NÍVEIS E PROFISSÕES (V5.1 - SINCRONIZADA) ---
 # =============================================================================
 
 # Retorna a lista de profissões ativas do jogador (Dinâmico via JobsReborn)
@@ -153,7 +188,7 @@ function getJobsAtivos(p: player) :: strings:
             
     return {_ativos::*}
 
-# Retorna o nível de uma profissão específica de forma segura
+# [ATUALIZADO] Lê da RAM do Skript (Rápido, sem depender da Placeholder API toda hora)
 function getNivelJob(p: player, job: text) :: integer:
     set {_uuid} to uuid of {_p}
     # Se a variável não existir, o nível padrão é 1
@@ -161,17 +196,38 @@ function getNivelJob(p: player, job: text) :: integer:
         return 1
     return {nivel::%{_job}%::%{_uuid}%}
 
-# Define o nível de uma profissão (Usado por missões principais e comandos admin)
+# [ATUALIZADO - ADAPTADOR] Define o nível e Sincroniza com o JobsReborn 
 function setNivelJob(p: player, job: text, nivel: integer):
     set {_uuid} to uuid of {_p}
+    
+    # 1. Atualiza a variável do Skript
     set {nivel::%{_job}%::%{_uuid}%} to {_nivel}
     
-    # (Removida a linha antiga que gravava variáveis redundantes)
+    # 2. Força o JobsReborn a acompanhar (Removida a trava do Explorador)
+    execute console command "jobs level %{_p}% %{_job}% set %{_nivel}%"
 
-# Adiciona XP/Nível (Apenas soma +1, excelente para economia de processamento)
+# [ATUALIZADO - ADAPTADOR] Adiciona XP/Nível e sincroniza
 function addNivelJob(p: player, job: text):
     set {_uuid} to uuid of {_p}
-    add 1 to {nivel::%{_job}%::%{_uuid}%}
+    set {_atual} to {nivel::%{_job}%::%{_uuid}%}
+    if {_atual} is not set:
+        set {_atual} to 1
+        
+    set {_novo_nivel} to {_atual} + 1
+    # Usa o setter para sincronizar ambos
+    setNivelJob({_p}, {_job}, {_novo_nivel})
+
+# [NOVO] Função para Demitir e limpar as variáveis de uma Profissão
+function demitirJob(p: player, job: text):
+    set {_uuid} to uuid of {_p}
+    
+    # 1. Apaga Nível e Histórico Recente de Contratos do Skript
+    delete {nivel::%{_job}%::%{_uuid}%}
+    delete {diaria::%{_job}%::%{_uuid}%::*}
+    delete {missao::semanal::%{_p}%::%{_job}%::*}
+    
+    # 2. Executa a demissão no JobsReborn (Removida a trava do Explorador)
+    execute console command "jobs fire %{_p}% %{_job}%"
 
 # =============================================================================
 # --- NOVO: FORMATADOR VISUAL DE PROFISSÕES ---

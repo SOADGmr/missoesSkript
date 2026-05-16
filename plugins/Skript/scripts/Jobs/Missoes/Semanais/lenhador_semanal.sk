@@ -29,16 +29,6 @@ on load:
     registrarMetaBase("lenhador_coletar_cherry", "minerar", "cherry log", "Madeira de Cerejeira", "Cortar @alvo@ madeiras de cerejeira")
     registrarMetaBase("lenhador_coletar_mangrove", "minerar", "mangrove log", "Madeira de Mangue", "Cortar @alvo@ madeiras de mangue")
     registrarMetaBase("lenhador_coletar_mangrove_roots", "minerar", "mangrove roots,muddy mangrove roots", "Raízes de Mangue", "Extrair @alvo@ raízes de mangue")
-    
-    # --- MONTAR CERCAS ---
-    registrarMetaBase("lenhador_montar_oak_fence", "construir", "oak fence", "Cerca de Carvalho", "Instalar @alvo@ cercas de carvalho")
-    registrarMetaBase("lenhador_montar_birch_fence", "construir", "birch fence", "Cerca de Bétula", "Instalar @alvo@ cercas de bétula")
-    registrarMetaBase("lenhador_montar_spruce_fence", "construir", "spruce fence", "Cerca de Pinheiro", "Instalar @alvo@ cercas de pinheiro")
-    registrarMetaBase("lenhador_montar_jungle_fence", "construir", "jungle fence", "Cerca da Selva", "Instalar @alvo@ cercas da selva")
-    registrarMetaBase("lenhador_montar_dark_oak_fence", "construir", "dark oak fence", "Cerca de Carv. Escuro", "Instalar @alvo@ cercas de carvalho escuro")
-    registrarMetaBase("lenhador_montar_acacia_fence", "construir", "acacia fence", "Cerca de Acácia", "Instalar @alvo@ cercas de acácia")
-    registrarMetaBase("lenhador_montar_cherry_fence", "construir", "cherry fence", "Cerca de Cerejeira", "Instalar @alvo@ cercas de cerejeira")
-    registrarMetaBase("lenhador_montar_mangrove_fence", "construir", "mangrove fence", "Cerca de Mangue", "Instalar @alvo@ cercas de mangue")
 
     # --- PLANTAR MUDAS (REFLORESTAMENTO) ---
     registrarMetaBase("lenhador_plantar_oak", "plantar", "oak sapling", "Muda de Carvalho", "Plantar @alvo@ mudas de carvalho")
@@ -52,9 +42,6 @@ on load:
 
     # --- ESFORÇO E PROCESSAMENTO ---
     registrarMetaBase("lenhador_quebrar_machado", "quebrar_ferramenta", "iron axe,diamond axe", "Machado Exausto", "Quebrar @alvo@ machados por exaustão")
-    registrarMetaBase("lenhador_craftar_oak_planks", "craftar", "oak planks", "Tábuas de Carvalho", "Processar @alvo@ tábuas de carvalho")
-    registrarMetaBase("lenhador_craftar_spruce_planks", "craftar", "spruce planks", "Tábuas de Pinheiro", "Processar @alvo@ tábuas de pinheiro")
-
 
     # ========================================================================
     # 3. CONTRATOS (MISSÕES COMPOSTAS)
@@ -72,8 +59,10 @@ on load:
     
     addMetaSemanal("semanal_lenhador_desmatamento", "lenhador_coletar_oak", 500, 800)
     addMetaSemanal("semanal_lenhador_desmatamento", "lenhador_coletar_birch", 500, 800)
-    addMetaSemanal("semanal_lenhador_desmatamento", "lenhador_montar_oak_fence", 50, 100)
-    addMetaSemanal("semanal_lenhador_desmatamento", "lenhador_montar_birch_fence", 50, 100)
+
+    vincularEntrega("semanal_lenhador_desmatamento", 21, 0, "Excelente! Estas cercas ajudarão a proteger a nova vila.")
+    addRequisitoEntrega("semanal_lenhador_desmatamento", "oak fence", 32, "Cercas de Carvalho")
+    addRequisitoEntrega("semanal_lenhador_desmatamento", "birch fence", 32, "Cercas de Bétula")
 
     # --- CONTRATO 2: Reserva de Inverno ---
     delete {semanal_meta::semanal_lenhador_inverno::*}
@@ -87,8 +76,10 @@ on load:
     
     addMetaSemanal("semanal_lenhador_inverno", "lenhador_coletar_spruce", 600, 1000)
     addMetaSemanal("semanal_lenhador_inverno", "lenhador_coletar_oak", 500, 800)
-    addMetaSemanal("semanal_lenhador_inverno", "lenhador_montar_oak_fence", 50, 100)
-    addMetaSemanal("semanal_lenhador_inverno", "lenhador_montar_spruce_fence", 50, 100)
+
+    vincularEntrega("semanal_lenhador_inverno", 21, 0, "Com estas cercas, os animais estarão seguros durante o inverno.")
+    addRequisitoEntrega("semanal_lenhador_inverno", "oak fence", 32, "Cercas de Carvalho")
+    addRequisitoEntrega("semanal_lenhador_inverno", "spruce fence", 32, "Cercas de Pinheiro")
 
     # --- CONTRATO 3: Expedição Tropical ---
     delete {semanal_meta::semanal_lenhador_tropical::*}
@@ -102,8 +93,10 @@ on load:
     
     addMetaSemanal("semanal_lenhador_tropical", "lenhador_coletar_jungle", 600, 1000)
     addMetaSemanal("semanal_lenhador_tropical", "lenhador_coletar_dark_oak", 500, 800)
-    addMetaSemanal("semanal_lenhador_tropical", "lenhador_montar_jungle_fence", 50, 100)
-    addMetaSemanal("semanal_lenhador_tropical", "lenhador_montar_dark_oak_fence", 50, 100)
+
+    vincularEntrega("semanal_lenhador_tropical", 21, 0, "Madeira exótica e bem trabalhada. O Sindicato agradece!")
+    addRequisitoEntrega("semanal_lenhador_tropical", "jungle fence", 32, "Cercas da Selva")
+    addRequisitoEntrega("semanal_lenhador_tropical", "dark oak fence", 32, "Cercas de Carv. Escuro")
 
     # --- CONTRATO 4: Cores da Primavera ---
     delete {semanal_meta::semanal_lenhador_primavera::*}
@@ -117,8 +110,10 @@ on load:
     
     addMetaSemanal("semanal_lenhador_primavera", "lenhador_coletar_acacia", 500, 800)
     addMetaSemanal("semanal_lenhador_primavera", "lenhador_coletar_cherry", 500, 800)
-    addMetaSemanal("semanal_lenhador_primavera", "lenhador_montar_acacia_fence", 50, 100)
-    addMetaSemanal("semanal_lenhador_primavera", "lenhador_montar_cherry_fence", 50, 100)
+
+    vincularEntrega("semanal_lenhador_primavera", 21, 0, "As cores vivas desta madeira alegrarão os jardins da nobreza.")
+    addRequisitoEntrega("semanal_lenhador_primavera", "acacia fence", 32, "Cercas de Acácia")
+    addRequisitoEntrega("semanal_lenhador_primavera", "cherry fence", 32, "Cercas de Cerejeira")
 
     # --- CONTRATO 5: Raízes do Pântano ---
     delete {semanal_meta::semanal_lenhador_pantano::*}
@@ -132,7 +127,9 @@ on load:
     
     addMetaSemanal("semanal_lenhador_pantano", "lenhador_coletar_mangrove", 200, 400)
     addMetaSemanal("semanal_lenhador_pantano", "lenhador_coletar_mangrove_roots", 500, 800)
-    addMetaSemanal("semanal_lenhador_pantano", "lenhador_montar_mangrove_fence", 50, 100)
+
+    vincularEntrega("semanal_lenhador_pantano", 21, 0, "Trabalho duro recompensado. Estas cercas resistirão à humidade.")
+    addRequisitoEntrega("semanal_lenhador_pantano", "mangrove fence", 32, "Cercas de Mangue")
 
     # --- CONTRATO 6: Reflorestamento Global ---
     delete {semanal_meta::semanal_lenhador_reflorestamento::*}
@@ -152,6 +149,7 @@ on load:
     addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_acacia", 25, 50)
     addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_dark_oak", 25, 50)
     addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_cherry", 25, 50)
+    # Sem entrega física, conforme o design.
 
     # --- CONTRATO 7: O Mestre do Machado ---
     delete {semanal_meta::semanal_lenhador_mestre::*}
@@ -165,6 +163,7 @@ on load:
     
     addMetaSemanal("semanal_lenhador_mestre", "lenhador_quebrar_machado", 1, 2)
     addMetaSemanal("semanal_lenhador_mestre", "lenhador_coletar_oak", 1000, 2000)
+    # Sem entrega física, conforme o design.
 
     # --- CONTRATO 8: O Sindicato da Madeira ---
     delete {semanal_meta::semanal_lenhador_sindicato::*}
@@ -176,8 +175,9 @@ on load:
     set {semanal_meta::semanal_lenhador_sindicato::nome} to "&eO Sindicato da Madeira"
     set {semanal_meta::semanal_lenhador_sindicato::desc} to "&7Uma encomenda massiva chegou à vila.|&7Precisamos de todos os tipos de|&7madeira processada urgentemente."
     
-    addMetaSemanal("semanal_lenhador_sindicato", "lenhador_craftar_oak_planks", 2000, 3000)
-    addMetaSemanal("semanal_lenhador_sindicato", "lenhador_craftar_spruce_planks", 2000, 3000)
+    # Modificado: Foca na coleta intensa em vez de craft
+    addMetaSemanal("semanal_lenhador_sindicato", "lenhador_coletar_oak", 800, 1200)
+    addMetaSemanal("semanal_lenhador_sindicato", "lenhador_coletar_spruce", 800, 1200)
     
     vincularEntrega("semanal_lenhador_sindicato", 21, 0, "A serraria agradece a sua entrega massiva!")
     addRequisitoEntrega("semanal_lenhador_sindicato", "oak planks", 256, "Tábuas de Carvalho (4 Packs)")
