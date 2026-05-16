@@ -26,11 +26,6 @@ function getPlayerLevel(p: player) :: number:
     set {_lvl} to {nivel::explorador::%{_uuid}%} ? {nivel::%{_uuid}%} ? 1
     return {_lvl}
 
-# Força o Skript a guardar variáveis no disco periodicamente
-every 10 minutes:
-    execute console command "sk save variables"
-    send "&8[DesertSky-Core] Variáveis guardadas no disco com sucesso." to console
-
 # --- 1. GLOBAL REGISTRY (MECÂNICA DE HERANÇA OTIMIZADA) ---
 function registrarMissao(id: integer, job: text, min_level: integer, nome: text, lore: text, desc: text):
     # [ANTI-LAG] Só faz a gravação no disco se a variável não existir ou tiver sido alterada
