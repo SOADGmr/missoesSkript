@@ -1,5 +1,5 @@
 # ========================================================================
-# MOTOR DE MISSÕES SEMANAIS - DESERTSKY (V5 - MOTOR MODULAR PURO)
+# MOTOR DE MISSÕES SEMANAIS - DESERTSKY (V5.1 - LORE MELHORADA E EVENTOS)
 # Arquivo: gerador_semanais.sk
 # Função: Lógica central, eventos, action bar e sincronização.
 # ========================================================================
@@ -16,7 +16,7 @@ on load:
     registrarNPC(71, "Almoxarife")
     registrarNPC(81, "Almoxarife")
     
-    send "&e[DesertSky-Jobs] &aMotor Semanal V5 carregado (Modo Modular Puro)!" to console
+    send "&e[DesertSky-Jobs] &aMotor Semanal V5.1 carregado (Modo Modular + Nova Lore)!" to console
 
 # ========================================================================
 # FUNÇÕES DE REGISTRO E COMPILAÇÃO (API PARA OS MÓDULOS)
@@ -95,7 +95,7 @@ function sortearSemanal(p: player, job: text):
     send "" to {_p}
 
 # ========================================================================
-# CONSTRUTOR DE LORE DINÂMICA (Para a GUI)
+# CONSTRUTOR DE LORE DINÂMICA (Para a GUI) - V2 ENTREGA VISÍVEL
 # ========================================================================
 
 function formatarLoreSemanal(p: player, job: text) :: texts:
@@ -122,13 +122,30 @@ function formatarLoreSemanal(p: player, job: text) :: texts:
             
         add 1 to {_index}
 
-    if {missao::semanal::%{_p}%::%{_job}%::status} is "aguardando_entrega":
-        add "" to {_lore::*}
+    # --- NOVA LÓGICA: ENTREGAS SEMPRE VISÍVEIS ---
+    if {entrega_registry::%{_contrato_id}%::npc} is set:
         set {_npc_id} to {entrega_registry::%{_contrato_id}%::npc}
         set {_npc_nome} to {npc_nome::%{_npc_id}%} ? "NPC"
-        add "&8[&e&l!&8] &eAguardando Entrega Física" to {_lore::*}
-        add "&7Leve os materiais para &f%{_npc_nome}% (NPC %{_npc_id}%)" to {_lore::*}
         
+        add "" to {_lore::*}
+        add "&f&lEntregas Finais (&eNPC %{_npc_nome}%&f):" to {_lore::*}
+        
+        loop {entrega_registry::%{_contrato_id}%::requisitos::*}:
+            set {_req_parts::*} to loop-value split at "|"
+            set {_qtd_req} to {_req_parts::2}
+            set {_nome_amigavel} to {_req_parts::3}
+            
+            if {missao::semanal::%{_p}%::%{_job}%::status} is "concluida":
+                add "&8[&a&l✔&8] &aEntregar %{_qtd_req}%x %{_nome_amigavel}%" to {_lore::*}
+            else:
+                add "&8[&6&l📦&8] &7Entregar %{_qtd_req}%x %{_nome_amigavel}%" to {_lore::*}
+                
+        # Status do progresso da entrega
+        if {missao::semanal::%{_p}%::%{_job}%::status} is "aguardando_entrega":
+            add "&8[&e&l!&8] &ePode entregar os itens agora!" to {_lore::*}
+        else if {missao::semanal::%{_p}%::%{_job}%::status} is "em_andamento":
+            add "&8[&c&l!&8] &cConclua as metas acima primeiro." to {_lore::*}
+            
     add "" to {_lore::*}
     
     set {_money} to {missao::semanal::%{_p}%::%{_job}%::recompensa_dinheiro} ? 100
@@ -249,6 +266,7 @@ on inventory click:
                 set {_qtd} to item amount of event-item
                 if {_jobs_low} contains "minerador":
                     addProgressoSemanal(player, "minerador", "forjar", {_tipo}, {_qtd})
+
 on mine:
     if metadata "desertsky_placed" of event-block is true:
         stop
@@ -290,7 +308,6 @@ on place:
     if {_jobs_low} contains "lenhador":
         addProgressoSemanal(player, "lenhador", "construir", {_tipo}, 1)
         addProgressoSemanal(player, "lenhador", "plantar", {_tipo}, 1)
-
 
 on craft:
     set {_tipo} to "%type of event-item%"
@@ -340,7 +357,6 @@ on join:
             sortearSemanal(player, "bruxo")
         if {_jobs_low} contains "mago":
             sortearSemanal(player, "mago")
-
 
 # ========================================================================
 # 8. SINCRONIZADOR DE ENTREGAS (INTEGRAÇÃO COM MOTOR UNIVERSAL)
