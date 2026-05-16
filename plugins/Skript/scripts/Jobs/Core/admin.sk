@@ -1,5 +1,5 @@
 # =============================================================================
-# DESERTSKY - CLI ADMINISTRATIVA (V4.1 - MULTI-JOBS & INSPECT)
+# DESERTSKY - CLI ADMINISTRATIVA (V4.2 - MULTI-JOBS, INSPECT & DEMISSÃO)
 # Caminho: /plugins/Skript/scripts/Jobs/core/Admin.sk
 # =============================================================================
 
@@ -9,10 +9,11 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
     permission message: &c[!] Acesso negado. Requer node 'desertsky.admin'.
     trigger:
         if arg 1 is not set:
-            send "&8&l--- &6DesertSky Admin CLI v4.1 &8&l---"
+            send "&8&l--- &6DesertSky Admin CLI v4.2 &8&l---"
             send "&e/adminmissao status <player> &7- Visão geral dos Jobs."
             send "&e/adminmissao inspect <player> &7- Abre GUI com histórico de missões."
             send "&e/adminmissao setnivel <player> <job> <nivel> &7- Altera o nível do Job."
+            send "&e/adminmissao fire <player> <job> &7- Demite o jogador do Job."
             send "&e/adminmissao reset <player> <job> <id> &7- Reseta missão."
             send "&e/adminmissao forcecomplete <player> <job> <id> &7- Força conclusão."
             send "&e/adminmissao skipday <player> &7- Simula passagem de dia."
@@ -42,7 +43,7 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
             send "&eÚltimo Reset (Data): &f%{last_reset::%{_uuid}%}%"
             send "&8&l------------------------"
 
-        # 2. SETNIVEL (Exige saber qual profissão)
+        # 2. SETNIVEL (Exige saber qual profissão - AGORA SINCRONIZADO)
         else if arg 1 is "setnivel":
             if arg 3 is not set:
                 send "&c[!] Especifique o job (ex: explorador, minerador)."
@@ -52,15 +53,30 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
                 stop
                 
             set {_job} to arg 3 in lowercase
-            set {nivel::%{_job}%::%{_uuid}%} to arg 4
+            
+            # Usa a nova função adaptadora para sincronizar Jobs e Skript!
+            setNivelJob({_p}, {_job}, arg 4)
             
             # Retrocompatibilidade com a fase 1 do Explorador
             if {_job} is "explorador":
                 set {nivel::%{_uuid}%} to arg 4
                 
-            send "&a[!] O Nível de %{_job}% de %{_p}% foi alterado para %arg 4%."
+            send "&a[!] O Nível de %{_job}% de %{_p}% foi alterado e sincronizado para %arg 4%."
 
-        # 3. RESET DE MISSÃO ESPECÍFICA (Por Job e ID)
+        # 3. DEMISSÃO (FIRE)
+        else if arg 1 is "fire":
+            if arg 3 is not set:
+                send "&c[!] Especifique o job que deseja demitir o jogador."
+                stop
+                
+            set {_job} to arg 3 in lowercase
+            
+            # Usa a função do core para apagar as variáveis e remover no JobsReborn
+            demitirJob({_p}, {_job})
+            
+            send "&a[!] O jogador %{_p}% foi demitido da profissão %{_job}% e o progresso foi limpo."
+
+        # 4. RESET DE MISSÃO ESPECÍFICA (Por Job e ID)
         else if arg 1 is "reset":
             if arg 3 is not set:
                 send "&c[!] Especifique o job."
@@ -81,7 +97,7 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
             
             send "&a[!] A missão %arg 4% (%{_job}%) do jogador %{_p}% foi resetada."
 
-        # 4. FORCE COMPLETE (Corrigido)
+        # 5. FORCE COMPLETE
         else if arg 1 is "forcecomplete":
             if arg 3 is not set:
                 send "&c[!] Especifique o job."
@@ -92,21 +108,19 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
             
             set {_job} to arg 3 in lowercase
             
-            # CORREÇÃO AQUI: Usa 'arg 4' com espaço. Ele já é um integer!
             set {_id} to arg 4
             set {_prox_nivel} to {_id} + 1
             
-            # Chama a função oficial que dá a música, o level up e a mensagem correta!
             concluirMissaoPrincipal({_p}, {_id}, {_job}, {_prox_nivel})
             
             send "&a[!] Missão %{_id}% (%{_job}%) do jogador %{_p}% forçada para CONCLUÍDA com sucesso."
 
-        # 5. SKIPDAY
+        # 6. SKIPDAY
         else if arg 1 is "skipday":
             set {last_reset::%{_uuid}%} to "01/01/1990"
             send "&a[!] Data de %{_p}% revertida. Lazy Reset engatilhado."
 
-        # 6. INSPECT GUI (Novo - Monitoramento visual)
+        # 7. INSPECT GUI
         else if arg 1 is "inspect":
             set {_gui} to a new chest inventory with 6 rows named "&8&lInspect: %{_p}%"
             
@@ -117,7 +131,6 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
             # Dados do jogador
             set {_lvl_exp} to {nivel::%{_uuid}%} ? 1
             
-            # Info Base (Slot 4) - CORRIGIDO O 'and' NO FINAL DA LORE
             set slot 4 of {_gui} to player head named "&6&l%{_p}%" with lore "&7Nível Explorador: &f%{_lvl_exp}%", "" and "&8Monitoramento em tempo real."
             
             # Grade de Missões do Explorador (Slots 10-16, 19-25, 28-34)
@@ -145,8 +158,10 @@ on inventory click:
         cancel event
         
 # ========================================================================
-# COMANDO DE CORREÇÃO (USAR UMA VEZ PARA LIMPAR O PERFIL CORROMPIDO)
+# COMANDOS CONSOLE-BRIDGE E ADMIN FERRAMENTAS AVANÇADAS
 # ========================================================================
+
+# Comando de correção de bugs
 command /fix_minhas_semanais:
     permission: desertsky.admin
     trigger:
@@ -233,6 +248,8 @@ command /completar_coleta_semanal <text>:
         else:
             send "&c[!] Você não tem uma missão semanal de %{_job}% na fase de coleta." to player
 
+
+# Comando Ponte (Bridge) para Contratações por Interface Gráfica ou NPC
 command /desertsky_admin_setjob <text> <text>:
     executable by: console
     trigger:
@@ -326,3 +343,18 @@ command /desertsky_admin_setjob <text> <text>:
             play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 1.0 to {_p}
             close {_p}'s inventory
             stop
+
+# Comando Ponte para Demissões Via Interfaces/Botões (Similar ao setjob)
+command /desertsky_admin_firejob <text> <text>:
+    executable by: console
+    trigger:
+        set {_p} to arg-1 parsed as player
+        set {_job} to arg-2
+        
+        if {_p} is not set:
+            send "&c[DesertSky] Falha: Jogador %arg-1% não encontrado." to console
+            stop
+            
+        demitirJob({_p}, {_job})
+        send "&c&l[SINDICATO] &7Foste demitido da profissão de &f%{_job}%&7." to {_p}
+        play sound "entity.villager.no" to {_p}
