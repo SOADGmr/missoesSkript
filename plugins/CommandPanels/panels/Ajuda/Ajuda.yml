@@ -1,0 +1,505 @@
+panels:
+  ajuda:
+    perm: default
+    rows: 5
+    title: '               &6&lAjuda'
+    empty: YELLOW_STAINED_GLASS_PANE
+    commands:
+    - ajuda
+    item:
+      '19':
+        material: MAP
+        stack: 1
+        name: '§6§l☼ §b§lᴇᴍᴘʀᴇɢᴏs '
+        commands:
+        - 'console= cp emprego %cp-player-name%'
+      '20':
+        material: MAP
+        stack: 1
+        name: '§6§l☼ §b§lʟᴏᴊᴀs'
+        commands:
+        - 'console= cp loja %cp-player-name%'
+      '21':
+        material: MAP
+        stack: 1
+        name: '§6§l☼ §b§lᴘᴇᴛs'
+        commands:
+        - 'console= cp pets %cp-player-name%'
+      '22':
+        material: MAP
+        stack: 1
+        name: '§6§l☼ §b§lᴛᴇʀʀᴇɴᴏs'
+        commands:
+        - console= cp Terreno %cp-player-name%
+        lore:
+        - ''
+        - '&e/ᴜɴᴄʟᴀɪᴍ &fᴅᴇsᴘʀᴏᴛᴇɢᴇ ᴏ ᴛᴇʀʀᴇɴᴏ ǫᴜᴇ ᴠᴏᴄᴇ ᴇsᴛᴀ ᴘɪsᴀɴᴅᴏ'
+        -  '&e/ᴛʀᴜsᴛ <ɴɪᴄᴋ> &fᴅᴀ ᴘᴇʀᴍɪssãᴏ ᴘᴀʀᴀ ᴏᴜᴛʀᴏ ᴘʟᴀʏᴇʀ ᴄᴏɴsᴛʀᴜɪʀ ᴇᴍ sᴇᴜ ᴛᴇʀʀᴇɴᴏ'
+        -  '&e/ᴜɴᴛʀᴜsᴛ <ɴɪᴄᴋ>&fᴛɪʀᴀ ᴀ ᴘᴇʀᴍɪssãᴏ ᴅᴇ ᴏᴜᴛʀᴏ ᴘʟᴀʏᴇʀ ᴄᴏɴsᴛʀᴜɪʀ ᴇᴍ sᴇᴜ ᴛᴇʀʀᴇɴᴏ'
+        - ''
+        - '&e/ᴡᴀʀᴘ ᴀᴊᴜᴅᴀ &fᴘᴀʀᴀ ᴍᴀɪs ɪɴꜰᴏʀᴍᴀçãᴏ' # #terrenos
+      '23':
+        material: MAP
+        stack: 1
+        name: '§6§l☼ §b§lᴄᴏᴍᴏ ᴄᴏᴍᴇcᴀʀ ᴀ ᴇxᴘʟᴏʀᴀʀ?'
+        commands:
+        - 'console= cp explorar %cp-player-name%'
+      '24':
+        material: MAP
+        stack: 1
+        name: '§6§l☼ §b§lᴡᴀʀᴘs ɪᴍᴘᴏʀᴛᴀɴᴛᴇs '
+        commands:
+        - 'console= cp warpi %cp-player-name%'
+      '25':
+        material: MAP
+        stack: 1
+        name: §6§l☼ §b§lSlot §6§l☼
+  emprego:
+    perm: default
+    panelType:
+    - static
+    rows: 5
+    title: '            &6&lEmpregos'
+    empty: YELLOW_STAINED_GLASS_PANE
+    commands:
+    - 'emprego'
+    item:
+      '20':
+        material: MAP
+        stack: 1
+        name: '&e&lComo saber o salario de cada função?'
+        lore:
+        - ''
+        - '&e&l/ᴊᴏʙs ɪɴꜰᴏ <ᴊᴏʙɴᴀᴍᴇ> &f&lᴘᴀʀᴀ ᴠᴇʀ ǫᴜᴀɴᴛᴏ ɢᴀɴʜᴀ ᴘᴏʀ ᴄᴀᴅᴀ ꜰᴜɴçãᴏ'
+        - ''
+        - '&e/ᴡᴀʀᴘ ᴀᴊᴜᴅᴀ &fᴘᴀʀᴀ ᴍᴀɪs ɪɴꜰᴏʀᴍᴀçãᴏ'
+      '21':
+        material: MAP
+        stack: 1
+        name: '&e&lComo escolher um emprego?'
+        lore:
+        - ''
+        - '&e&l/ᴊᴏʙs ᴊᴏɪɴ &f&lᴘᴀʀᴀ ᴇsᴄᴏʟʜᴇʀ ᴜᴍ ᴇᴍᴘʀᴇɢᴏ'
+        - ''
+        - '&e/ᴡᴀʀᴘ ᴀᴊᴜᴅᴀ &fᴘᴀʀᴀ ᴍᴀɪs ɪɴꜰᴏʀᴍᴀçãᴏ'
+      '22':
+        material: MAP
+        stack: 1
+        name: '&e&lVer missão diária'
+        lore:
+        - ''
+        - '&e&l/ᴊᴏʙs ǫᴜᴇsᴛs &f&lᴘᴀʀᴀ ᴠᴇʀ ǫᴜᴀʟ sᴜᴀ ᴍɪssãᴏ ᴅɪáʀɪᴀ'
+        - ''
+        - '&e/ᴡᴀʀᴘ ᴀᴊᴜᴅᴀ &fᴘᴀʀᴀ ᴍᴀɪs ɪɴꜰᴏʀᴍᴀçãᴏ'
+      '23':
+        material: MAP
+        stack: 1
+        name: '&e&lComprar itens especiais'
+        lore:
+        - ''
+        - '&e&l/ᴊᴏʙs sʜᴏᴘ &f&lᴘᴀʀᴀ ᴠᴇʀ &e&l/ᴄᴏᴍᴘʀᴀʀ &f&lɪᴛᴇɴs ᴇsᴘᴇᴄɪᴀɪs'
+        - ''
+        - '&e/ᴡᴀʀᴘ ᴀᴊᴜᴅᴀ &f&lᴘᴀʀᴀ ᴍᴀɪs ɪɴꜰᴏʀᴍᴀçãᴏ'
+      '0': #Voltar
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+        stack: 1
+        name: '&a&lVoltar'
+        commands: 
+        - console= cp ajuda %cp-player-name%
+        - console= svar set cp-minion nada %cp-player-name%
+      '8':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+        stack: 1
+        name: '&c&lFechar'
+        commands: 
+        - 'cpc'
+        - console= svar set cp-minion nada %cp-player-name%
+  loja:
+    perm: default
+    rows: 5
+    title: '                &6&lLoja'
+    empty: YELLOW_STAINED_GLASS_PANE
+    panelType:
+    - static
+    commands:
+    - 'loja'
+    item: 
+      '20':
+        material: MAP
+        stack: 1
+        name: '&6&lComo criar uma loja?'
+        lore:
+        - ''
+        - '&fᴘᴀʀᴀ ᴄʀɪᴀʀ ᴜᴍᴀ ʟᴏᴊᴀ, ᴜsᴇ ᴜᴍ &e&lʙᴀᴜ' 
+        - '&fᴇ ᴜᴍᴀ &eᴘʟᴀᴄᴀ &fᴄᴏᴍ ᴏ sᴇɢᴜɪɴᴛᴇ &eᴘᴇʀꜰɪʟ'
+        - ''
+        -  '&fsᴇᴜ_ɴɪᴄᴋ'
+        -  '&fǫᴜᴀɴᴛɪᴅᴀᴅᴇ'
+        -  '&eʙ:ᴘʀᴇçᴏ:ᴘʀᴇçᴏ'
+        -  '&eɪᴅ_ᴅᴏ_ɪᴛᴇᴍ'
+        -  ''
+        -  '&eɴᴏᴛᴄʜ'
+        -  '&e64'
+        -  '&eʙ100:50S'
+        -  '&esᴛᴏɴᴇ' #loja
+        - ''
+        -  '&e/ᴡᴀʀᴘ ᴀᴊᴜᴅᴀ &fᴘᴀʀᴀ ᴍᴀɪs ɪɴꜰᴏʀᴍᴀçãᴏ'
+      '0': #Voltar
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+        stack: 1
+        name: '&a&lVoltar'
+        commands: 
+        - console= cp ajuda %cp-player-name%
+        - console= svar set cp-minion nada %cp-player-name%
+      '8':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+        stack: 1
+        name: '&c&lFechar'
+        commands: 
+        - 'cpc'
+        - console= svar set cp-minion nada %cp-player-name%
+  pets: 
+    perm: default
+    rows: 5
+    title: '                &6&lPets'
+    empty: YELLOW_STAINED_GLASS_PANE
+    panelType:
+    - static
+    commands:
+    - 'loja'
+    item:
+      '21':
+         material: MAP
+         name: '&6&lInformações do pet'
+         lore:
+         - ''
+         - '&e/ᴘᴇᴛɪɴғᴏ &fᴍᴏɴsᴛʀᴀ ɪɴғᴏʀᴍᴀçõᴇs sᴏʙʀᴇ sᴇᴜ ᴘᴇᴛ'
+         - ''
+         - '&e/ᴡᴀʀᴘ ᴘᴇᴛs &fᴘᴀʀᴀ ᴍᴀɪs ɪɴғᴏʀᴍᴀçõᴇs' #pets 
+         - ''
+      '22':
+         material: MAP
+         name: '&6&lLoja Pets'
+         lore:
+         - ''
+         - '&e/ᴘᴇᴛsʜᴏᴘ &fᴀʙʀᴇ ᴀ ʟᴏᴊᴀ ᴅᴇ ᴘᴇᴛs'
+         - ''
+         - '&e/ᴡᴀʀᴘ ᴘᴇᴛs &fᴘᴀʀᴀ ᴍᴀɪs ɪɴғᴏʀᴍᴀçõᴇs' #pets 
+         - ''
+      '23':
+         material: MAP
+         name: '&6&lComandos pet'
+         lore:
+         - ''
+         - '&e/ᴘsᴀ &fᴍᴀɴᴅᴀ ᴏ sᴇᴜ ᴘᴇᴛ ᴘᴀʀᴀ ʟᴏɴɢᴇ ᴅᴇ ᴠᴏᴄᴇ'
+         - '&e/ᴘᴇᴛᴄ &fᴄʜᴀᴍᴀ ᴏ sᴇᴜ ᴘᴇᴛ ᴅᴇ ᴠᴏʟᴛᴀ ᴘᴀʀᴀ ᴘᴇʀᴛᴏ ᴅᴇ ᴠᴏᴄᴇ'
+         - '&e/ᴘᴇᴛsʜᴏᴘ &e/ᴘᴇᴛɴᴀᴍᴇ &fᴍᴜᴅᴀ ᴏ ɴᴏᴍᴇ ᴅᴏ sᴇᴜ ᴘᴇᴛ'
+         - ''
+         - '&e/ᴡᴀʀᴘ ᴘᴇᴛs &fᴘᴀʀᴀ ᴍᴀɪs ɪɴғᴏʀᴍᴀçõᴇs' #pets 
+         - ''
+      '24':
+         material: MAP
+         stack: 1
+         name: '&6&lPets disponiveis para cada pessoa:'
+         commands:
+         - 'console= cp petPessoa %cp-player-name%'
+      '0': #Voltar
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+         stack: 1
+         name: '&a&lVoltar'
+         commands: 
+         - console= cp ajuda %cp-player-name%
+         - console= svar set cp-minion nada %cp-player-name%
+      '8':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+         stack: 1
+         name: '&c&lFechar'
+         commands: 
+         - 'cpc'
+         - console= svar set cp-minion nada %cp-player-name%
+  petPessoa:
+    perm: default
+    rows: 5
+    title: '       &6&lPets Disponiveis.'
+    empty: YELLOW_STAINED_GLASS_PANE
+    panelType:
+    - static
+    item:
+      '20':
+        material: MAP
+        stack: 1
+        name: '&6&lCargo Iniciante'
+        commands:
+        - 'console= cp petIniciante %cp-player-name%'
+      '21':
+        material: MAP
+        stack: 1
+        name: '&6&lCargo Membro'
+        commands:
+        - 'console= cp petMembro %cp-player-name%'
+  petIniciante:
+    perm: default
+    rows: 5
+    title: '           &e&lPet Iniciante'
+    empty: WHITE_STAINED_GLASS_PANE
+    panelType:
+    - static
+    item:
+      '36': #Voltar
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+        stack: 1
+        name: '&a&lVoltar'
+        commands: 
+        - console= cp pets %cp-player-name%
+        - console= svar set cp-minion nada %cp-player-name%
+      '44':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+        stack: 1
+        name: '&c&lFechar'
+        commands: 
+        - 'cpc'
+        - console= svar set cp-minion nada %cp-player-name%   
+      '10':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGE0ZTJhZjY1MDA1MzhkZmVhMzc5YmVhMTE0NzFlNjJjM2RkNDY2NjE3YWYxYzVmMmJkYTM0NzI3NWE4NjkifX19
+        stack: 1
+        name: §9Rotting Skeleton 9
+      '12':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTYzODQ2OWE1OTljZWVmNzIwNzUzNzYwMzI0OGE5YWIxMWZmNTkxZmQzNzhiZWE0NzM1YjM0NmE3ZmFlODkzIn19fQ==
+        stack: 1
+        name: §9Chicken
+      '14':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM5ZTVmODM0NThlOTAwN2YxZGJhYmI4Yjc1N2E2NzAxOGUzMGZkMWRmOTJmYTJiODQ3NjUyZDMxNWY3ZTAyNyJ9fX0=
+        stack: 1
+        name: §9Black Cow
+      '16':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjE0NGJkYWQ2YmMxOGEzNzE2YjE5NmRjNGE0YmQ2OTUyNjVlY2NhYWRkMGQ5NDViZWI5NzY0NDNmODI2OTNiIn19fQ==
+        stack: 1
+        name: §9Donkey
+      '20':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmVkZjczZWExMmNlNmJkOTBhNGFlOWE4ZDE1MDk2NzQ5Y2ZlOTE4MjMwZGM4MjliMjU4MWQyMjNiMWEyYTgifX19
+        stack: 1
+        name: §9Brown Horse
+      '24':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWEzNzFhMDZlYTc4NThmODlkMjdjYzEwNTVjMzE3YjIzZjEwNWM5MTI1YmM1MTZkMzg5MWFhNGM4MzVjMjk5In19fQ==
+        stack: 1
+        name: §9Dirty Pig
+      '30':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzBmNTAzOTRjNmQ3ZGJjMDNlYTU5ZmRmNTA0MDIwZGM1ZDY1NDhmOWQzYmM5ZGNhYzg5NmJiNWNhMDg1ODdhIn19fQ==
+        stack: 1
+        name: §9Sheep
+      '31':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODJkMTZlMGYxN2NiMWNhMmViZWZhNGQzMTI2YjA0YjAzMTI0NDRmMzBiNzdiMjM2NmQ3ZTU0NGU1NzNlMzM0YSJ9fX0=
+        stack: 1
+        name: §9Red Collared Pale Wolf
+      '32':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjQ1MjhiMzIyOTY2MGYzZGZhYjQyNDE0ZjU5ZWU4ZmQwMWU4MDA4MWRkM2RmMzA4Njk1MzZiYTliNDE0ZTA4OSJ9fX0=
+        stack: 1
+        name: §9Zombie
+  petMembro:
+    perm: default
+    rows: 6
+    title: '       &6&lPet disponiveis para Membro'
+    empty: WHITE_STAINED_GLASS_PANE
+    panelType:
+    - static
+    item:
+      '45': #Voltar
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+        stack: 1
+        name: '&a&lVoltar'
+        commands: 
+        - 'console= cp pets %cp-player-name%'
+        - console= svar set cp-minion nada %cp-player-name%
+      '53':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+        stack: 1
+        name: '&c&lFechar'
+        commands: 
+        - 'cpc'
+        - console= svar set cp-minion nada %cp-player-name%'0':
+      '0':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWEzNzFhMDZlYTc4NThmODlkMjdjYzEwNTVjMzE3YjIzZjEwNWM5MTI1YmM1MTZkMzg5MWFhNGM4MzVjMjk5In19fQ==
+        stack: 1
+        name: §9Dirty Pig
+      '1':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGE0ZTJhZjY1MDA1MzhkZmVhMzc5YmVhMTE0NzFlNjJjM2RkNDY2NjE3YWYxYzVmMmJkYTM0NzI3NWE4NjkifX19
+        stack: 1
+        name: §9Rotting Skeleton 9
+      '2':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODJkMTZlMGYxN2NiMWNhMmViZWZhNGQzMTI2YjA0YjAzMTI0NDRmMzBiNzdiMjM2NmQ3ZTU0NGU1NzNlMzM0YSJ9fX0=
+        stack: 1
+        name: §9Red Collared Pale Wolf
+      '4':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmVkZjczZWExMmNlNmJkOTBhNGFlOWE4ZDE1MDk2NzQ5Y2ZlOTE4MjMwZGM4MjliMjU4MWQyMjNiMWEyYTgifX19
+        stack: 1
+        name: §9Brown Horse
+      '6':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjQ1MjhiMzIyOTY2MGYzZGZhYjQyNDE0ZjU5ZWU4ZmQwMWU4MDA4MWRkM2RmMzA4Njk1MzZiYTliNDE0ZTA4OSJ9fX0=
+        stack: 1
+        name: §9Zombie
+      '7':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM5ZTVmODM0NThlOTAwN2YxZGJhYmI4Yjc1N2E2NzAxOGUzMGZkMWRmOTJmYTJiODQ3NjUyZDMxNWY3ZTAyNyJ9fX0=
+        stack: 1
+        name: §9Black Cow
+      '8':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTYzODQ2OWE1OTljZWVmNzIwNzUzNzYwMzI0OGE5YWIxMWZmNTkxZmQzNzhiZWE0NzM1YjM0NmE3ZmFlODkzIn19fQ==
+        stack: 1
+        name: §9Chicken
+      '10':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWU5OWRlZWY5MTlkYjY2YWMyYmQyOGQ2MzAyNzU2Y2NkNTdjN2Y4YjEyYjlkY2E4ZjQxYzNlMGEwNGFjMWNjIn19fQ==
+        stack: 1
+        name: §9Bat
+      '11':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTNkMThkYWQwYmQ5MGYwMmFjMDg3NTRhNzUzNThiMWMyN2RhNTc5YjNjYTM1YjY5ZTZiYjEwYTdhNWMyZGJkYSJ9fX0=
+        stack: 1
+        name: §9Cave Spider
+      '12':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzFkYjM4ZWYzYzFhMWQ1OWY3NzlhMGNkOWY5ZTYxNmRlMGNjOWFjYzc3MzRiOGZhY2MzNmZjNGVhNDBkMDIzNSJ9fX0=
+        stack: 1
+        name: §9Brown Rabbit
+      '13':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWIzYzFmOTJkZmUzZGRiZTMxZjY3MzMwODJhMjdhZjg1YzM5NmQ4MjkwMjE1ZGQ0NTY0NmU3ZDQzOGZmYWQ5ZSJ9fX0=
+        stack: 1
+        name: §9Bright Green Creeper
+      '14':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzA5NjE2NGY4MTk1MGE1Y2MwZTMzZTg3OTk5Zjk4Y2RlNzkyNTE3ZjRkN2Y5OWE2NDdhOWFlZGFiMjNhZTU4In19fQ==
+        stack: 1
+        name: §9Husk
+      '15':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDkxNWI5OThhZGVmZmNjZmY4NTk1Nzc0ZWE0Yjg0M2Q5YzE2NWU0Y2JjZGMyMWU2ZmQ0OTNhNjEwNzU3MDc1ZCJ9fX0=
+        stack: 1
+        name: §9Fox
+      '16':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTA0ODZhNzQyZTdkZGEwYmFlNjFjZTJmNTVmYTEzNTI3ZjFjM2IzMzRjNTdjMDM0YmI0Y2YxMzJmYjVmNWYifX19
+        stack: 1
+        name: §9Mule
+      '19':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDY0YmRjNmY2MDA2NTY1MTFiZWY1OTZjMWExNmFhYjFkM2Y1ZGJhYWU4YmVlMTlkNWMwNGRlMGRiMjFjZTkyYyJ9fX0=
+        stack: 1
+        name: §9Squid
+      '20':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGU4ZDIwNmY2MWU2ZGU4YTc5ZDBjYjBiY2Q5OGFjZWQ0NjRjYmZlZmM5MjFiNDE2MGEyNTI4MjE2MzExMmEifX19
+        stack: 1
+        name: §9Snowman
+      '21':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGFhOTg2YTZlMWMyZDg4ZmYxOThhYjJjMzI1OWU4ZDI2NzRjYjgzYTZkMjA2Zjg4M2JhZDJjOGFkYTgxOSJ9fX0=
+        stack: 1
+        name: §9Witch
+      '22':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTJlYzJjM2NiOTVhYjc3ZjdhNjBmYjRkMTYwYmNlZDRiODc5MzI5YjYyNjYzZDdhOTg2MDY0MmU1ODhhYjIxMCJ9fX0=
+        stack: 1
+        name: §9Silverfish
+      '23':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzY0MmM5ZjcxMTMxYjVkZjRhOGMyMWM4YzZmMTA2ODRmMjJhYmFmYjhjZDY4YTFkNTVhYzRiZjI2M2E1M2EzMSJ9fX0=
+        stack: 1
+        name: §9Camel
+      '24':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTEzZjM0MjI3MjgzNzk2YmMwMTcyNDRjYjQ2NTU3ZDY0YmQ1NjJmYTlkYWIwZTEyYWY1ZDIzYWQ2OTljZjY5NyJ9fX0=
+        stack: 1
+        name: §9Iron Golem
+      '25':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTY1N2NkNWMyOTg5ZmY5NzU3MGZlYzRkZGNkYzY5MjZhNjhhMzM5MzI1MGMxYmUxZjBiMTE0YTFkYjEifX19
+        stack: 1
+        name: §9Ocelot
+      '28':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4MjRhODdhYWMyMWRkYWFkOGRhMGY0ZDA1MzMzMmE0YjUyOWFiZDNkMThlZGM1Zjg2NzVmZjJhOTViZWM3In19fQ==
+        stack: 1
+        name: §9Calico Cat
+      '29':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjliYWJhYjcyYjY4MjQzN2Y5ZGVhZTEzOTFhMzM3MDEzOThhOWIzY2M2NTQ2YjA2M2U5MzgwOGUwM2E0MDc0In19fQ==
+        stack: 1
+        name: §9Tortoise
+      '30':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWJjN2I5ZDM2ZmI5MmI2YmYyOTJiZTczZDMyYzZjNWIwZWNjMjViNDQzMjNhNTQxZmFlMWYxZTY3ZTM5M2EzZSJ9fX0=
+        stack: 1
+        name: §9Endermite
+      '31':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzkxNjUxZjIxZDI5NTJkOWQxNGJiNzc3OTEwNTkyZDc0MjY3MjA0N2I3ZjE5NTBiMTUxNDg0NmE4MjU2MjUyOSJ9fX0=
+        stack: 1
+        name: §9Open Spawn Egg (Zombie Villager)
+      '32':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTcwZWU0ZGY1ZWI3NDJkYzhiNjIxNjM3Mzg0ZTQ4OTAzNjNhM2U1Nzg1ODM4NDYwNmE1ODg4YmVkNGRhMzkwZiJ9fX0=
+        stack: 1
+        name: §9Green Parrot
+      '33':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2U2MmU4YTA0OGQwNDBlYjA1MzNiYTI2YTg2NmNkOWMyZDA5MjhjOTMxYzUwYjQ0ODJhYzNhMzI2MWZhYjZmMCJ9fX0=
+        stack: 1
+        name: §9Cold Frog
+      '34':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzBmNTAzOTRjNmQ3ZGJjMDNlYTU5ZmRmNTA0MDIwZGM1ZDY1NDhmOWQzYmM5ZGNhYzg5NmJiNWNhMDg1ODdhIn19fQ==
+         stack: 1
+         name: §9Sheep
+  explorar: 
+    perm: default
+    rows: 5
+    title: '                &6&lExplorar'
+    empty: YELLOW_STAINED_GLASS_PANE
+    panelType:
+    - static
+    commands:
+    - 'explorar'
+    item:
+      '0': #Voltar
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+         stack: 1
+         name: '&a&lᴠᴏʟᴛᴀʀ'
+         commands: 
+         - console= cp ajuda %cp-player-name%
+         - console= svar set cp-minion nada %cp-player-name%
+      '8':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+         stack: 1
+         name: '&c&lғᴇᴄʜᴀʀ'
+         commands: 
+         - 'cpc'
+         - 'console= svar set cp-minion nada %cp-player-name%'
+      '22':
+         material: MAP
+         stack: 1
+         name: '&e&lᴄᴏᴍᴏ ᴄᴏᴍᴇçᴀʀ ᴀ ᴇxᴘʟᴏʀᴀʀ?'
+         lore:     
+         - ''
+         -  '&e/ʀᴛᴘ &fɪʀᴀ ʟᴇᴠᴀʀ ᴠᴏᴄᴇ ᴀ ᴜᴍᴀ ʟᴏᴄᴀʟɪᴢᴀçᴀᴏ ᴀʟᴇᴀᴛᴏʀɪᴀ'
+         - '' # exploração
+  warpi: 
+    perm: default
+    rows: 5
+    title: '                &6&lᴡᴀʀᴘs ɪᴍᴘᴏʀᴛᴀɴᴛᴇs'
+    empty: YELLOW_STAINED_GLASS_PANE
+    panelType:
+    - static
+    commands:
+    - 'warpi'
+    item:
+      '0': #Voltar
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+         stack: 1
+         name: '&a&lᴠᴏʟᴛᴀʀ'
+         commands: 
+         - console= cp ajuda %cp-player-name%
+         - console= svar set cp-minion nada %cp-player-name%
+      '8':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+         stack: 1
+         name: '&c&lғᴇᴄʜᴀʀ'
+         commands: 
+         - 'cpc'
+         - 'console= svar set cp-minion nada %cp-player-name%'
+      '20':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDEzZTk2ZGY2ZWQ0YjcwYTVhNzBmYzI5ZGNkZTkzMTRkYmU5NzY2OTY0NzRmMTIwZTBiMzBlYTVkN2I5NmIzYSJ9fX0=
+         stack: 1
+         name: '&e&lᴀᴊᴜᴅᴀ'
+         lore:
+         - ''
+         - '&fᴜᴛɪʟɪᴢᴇ ᴏ ᴄᴏᴍᴀɴᴅᴏ &e/ᴀᴊᴜᴅᴀ &fᴘᴀʀᴀ ᴄᴏɴsᴇɢᴜɪʀ ᴛɪʀᴀʀ sᴜᴀs ᴅᴜᴠɪᴅᴀs'
+         - ''
+      '22': 
+         material: CHEST
+         stack: 1
+         name: '&e&lᴄʀᴀᴛᴇs'
+         lore:
+         - ''
+         - '&fᴘᴀʀᴀ ᴀʙʀɪʀ sᴜᴀs ᴄᴀɪxᴀs ᴄᴏᴍ sᴜᴀs ᴄʜᴀᴠᴇs. '
+         - '&fᴜᴛɪʟɪᴢᴇ ᴏ ᴄᴏᴍᴀɴᴅᴏ &e&l/ᴡᴀʀᴘ ᴄʀᴀᴛᴇs'
+         - ''
+   

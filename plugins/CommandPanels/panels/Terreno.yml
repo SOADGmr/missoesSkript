@@ -1,0 +1,133 @@
+panels:
+  Terreno:
+    perm: default
+    rows: 5
+    title: '&8Gerenciador de Terrenos'
+    empty: YELLOW_STAINED_GLASS_PANE
+    panelType:
+    - static
+    commands:
+    - terreno
+    - terrenos
+    empty: AIR
+    item:
+      '11':
+        material: GLOWSTONE
+        stack: 1
+        name: §6§lProteger Terreno
+        commands:
+        - console= cp ClaimCreate %cp-player-name%
+        lore:
+        - §fCria um Terreno
+        - §e/claim <tamanho>
+        - §cCLIQUE PARA ABRIR O MENU
+      '12':
+        material: CRIMSON_HYPHAE
+        stack: 1
+        name: §6§lAbandonar Todos os Terrenos
+        commands:
+        - console= cp ConfirmAbandonAllClaims %cp-player-name%
+        lore:
+        - §fAbandona todos os seus terrenos protegidos
+        - §e/abandonallclaims
+        - §cCLIQUE PARA ABRIR EXECUTAR O COMANDO
+      '13':
+        material: CRIMSON_PLANKS
+        stack: 1
+        name: §6§lAbandonar Terreno
+        commands:
+        - console= cp ConfirmAbandonClaim %cp-player-name%
+        lore:
+        - §fAbandona o terreno que você está pisando
+        - §e/abandonclaim
+        - §cCLIQUE PARA EXECUTAR O COMANDO
+      '14':
+        material: WHITE_WOOL
+        stack: 1
+        name: §6§lProteção de Subterreno
+        commands:
+        - subdivideclaims
+        lore:
+        - §fMuda o modo de proteção para Proteção de Subterreno
+        - §e/subdivideclaim
+        - §e/sc
+        - §cCLIQUE PARA EXECUTAR O COMANDO
+      '15':
+        material: GOLD_BLOCK
+        stack: 1
+        name: §6§lProteção de Terreno
+        commands:
+        - basicclaims
+        lore:
+        - §fMuda o modo de proteção para Proteção de Terreno
+        - §e/basicclaims
+        - §e/bc
+        - §cCLIQUE PARA EXECUTAR O COMANDO
+      '20':
+        material: CREEPER_BANNER_PATTERN
+        stack: 1
+        name: §6§lLista de Permissões
+        commands:
+        - trustlist
+        lore:
+        - §fMostra uma lista de players que tem permissão em seu terreno
+        - §e/trustlist
+        - §cCLIQUE PARA EXECUTAR O COMANDO
+      '21':
+        material: HOPPER
+        stack: 1
+        name: §6§lTransferir Terreno
+        lore:
+        - §fTransfere seu terreno para outro player
+        - §e/transferclaim <nick>
+      '22':
+        material: EMERALD
+        stack: 1
+        name: §6§lMercado de Claims
+        commands:
+        - console= cp MercadoClaims %cp-player-name%
+        lore:
+        - §fCompra e vende blocos de proteção
+        - §cCLIQUE PARA ABRIR A LOJA
+      '23':
+        material: TOTEM_OF_UNDYING
+        stack: 1
+        name: §6§lEscapar de um Terreno
+        commands:
+        - trapped
+        lore:
+        - §fFaz você escapar de um terreno que não você tem permissão
+        - §e/trapped
+        - §cCLIQUE PARA EXECUTAR O COMANDO
+      '24':
+        material: FLOWER_BANNER_PATTERN
+        stack: 1
+        name: §6§lLista de Terrenos
+        commands:
+        - claimlist
+        lore:
+        - §fMostra uma lista de todos os seus terrenos e suas localizações
+        - §e/claimlist
+        - §cCLIQUE PARA EXECUTAR O COMANDO
+      '31':
+        material: BOOKSHELF
+        stack: 1
+        name: §2§lOpções do Terreno
+        commands:
+        - console= cp TerrenoOptions %cp-player-name%
+      '0': #Voltar
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+         stack: 1
+         name: '&a&lVoltar'
+         commands: 
+         - console= cp ajuda %cp-player-name%
+         - console= svar set cp-minion nada %cp-player-name%
+      '8':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+         stack: 1
+         name: '&c&lFechar'
+         commands: 
+         - 'cpc'
+         - console= svar set cp-minion nada %cp-player-name%
+      
+        

@@ -1,0 +1,75 @@
+panels:
+  TerrenoOptions:
+    perm: default
+    rows: 5
+    title: '&8Opções do Terreno'
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '10':
+        material: TNT
+        stack: 1
+        name: §6§lExplosões
+        commands:
+        - ClaimExplosions
+        lore:
+        - §fAtiva | Desativa explosões no terreno
+        - §e/claimexplosion
+        - §cCLIQUE PARA EXECUTAR O COMANDO
+      '11':
+        material: OAK_DOOR
+        stack: 1
+        name: §6§lAccess Trust
+        lore:
+        - §fDá acesso a portas, alçapões, botoes, alavancas e outros
+        - §e/Accesstrust <nick>
+        - §e/At <nick>
+      '12':
+        material: TRAPPED_CHEST
+        stack: 1
+        name: §6§lContainer Trust
+        lore:
+        - §fDá acesso a Baús, Fornalhas, e outros itens com inventário
+        - §e/Containertrust <nick>
+        - §e/Ct <nick>
+      '13':
+        material: TRIPWIRE_HOOK
+        stack: 1
+        name: §6§lPermission Trust
+        lore:
+        - §fDá permissão para gerenciar seu terreno
+        - §e/Permissiontrust <nick>
+        - §e/Pt <nick>
+      '14':
+        material: STONE
+        stack: 1
+        name: §6§lTrust
+        lore:
+        - §fDá permissão para construir em seu terreno
+        - §e/trust <nick>
+        - §e/tr <nick>
+      '15':
+        material: SUNFLOWER
+        stack: 1
+        name: §6§lRestrict Subclaim
+        commands:
+        - Restrictsubclaim
+        lore:
+        - §fO Subterreno não recebe permissões do Terreno-pai
+        - §e/Restrictsubclaim
+        - §cCLIQUE PARA EXECUTAR O COMANDO
+      '16':
+        material: BARRIER
+        stack: 1
+        name: §6§lUntrust
+        lore:
+        - §fRemove todas as permissões de um player em seu terreno
+        - §e/untrust <nick>
+        - §e/ut <nick>
+      '40':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp Terreno %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior

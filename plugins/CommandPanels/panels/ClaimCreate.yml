@@ -1,0 +1,71 @@
+panels:
+  ClaimCreate:
+    perm: default
+    rows: 4
+    title: '&6Criar um Terreno'
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '10':
+        material: GLOWSTONE
+        stack: 1
+        name: §a5 Blocos
+        commands:
+        - claim 5
+        lore:
+        - §fCria um terreno de 11x11
+      '11':
+        material: GLOWSTONE
+        stack: 2
+        name: §a10 Blocos
+        commands:
+        - claim 10
+        lore:
+        - §fCrie um terreno de 21x21
+      '12':
+        material: GLOWSTONE
+        stack: 3
+        name: §a15 Blocos
+        commands:
+        - claim 15
+        lore:
+        - §fCrie um terreno de 31x31
+      '13':
+        material: GLOWSTONE
+        stack: 4
+        name: §a20 Blocos
+        commands:
+        - claim 20
+        lore:
+        - §fCrie um terreno de 41x41
+      '14':
+        material: GLOWSTONE
+        stack: 5
+        name: §a30 Blocos
+        commands:
+        - claim 30
+        lore:
+        - §fCrie um terreno de 61x61
+      '15':
+        material: GLOWSTONE
+        stack: 6
+        name: §a50 Blocos
+        commands:
+        - claim 50
+        lore:
+        - §fCrie um terreno de 101x101
+      '16':
+        material: GLOWSTONE
+        stack: 7
+        name: §a70 Blocos
+        commands:
+        - claim 70
+        lore:
+        - §fCrie um terreno de 141x141
+      '31':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp Terreno %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior

@@ -1,0 +1,657 @@
+panels:
+  SpecialShop:
+    panelType:
+    - static
+    sound-on-open: BLOCK_NOTE_BLOCK_PLING
+    perm: default
+    commands:
+    - eshop
+    - especialshop
+    - eloja
+    - lojae
+    rows: 3
+    title: '&8&l        ᴇꜱᴘᴇᴄɪᴀʟ ꜱʜᴏᴘ'
+    empty: LIME_STAINED_GLASS_PANE
+    item:
+      '2':
+        duplicate: '4,6,10,11,13,15,16,18,19,21-23,25,26' 
+        material: PINK_STAINED_GLASS_PANE
+        stack: 1
+        name: ''
+      '10': 
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWZkMTA4MzgzZGZhNWIwMmU4NjYzNTYwOTU0MTUyMGU0ZTE1ODk1MmQ2OGMxYzhmOGYyMDBlYzdlODg2NDJkIn19fQ==
+        stack: 1
+        name: '&6&lCASA DE CÂMBIO'
+        lore:
+        - ''
+        - ' &7➡ &fᴄᴏɴᴠᴇʀᴛᴀ sᴇᴜ ᴅɪɴʜᴇɪʀᴏ ᴀɴᴛɪɢᴏ'
+        - ''
+        commands: 
+        - console= cp Conversor %cp-player-name%
+      '12':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjljODUxMTdkMjBhM2MyYWYxYzM2OWVlYTBhYTc4YmYxMTE5MDc2YmIwZGVhYThjODZiODQyYTVkYzQzNjZhYiJ9fX0=
+        stack: 1
+        name: '&6&lMINIONS'
+        commands:
+        - console= cp ShopMinions %cp-player-name%
+        lore:
+        - ''
+        - ' &7➡ &fᴛʀᴀʙᴀʟʜᴀ ᴘᴀʀᴀ ᴠᴏᴄᴇ.'
+        - ''
+      '14':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGViODFlZjg5MDIzNzk2NTBiYTc5ZjQ1NzIzZDZiOWM4ODgzODhhMDBmYzRlMTkyZjM0NTRmZTE5Mzg4MmVlMSJ9fX0=
+        stack: 1
+        name: '&6&lFUNIS'
+        commands:
+        - console= cp ShopFunis %cp-player-name%
+        lore:
+        - ''
+        - ' &7➡ &fᴄᴏᴍᴘʀᴇ ғᴜɴɪs ᴇsᴘᴇᴄɪᴀɪs.'
+        - ''
+      '16':
+        material: CHEST
+        stack: 1
+        name: '§e&lBAÚS'
+        lore:
+        - ''
+        - ' &7➡ &fᴄᴏᴍᴘʀᴇ ʙᴀᴜs ᴇsᴘᴇᴄɪᴀɪs'
+        - ''
+        commands:
+        - console= cp ShopBaús %cp-player-name%
+  ShopMinions:
+    panelType:
+    - static
+    sound-on-open: BLOCK_NOTE_BLOCK_PLING
+    perm: default
+    rows: 6
+    title:   '            &8ꜱʜᴏᴘ ᴍɪɴɪᴏɴꜱ'
+    empty: ORANGE_STAINED_GLASS_PANE
+    item:
+      '0': #Voltar
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+        stack: 1
+        name: '&a&lVoltar'
+        commands: 
+        - console= cp SpecialShop %cp-player-name%
+        - console= svar set cp-minion nada %cp-player-name%
+      '8': #Sair
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+        stack: 1
+        name: '&c&lFechar'
+        commands: 
+        - 'cpc'
+        - console= svar set cp-minion nada %cp-player-name%
+      '1': #Background Marrom
+        material: BROWN_STAINED_GLASS_PANE
+        stack: 1
+        duplicate: '2-7,9,10,16,17,45-47,51-53'
+      '50': #Vidro Confirma Compra
+        material: BROWN_STAINED_GLASS_PANE
+        stack: 1
+        duplicate: '39-41,48'
+        has1:
+          value0: 'slayer OR farmer OR crafter OR collector'
+          compare0: '%servervariables_value_cp-minion%'
+          material: RED_STAINED_GLASS_PANE
+          duplicate: '39-41,48'
+          stack: 1
+          has0:
+            value0: '%vault_eco_balance% ISGREATER'
+            compare0: '%servervariables_value_cp-minion-value%'
+            material: LIME_STAINED_GLASS_PANE
+            duplicate: '39-41,48'
+            stack: 1
+      '28': #Fazendeiro
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWYxNWZlNGI3NjIzYzc1MzM5MzUyNGY1NTdiMzZlYzgxMjU4YTc1ZGFiYTE1OWIzOWE2ZjgwMGY3MTcxYTQ3NSJ9fX0=
+        stack: 1
+        name: '                 &6&LMINION FAZENDEIRO'
+        lore: 
+        - ''
+        - '    &fᴘʟᴀɴᴛᴀ ᴇ ʀᴇᴘʟᴀɴᴛᴀ ᴘʟᴀɴᴛᴀçᴏᴇs ᴘᴀʀᴀ ᴠᴏᴄᴇ !   '
+        - ''
+        - '    &7ᴄᴜsᴛᴏ: &aD$500'
+        - ''
+        commands:
+        - console= svar set cp-minion farmer %player_name%
+        - console= svar set cp-minion-value 500 %player_name%
+        - console= cp ShopMinions %player_name%
+        has0: 
+          value0: 'slayer OR collector OR crafter'
+          compare0: '%servervariables_value_cp-minion%'
+          commands:
+          - console= svar set cp-minion farmer %player_name%
+          - console= svar set cp-minion-value 500 %cp-player_name%
+          - console= cp ShopMinions %player_name%
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk4NDhkZGU4ZTUzMGRjNzA1ZmI2NzdkYWQ4MTQ5MmNjMjIyYmY5NmZkNjMyYjg1MTRhZWZiODA5MzFmZTBkIn19fQ==
+      '21': #Assassino
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDNkYWM3YzNjMWU2YzljNzA3Yjg1NWI4NDM3YjEzNWY5M2Y5M2Y5MmEzMmQ0MzAwODIzMmRmMjcxZjg1YmVhIn19fQ==
+        stack: 1
+        name: '               &c&lMINION ASSASSINO'
+        lore:
+        - ''
+        - '    &fᴍᴀᴛᴀ ᴍᴏʙs ᴀɢʀᴇssɪᴠᴏs ᴇᴍ sᴜᴀ ᴠᴏʟᴛᴀ !    ' 
+        - ''
+        - '    &7ᴄᴜsᴛᴏ: &aD$500'
+        - ''
+        commands:
+        - console= svar set cp-minion slayer %cp-player-name%
+        - console= svar set cp-minion-value 500 %cp-player_name%
+        - console= cp ShopMinions %player_name%
+        has0: 
+          value0: 'farmer OR collector OR crafter'
+          compare0: '%servervariables_value_cp-minion%'
+          commands:
+          - console= svar set cp-minion slayer %player_name%
+          - console= svar set cp-minion-value 500 %cp-player_name%
+          - console= cp ShopMinions %player_name%
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk4NDhkZGU4ZTUzMGRjNzA1ZmI2NzdkYWQ4MTQ5MmNjMjIyYmY5NmZkNjMyYjg1MTRhZWZiODA5MzFmZTBkIn19fQ==
+      '23': #Carpinteiro
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWYzMGZmYmMwMTEwZWZhMzRlMDMwODYwZGExOGM4YTFkNmIyMjNkZTBmMDBkOWU0YzVkMGNmYTdlY2ZhZmE0OCJ9fX0=
+        stack: 1
+        name: '                   &a&lMINION ARTEZÃO'
+        lore:
+        - ''
+        - '    &fᴄʀᴀғᴛᴀ ɪᴛᴇɴs ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀᴍᴇɴᴛᴇ ᴇᴍ ᴜᴍ ʙᴀᴜ !    '
+        - ''
+        - '    &7ᴄᴜsᴛᴏ: &aD$500'
+        - ''
+        commands:
+        - console= svar set cp-minion crafter %cp-player-name%
+        - console= svar set cp-minion-value 500 %cp-player_name%
+        - console= cp ShopMinions %player_name%
+        has0: 
+          value0: 'slayer OR collector OR farmer'
+          compare0: '%servervariables_value_cp-minion%'
+          commands:
+          - console= svar set cp-minion crafter %player_name%
+          - console= svar set cp-minion-value 500 %cp-player_name%
+          - console= cp ShopMinions %player_name%
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk4NDhkZGU4ZTUzMGRjNzA1ZmI2NzdkYWQ4MTQ5MmNjMjIyYmY5NmZkNjMyYjg1MTRhZWZiODA5MzFmZTBkIn19fQ==
+      '34': #Coletor 
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2UzZDM2MzVjZTQxMWFiZjFlNGYzNzNkMTYxZDA3YjhjNDdlMzU5YjZjNTZmNzRiNDEzY2I0OTRhYzc0NmUyZCJ9fX0=
+        stack: 1
+        name: '                          &d&lMINION COLETOR'
+        lore: 
+        - ''
+        - '    &fᴄᴏʟᴇᴛᴀ ᴛᴏᴅᴏs ɪᴛᴇɴs ᴀᴏ sᴇᴜ ʀᴇᴅᴏʀ ᴇ ᴄᴏʟᴏᴄᴀ ᴇᴍ ᴜᴍ ʙᴀᴜ !    '
+        - ''
+        - '    &7ᴄᴜsᴛᴏ: &aD$500'
+        - ''
+        commands:
+        - console= svar set cp-minion collector %cp-player-name%
+        - console= svar set cp-minion-value 500 %cp-player_name%
+        - console= cp ShopMinions %player_name%
+        has0: 
+          value0: 'slayer OR farmer OR crafter'
+          compare0: '%servervariables_value_cp-minion%'
+          commands:
+          - console= svar set cp-minion collector %player_name%
+          - console= svar set cp-minion-value 500 %cp-player_name%
+          - console= cp ShopMinions %player_name%
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk4NDhkZGU4ZTUzMGRjNzA1ZmI2NzdkYWQ4MTQ5MmNjMjIyYmY5NmZkNjMyYjg1MTRhZWZiODA5MzFmZTBkIn19fQ==
+      '49': #Botão Compra
+        material: BROWN_STAINED_GLASS_PANE
+        stack: 1
+        has0:
+          value0: 'slayer OR farmer OR crafter OR collector'
+          compare0: '%servervariables_value_cp-minion%'
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2VjZDA0MWY2MjhjMDA1YTY5MGZjNmI4MjM3ZTczMTFiYjdjM2IzYWFjMTA1MzlmZWZlMzk2YTRjN2M3ODNlNyJ9fX0=
+          stack: 1
+          name: '&cVocê não pode comprar !!'
+          lore:
+          - ' '
+          - '#ffaa99 Você não tem dinheiro suficiente'
+          commands:
+          - console= svar set cp-minion nada %cp-player-name%
+          has1:
+            value0: '%vault_eco_balance% ISGREATER'
+            compare0: '500' 
+            material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4ZjZiMTMxZWY4NDdkOTE2MGU1MTZhNmY0NGJmYTkzMjU1NGQ0MGMxOGE4MTc5NmQ3NjZhNTQ4N2I5ZjcxMCJ9fX0=
+            name: '&aConfirmar a compra'
+            commands:
+            - console= playsound minecraft:block.amethyst_cluster.fall neutral %cp-player-name%
+            - console= playsound minecraft:block.amethyst_block.resonate neutral %cp-player-name%
+            - console= playsound minecraft:entity.firework_rocket.large_blast neutral %cp-player-name%
+            - console= eco take %cp-player-name% 500
+            - console= minions give %cp-player-name% %servervariables_value_cp-minion% 1 1
+            - console= svar set cp-minion nada %cp-player-name%
+            - console= cp ShopMinions %cp-player-name%
+  ShopFunis:
+    panelType:
+    - static
+    sound-on-open: BLOCK_NOTE_BLOCK_PLING
+    perm: default
+    rows: 6
+    title:   '            &8ꜱʜᴏᴘ ғᴜɴɪs'
+    empty: GRAY_STAINED_GLASS_PANE
+    item:
+      '0': #Voltar
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+        stack: 1
+        name: '&a&lVoltar'
+        commands: 
+        - console= cp SpecialShop %cp-player-name%
+        - console= svar set cp-minion nada %cp-player-name%
+      '8': #Sair
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+        stack: 1
+        name: '&c&lFechar'
+        commands: 
+        - 'cpc'
+        - console= svar set cp-minion nada %cp-player-name%
+      '1': #Background Preto
+        material: BLACK_STAINED_GLASS_PANE
+        stack: 1
+        duplicate: '2-7,9,13,17,18,22,26,27,31,35-53'
+      '50': #Vidro Confirma Compra
+        material: BLACK_STAINED_GLASS_PANE
+        stack: 1
+        duplicate: '39-41,48'
+        has1:
+          value0: 'normal OR chunk'
+          compare0: '%servervariables_value_cp-minion%'
+          material: RED_STAINED_GLASS_PANE
+          duplicate: '39-41,48'
+          stack: 1
+          has0:
+            value0: '%vault_eco_balance% ISGREATER'
+            compare0: '500'
+            material: LIME_STAINED_GLASS_PANE
+            duplicate: '39-41,48'
+            stack: 1
+      '20': #Normal
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGViODFlZjg5MDIzNzk2NTBiYTc5ZjQ1NzIzZDZiOWM4ODgzODhhMDBmYzRlMTkyZjM0NTRmZTE5Mzg4MmVlMSJ9fX0=
+        stack: 1
+        name: '                              &c&lSUPER FUNIL'
+        lore:
+        - ''
+        - '               &fᴇssᴇ é ᴜᴍ ғᴜɴɪʟ sᴜᴘᴇʀ ᴄᴏɴғɪɢᴜʀᴀᴠᴇʟ.    ' 
+        - '    &fᴄʀɪᴇ ғɪʟᴛʀᴏs ᴇ ᴠɪɴᴄᴜʟᴇ ᴀ ᴠᴀ́ʀɪᴏs ʙᴀús ᴀᴏ ᴍᴇsᴍᴏ ᴛᴇᴍᴘᴏ   '
+        - ''
+        - ''
+        - '    &7ᴄᴜsᴛᴏ: &aD$5000'
+        - ''
+        commands:
+        - console= svar set cp-minion normal %cp-player-name%
+        - console= svar set cp-minion-value 5000 %cp-player-name%
+        - console= cp ShopFunis %player_name%
+        has0: 
+          value0: 'chunk'
+          compare0: '%servervariables_value_cp-minion%'
+          commands:
+          - console= svar set cp-minion normal %player_name%
+          - console= svar set cp-minion-value 5000 %cp-player-name%
+          - console= cp ShopFunis %player_name%
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk4NDhkZGU4ZTUzMGRjNzA1ZmI2NzdkYWQ4MTQ5MmNjMjIyYmY5NmZkNjMyYjg1MTRhZWZiODA5MzFmZTBkIn19fQ==
+      '24': #Chunk
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGViODFlZjg5MDIzNzk2NTBiYTc5ZjQ1NzIzZDZiOWM4ODgzODhhMDBmYzRlMTkyZjM0NTRmZTE5Mzg4MmVlMSJ9fX0=
+        stack: 1
+        name: '                           &c&lSUPER HIPER FUNIL'
+        lore:
+        - ''
+        - '     &fᴇssᴇ é ᴜᴍ ғᴜɴɪʟ ᴅᴇ ʙᴏᴄᴀ ʟᴀʀɢᴀ sᴜᴘᴇʀ ᴄᴏɴғɪɢᴜʀᴀᴠᴇʟ.    ' 
+        - '    &fᴄʀɪᴇ ғɪʟᴛʀᴏs ᴇ ᴠɪɴᴄᴜʟᴇ ᴀ ᴠáʀɪᴏs ʙᴀús ᴀᴏ ᴍᴇsᴍᴏ ᴛᴇᴍᴘᴏ   '
+        - '        &fᴇ ᴅᴇ ʙʀɪɴᴅᴇ, ᴇʟᴇ ᴘᴇɢᴀ ғᴜɴɪs ᴇᴍ ᴜᴍᴀ ɢʀᴀɴᴅᴇ ᴀʀᴇᴀ'
+        - ''
+        - ''
+        - '    &7ᴄᴜsᴛᴏ: &aD$10000'
+        - ''
+        commands:
+        - console= svar set cp-minion chunk %cp-player-name%
+        - console= svar set cp-minion-value 10000 %cp-player-name%
+        - console= cp ShopFunis %player_name%
+        has0: 
+          value0: 'normal'
+          compare0: '%servervariables_value_cp-minion%'
+          commands:
+          - console= svar set cp-minion chunk %player_name%
+          - console= svar set cp-minion-value 10000 %cp-player-name%
+          - console= cp ShopFunis %player_name%
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk4NDhkZGU4ZTUzMGRjNzA1ZmI2NzdkYWQ4MTQ5MmNjMjIyYmY5NmZkNjMyYjg1MTRhZWZiODA5MzFmZTBkIn19fQ==
+      '49': #Botão Compra
+        material: BLACK_STAINED_GLASS_PANE
+        stack: 1
+        has0:
+          value0: 'normal OR chunk'
+          compare0: '%servervariables_value_cp-minion%'
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2VjZDA0MWY2MjhjMDA1YTY5MGZjNmI4MjM3ZTczMTFiYjdjM2IzYWFjMTA1MzlmZWZlMzk2YTRjN2M3ODNlNyJ9fX0=
+          stack: 1
+          name: '&cVocê não pode comprar !!'
+          lore:
+          - ' '
+          - '#ffaa99 Você não tem dinheiro suficiente'
+          commands:
+          - console= svar set cp-minion nada %cp-player-name%
+          has1:
+            value0: '%vault_eco_balance% ISGREATER'
+            compare0: '%servervariables_value_cp-minion-value%' 
+            material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4ZjZiMTMxZWY4NDdkOTE2MGU1MTZhNmY0NGJmYTkzMjU1NGQ0MGMxOGE4MTc5NmQ3NjZhNTQ4N2I5ZjcxMCJ9fX0=
+            name: '&aConfirmar a compra'
+            commands:
+            - console= playsound minecraft:block.amethyst_cluster.fall neutral %cp-player-name%
+            - console= playsound minecraft:block.amethyst_block.resonate neutral %cp-player-name%
+            - console= playsound minecraft:entity.firework_rocket.large_blast neutral %cp-player-name%
+            - console= eco take %cp-player-name% %servervariables_value_cp-minion-value%
+            - console= funil admin give %cp-player-name% %servervariables_value_cp-minion% 1
+            - console= svar set cp-minion nada %cp-player-name%
+            - console= svar set cp-minion-value 0 %cp-player-name%
+            - console= cp ShopFunis %cp-player-name%
+  ShopBaús:
+    panelType:
+    - static
+    sound-on-open: BLOCK_NOTE_BLOCK_PLING
+    perm: default
+    rows: 6
+    title: '             &8ꜱʜᴏᴘ ʙᴀúꜱ'
+    empty: WHITE_STAINED_GLASS_PANE
+    item:
+      '0': #Voltar
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+        stack: 1
+        name: '&a&lVoltar'
+        commands: 
+        - console= cp SpecialShop %cp-player-name%
+        - console= svar set cp-minion nada %cp-player-name%
+      '8': #Sair
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+        stack: 1
+        name: '&c&lFechar'
+        commands: 
+        - 'cpc'
+        - console= svar set cp-minion nada %cp-player-name%
+      '1': #Background Preto
+        material: BLACK_STAINED_GLASS_PANE
+        stack: 1
+        duplicate: '2-7,9-10,16-17,45-47,51-53'
+      '50': #Vidro Confirma Compra
+        material: BLACK_STAINED_GLASS_PANE
+        stack: 1
+        duplicate: '39-41,48'
+        has1:
+          value0: 'coletor_chunk OR estoque_unitario OR funil_separador OR bau_sync'
+          compare0: '%servervariables_value_cp-minion%'
+          material: RED_STAINED_GLASS_PANE
+          duplicate: '39-41,48'
+          stack: 1
+          has0:
+            value0: '%vault_eco_balance% ISGREATER'
+            compare0: '%servervariables_value_cp-minion-value%'
+            material: LIME_STAINED_GLASS_PANE
+            duplicate: '39-41,48'
+            stack: 1
+      '28': #Baú Infinito
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGYzOWJkMTBiMjM2OWFmNjk5YTMxYTdiZjdkMTQ1MzlmM2MxMjUyMTZmZDgzOTVlZjlhNTBlOTk0MTJjNzVjNSJ9fX0=
+        stack: 1
+        name: '&eBaú com Estoque Infinito'
+        lore: 
+        - ' '
+        - §7(Coloque para ativar)
+        - ' '
+        - §8Esse baú pode guardar infinitos itens,
+        - §8porém nele só caberá 1 tipo de item
+        - ''
+        - ' '
+        - '&7ᴄᴜsᴛᴏ: &aD$2.000'
+        commands:
+        - console= svar set cp-minion estoque_unitario %player_name%
+        - console= svar set cp-minion-value 2000 %player_name%
+        - console= cp ShopBaús %cp-player-name%
+        has0: 
+          value0: 'coletor_chunk OR funil_separador OR bau_sync'
+          compare0: '%servervariables_value_cp-minion%'
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk4NDhkZGU4ZTUzMGRjNzA1ZmI2NzdkYWQ4MTQ5MmNjMjIyYmY5NmZkNjMyYjg1MTRhZWZiODA5MzFmZTBkIn19fQ==
+          name: '&fBaú com Estoque Infinito'
+          lore: 
+          - ' '
+          - §7(Coloque para ativar)
+          - ' '
+          - §8Esse baú pode guardar infinitos itens,
+          - §8porém nele só caberá 1 tipo de item
+          - ''
+          commands:
+          - console= svar set cp-minion estoque_unitario %player_name%
+          - console= svar set cp-minion-value 2000 %player_name%
+          - console= cp ShopBaús %player_name%
+      '21': #Coletor Seletivo de Chunk
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDU5MmVkNmQwNTlhZTQ5Yzk4ODAzYjIyOWUzOTJmNDQwMmEyNjdjODNiYmY3ODIzOWI0ZmVmNjRlYmExMzEzYiJ9fX0=
+        stack: 1
+        name: §eBaú Coletor Seletivo de Itens
+        lore:
+        - ' '
+        - §7(Coloque no chão para ativar)
+        - ''
+        - §8Esse baú coletará todos os itens deixados
+        - §8na chunk que ele estiver, até uma altura
+        - §8de 5 blocos para cima ou para baixo.
+        - ' '
+        - §cPara verificar uma chunk utilize §4F3 + G  
+        - ' '
+        - '&7ᴄᴜsᴛᴏ: &aD$10.000'
+        commands:
+        - console= svar set cp-minion funil_separador %player_name%
+        - console= svar set cp-minion-value 10000 %player_name%
+        - console= cp ShopBaús %player_name%
+        has0: 
+          value0: 'estoque_unitario OR coletor_chunk OR bau_sync'
+          compare0: '%servervariables_value_cp-minion%'
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk4NDhkZGU4ZTUzMGRjNzA1ZmI2NzdkYWQ4MTQ5MmNjMjIyYmY5NmZkNjMyYjg1MTRhZWZiODA5MzFmZTBkIn19fQ==
+          name: §fBaú Coletor Seletivo de Itens
+          lore:
+          - ' '
+          - §7(Coloque no chão para ativar)
+          - ''
+          - §8Esse baú coletará todos os itens deixados
+          - §8na chunk que ele estiver, até uma altura
+          - §8de 5 blocos para cima ou para baixo.
+          - ' '
+          - §cPara verificar uma chunk utilize §4F3 + G
+          commands:
+          - console= svar set cp-minion funil_separador %player_name%
+          - console= svar set cp-minion-value 10000 %player_name%
+          - console= cp ShopBaús %player_name%
+      '23': #Baú Vinculado
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODdhY2I4Yjk5ZDQ3OGJhMzUwNTNlOWYyMTJhY2I1YzU1Y2MxNDQ4NDA0NjhmZDAyNDJiMzlmNWJkNzVhY2I0MSJ9fX0=
+        stack: 1
+        name: §eBaú Vinculado
+        lore:
+        - ' '
+        - §7(use §8/chests link §7para vincular)
+        - ''
+        - §8Esse baú vinculará todos os itens dos
+        - §8baús que forem vinculados. Para vincular,
+        - §8olhe para o primeiro, e use /chests link,
+        - §8depois, olhe para o outro e faça novamente.
+        - ' '
+        - '&7ᴄᴜsᴛᴏ: &aD$10.000'
+        commands:
+        - console= svar set cp-minion bau_sync %player_name%
+        - console= svar set cp-minion-value 10000 %player_name%
+        - console= cp ShopBaús %player_name%
+        has0: 
+          value0: 'estoque_unitario OR coletor_chunk OR funil_separador'
+          compare0: '%servervariables_value_cp-minion%'
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk4NDhkZGU4ZTUzMGRjNzA1ZmI2NzdkYWQ4MTQ5MmNjMjIyYmY5NmZkNjMyYjg1MTRhZWZiODA5MzFmZTBkIn19fQ==
+          name: §fBaú Vinculado
+          lore:
+          - ' '
+          - §7(use §8/chests link §7para vincular)
+          - ''
+          - §8Esse baú vinculará todos os itens dos
+          - §8baús que forem vinculados. Para vincular,
+          - §8olhe para o primeiro, e use /chests link,
+          - §8depois, olhe para o outro e faça novamente.
+          commands:
+          - console= svar set cp-minion bau_sync %player_name%
+          - console= svar set cp-minion-value 2000 %player_name%
+          - console= cp ShopBaús %player_name%
+      '34': #Coletor de Chunk
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjExOTY3M2RiNjFlY2JkNDJiYjE0ZmJjYjU2MjMwZmM1ZDhkZjA4OWEwODE3ZWI5MDg4OWQ1MzhiOGExNzM4YiJ9fX0=
+        stack: 1
+        name: §eBaú Coletor de Itens
+        lore:
+        - ' '
+        - §7(Coloque no chão para ativar)
+        - ''
+        - §8Esse baú coletará todos os itens deixados
+        - §8na chunk que ele estiver, até uma altura
+        - §8de 5 blocos para cima ou para baixo.
+        - ' '
+        - §cPara verificar uma chunk utilize §4F3 + G
+        - ' '
+        - '&7ᴄᴜsᴛᴏ: &aD$5.000'
+        commands:
+        - console= svar set cp-minion coletor_chunk %player_name%
+        - console= svar set cp-minion-value 5000 %player_name%
+        - console= cp ShopBaús %player_name%
+        has0: 
+          value0: 'estoque_unitario OR funil_separador OR bau_sync'
+          compare0: '%servervariables_value_cp-minion%'
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDk4NDhkZGU4ZTUzMGRjNzA1ZmI2NzdkYWQ4MTQ5MmNjMjIyYmY5NmZkNjMyYjg1MTRhZWZiODA5MzFmZTBkIn19fQ==
+          name: §fBaú Coletor de Itens
+          lore:
+          - ' '
+          - §7(Coloque no chão para ativar)
+          - ''
+          - §8Esse baú coletará todos os itens deixados
+          - §8na chunk que ele estiver, até uma altura
+          - §8de 5 blocos para cima ou para baixo.
+          - ' '
+          - §cPara verificar uma chunk utilize §4F3 + G
+          commands:
+          - console= svar set cp-minion coletor_chunk %player_name%
+          - console= svar set cp-minion-value 5000 %player_name%
+          - console= cp ShopBaús %player_name%
+      '49': #Botão Compra
+        material: BLACK_STAINED_GLASS_PANE
+        stack: 1
+        has0:
+          value0: 'coletor_chunk OR estoque_unitario OR funil_separador OR bau_sync'
+          compare0: '%servervariables_value_cp-minion%'
+          material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2VjZDA0MWY2MjhjMDA1YTY5MGZjNmI4MjM3ZTczMTFiYjdjM2IzYWFjMTA1MzlmZWZlMzk2YTRjN2M3ODNlNyJ9fX0=
+          stack: 1
+          name: ' &cVocê não pode comprar !!'
+          lore:
+          - ' '
+          - '#ffaa99 Você não tem dinheiro suficiente'
+          commands:
+          - console= svar set cp-minion nada %cp-player-name%
+          has1:
+           value0: '%vault_eco_balance% ISGREATER'
+           compare0: '%servervariables_value_cp-minion-value%' 
+           material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4ZjZiMTMxZWY4NDdkOTE2MGU1MTZhNmY0NGJmYTkzMjU1NGQ0MGMxOGE4MTc5NmQ3NjZhNTQ4N2I5ZjcxMCJ9fX0=
+           stack: 1
+           name: '&aConfirmar a compra'
+           lore: 
+           - ''
+           - '&fᴀᴏ ᴄᴏɴꜰɪʀᴍᴀʀ ᴀ ᴄᴏᴍᴘʀᴀ ꜱᴇʀᴀ ʀᴇᴛɪʀᴀᴅᴏ: &aD$%servervariables_value_cp-minion-value% &fᴅᴀ ꜱᴜᴀ ᴄᴏɴᴛᴀ.'
+           - ''
+           commands:
+           - console= eco take %cp-player-name% %servervariables_value_cp-minion-value%
+           - console= chests give %cp-player-name% %servervariables_value_cp-minion% 1
+           - console= svar set cp-minion nada %cp-player-name%
+           - console= cp ShopBaús %cp-player-name%
+           - console= playsound minecraft:block.amethyst_cluster.fall neutral %player-name%
+           - console= playsound minecraft:block.amethyst_block.resonate neutral %player-name%
+           - console= playsound minecraft:entity.firework_rocket.large_blast neutral %player-name%
+  Conversor:
+    panelType:
+    - static
+    sound-on-open: BLOCK_NOTE_BLOCK_PLING
+    perm: default
+    rows: 4
+    title: '             &8ᴄᴏɴᴠᴇʀꜱᴏʀ - %servervariables_value_buycoins%'
+    empty: WHITE_STAINED_GLASS_PANE
+    item:  
+      '19':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2QyNGRjNTgwNjljMTIxMmI1MjlhNGFlNWQ0ZTczYmUwOTkwZDQ2ZmU5MzcxYjFmNzllODE2NGI0Mjg1OWFjOCJ9fX0=
+         name: '&61 Skycoin'
+         lore:
+         - '%player_name%'
+         - '&fClique-Esquerdo para Adicionar 1'
+         - '&fClique-Direito para Diminuir 1'
+         - ''
+         commands:
+         - 'left= console= svar set buycoins2 %math_2:_{servervariables_value_buycoins}+1% %player_name%'
+         - 'left= delay= 10 console= svar set buycoins %servervariables_value_buycoins2% %player_name%'
+         - 'delay=2 cp Conversor %player_name%'
+      '20':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2QyNGRjNTgwNjljMTIxMmI1MjlhNGFlNWQ0ZTczYmUwOTkwZDQ2ZmU5MzcxYjFmNzllODE2NGI0Mjg1OWFjOCJ9fX0=
+         name: '&610 Skycoins'
+         lore:
+         - ''
+         - '&fClique-Direito para Adicionar 10'
+         - '&fClique-Esquerdo para Diminuir 10'
+         - ''
+         commands:
+         - 'console= svar set cp-minion 5k %player_name%'   
+         has0: 
+           value0: 'total OR 15k OR 1k'
+           compare0: '%servervariables_value_cp-minion%'   
+      '21':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2QyNGRjNTgwNjljMTIxMmI1MjlhNGFlNWQ0ZTczYmUwOTkwZDQ2ZmU5MzcxYjFmNzllODE2NGI0Mjg1OWFjOCJ9fX0=
+         name: '&650 Skycoins'
+         lore:
+         - ''
+         - '&fClique-Direito para Adicionar 50'
+         - '&fClique-Esquerdo para Diminuir 50'
+         - ''
+         commands:
+         - 'console= svar set cp-minion 15k %player_name%'
+         has0: 
+           value0: '5k OR 1k OR total'
+           compare0: '%servervariables_value_cp-minion%'   
+      '22':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2QyNGRjNTgwNjljMTIxMmI1MjlhNGFlNWQ0ZTczYmUwOTkwZDQ2ZmU5MzcxYjFmNzllODE2NGI0Mjg1OWFjOCJ9fX0=
+         name: '&6100 Skycoins'
+         lore:
+         - ''
+         - '&fClique-Direito para Adicionar 100'
+         - '&fClique-Esquerdo para Diminuir 100'
+         - ''
+         commands:
+         - 'console= svar set cp-minion total %player_name%'
+         has0: 
+           value0: '5k OR 15k OR total'
+           compare0: '%servervariables_value_cp-minion%'   
+      '25': 
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmE4ZjZiMTMxZWY4NDdkOTE2MGU1MTZhNmY0NGJmYTkzMjU1NGQ0MGMxOGE4MTc5NmQ3NjZhNTQ4N2I5ZjcxMCJ9fX0=
+         stack: 1
+         name: '&aᴄᴏɴꜰɪʀᴍᴀʀ'
+      '0':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIzODhjZDQzZGYyYTVlYzQxNjhmZjdjYjMzYTVhNmQ1MzQ3NWMzYzE1NTNmZWU3Y2FiNzI0MmE2ZDE5MzIwMCJ9fX0=
+         stack: 1
+         name: '&a&lVoltar'
+         lore:
+         - ''    
+         - '&6ᴄᴀɴᴄᴇʟᴀ ᴀ ᴏᴘᴇʀᴀcaᴏ ᴀᴛᴜᴀʟ'
+         - ''
+         commands: 
+         - console= cp SpecialShop %cp-player-name%
+         - console= svar set cp-minion nada %cp-player-name%
+      '8':
+         material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==
+         stack: 1
+         name: '&c&lFechar'
+         commands: 
+         - 'cpc'
+         - console= svar set cp-minion nada %cp-player-name%
+      '39':
+         material: WHITE_STAINED_GLASS_PANE
+         stack: 1
+         duplicate: '40,41,48,50'
+         has1:
+          value0: '1k OR 5k OR 15k OR total'
+          compare0: '%servervariables_value_cp-minion%'
+          material: RED_STAINED_GLASS_PANE
+          duplicate: '40,41,48,50'
+          stack: 1
+          has0:
+            value0: '%vault_eco_balance% ISGREATER'
+            compare0: '500'
+            material: LIME_STAINED_GLASS_PANE
+            duplicate: '39-41,48'
+            stack: 1
+         
+        
+        
+     

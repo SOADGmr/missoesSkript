@@ -1,0 +1,51 @@
+panels:
+  ConfirmAbandonClaim:
+    perm: default
+    rows: 5
+    title: '&4&lAPAGAR O TERRENO'
+    empty: RED_STAINED_GLASS_PANE
+    item:
+      '33':
+        material: RED_CONCRETE
+        stack: 1
+        name: §4§lNão Apagar
+        commands:
+        - console= cp Terreno %cp-player-name%
+      '29':
+        material: GREEN_CONCRETE
+        stack: 1
+        name: §a§lApagar
+        commands:
+        - abandonclaim
+      '16':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTdlZjI4ZGU4ZTJhY2NkY2IyM2IwOTQyZjU2MjRmNDE0OWE1YWE0OTBlYzE5ZjdkYzQ5OTFhODUwYjY1ZjQwIn19fQ==
+        stack: 1
+        name: §4§lCERTEZA??
+      '13':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDNkNGEzZDU5YjQ5YTE5YmI4OTBlMWE0M2ZiMWY4N2UyZjIwYzRkNjFjMzQ3NDQ1MTJlYTE2NWE4ZWM1OCJ9fX0=
+        stack: 1
+        name: §4§lCERTEZA??
+      '14':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzFhOGI4NDNkODhkNjM5YTYyYmIzMGE3N2RmMzRmODE5YjQyMzQ3ZTFkNmZlNTM3MmVkY2JlYWU1M2ZhNGE4In19fQ==
+        stack: 1
+        name: §§4§lCERTEZA??
+      '10':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTNjZjUzYzg0N2UyYzQ4NWQ0MjFjYTNiMmY1YmJiYTQzOWRhMTkwNjQyYTE4OGMyMjhiMjc5YjNmYWM1MmQifX19
+        stack: 1
+        name: §4§lCERTEZA??
+      '11':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzFhOGI4NDNkODhkNjM5YTYyYmIzMGE3N2RmMzRmODE5YjQyMzQ3ZTFkNmZlNTM3MmVkY2JlYWU1M2ZhNGE4In19fQ==
+        stack: 1
+        name: §4§lCERTEZA??
+      '12':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmFjNmY3NzVlOGFjZmRmNmUxZGVhYzgwYThkYTFmMzdiM2I0YmE1Y2FhNGEzNTI0OWY5ZWIxNDVjY2Y0M2RhNSJ9fX0=
+        stack: 1
+        name: §4§lCERTEZA??
+      '15':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGJkNjFlYzI4NThhZWY5MDYwYmFjYmM5MWFlNzI4YjVkZTUwZWNiNzU5YTM0MTQwMzM3ZTc0M2Q3NDEifX19
+        stack: 1
+        name: §4§lCERTEZA??
+      '22':
+        material: cps= eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzE4MDc5ZDU4NDc0MTZhYmY0NGU4YzJmZWMyY2NkNDRmMDhkNzM2Y2E4ZTUxZjk1YTQzNmQ4NWY2NDNmYmMifX19
+        stack: 1
+        name: §4§lCERTEZA??

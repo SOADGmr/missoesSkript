@@ -1,0 +1,276 @@
+panels:
+  mctop:
+    perm: default
+    rows: 6
+    title: '&6&lMcMMO Top'
+    empty: AIR
+    commands:
+    - mctop
+    item:
+      '12':
+        material: BREWING_STAND
+        stack: 1
+        name: §6Alquimia
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_alquimia_1_alltime_name%§7 %ajlb_lb_mcmmo_level_alquimia_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_alquimia_2_alltime_name%§7 %ajlb_lb_mcmmo_level_alquimia_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_alquimia_3_alltime_name%§7 %ajlb_lb_mcmmo_level_alquimia_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_alquimia_4_alltime_name%§7 %ajlb_lb_mcmmo_level_alquimia_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_alquimia_5_alltime_name%§7 %ajlb_lb_mcmmo_level_alquimia_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_alquimia_6_alltime_name%§7 %ajlb_lb_mcmmo_level_alquimia_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_alquimia_7_alltime_name%§7 %ajlb_lb_mcmmo_level_alquimia_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_alquimia_8_alltime_name%§7 %ajlb_lb_mcmmo_level_alquimia_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_alquimia_9_alltime_name%§7 %ajlb_lb_mcmmo_level_alquimia_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_alquimia_10_alltime_name%§7 %ajlb_lb_mcmmo_level_alquimia_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_alquimia%. %player_name% &7%mcmmo_level_alquimia%
+      '14':
+        material: CHAINMAIL_BOOTS
+        stack: 1
+        name: §6Acrobacia
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_acrobacia_1_alltime_name%§7 %ajlb_lb_mcmmo_level_acrobacia_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_acrobacia_2_alltime_name%§7 %ajlb_lb_mcmmo_level_acrobacia_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_acrobacia_3_alltime_name%§7 %ajlb_lb_mcmmo_level_acrobacia_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_acrobacia_4_alltime_name%§7 %ajlb_lb_mcmmo_level_acrobacia_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_acrobacia_5_alltime_name%§7 %ajlb_lb_mcmmo_level_acrobacia_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_acrobacia_6_alltime_name%§7 %ajlb_lb_mcmmo_level_acrobacia_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_acrobacia_7_alltime_name%§7 %ajlb_lb_mcmmo_level_acrobacia_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_acrobacia_8_alltime_name%§7 %ajlb_lb_mcmmo_level_acrobacia_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_acrobacia_9_alltime_name%§7 %ajlb_lb_mcmmo_level_acrobacia_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_acrobacia_10_alltime_name%§7 %ajlb_lb_mcmmo_level_acrobacia_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_acrobacia%. %player_name% &7%mcmmo_level_acrobacia%
+      '20':
+        material: GOLDEN_PICKAXE
+        stack: 1
+        name: §6Mineração
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_mineração_1_alltime_name%§7 %ajlb_lb_mcmmo_level_mineração_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_mineração_2_alltime_name%§7 %ajlb_lb_mcmmo_level_mineração_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_mineração_3_alltime_name%§7 %ajlb_lb_mcmmo_level_mineração_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_mineração_4_alltime_name%§7 %ajlb_lb_mcmmo_level_mineração_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_mineração_5_alltime_name%§7 %ajlb_lb_mcmmo_level_mineração_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_mineração_6_alltime_name%§7 %ajlb_lb_mcmmo_level_mineração_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_mineração_7_alltime_name%§7 %ajlb_lb_mcmmo_level_mineração_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_mineração_8_alltime_name%§7 %ajlb_lb_mcmmo_level_mineração_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_mineração_9_alltime_name%§7 %ajlb_lb_mcmmo_level_mineração_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_mineração_10_alltime_name%§7 %ajlb_lb_mcmmo_level_mineração_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_mineração%. %player_name% &7%mcmmo_level_mineração%
+      '23':
+        material: FISHING_ROD
+        stack: 1
+        name: §6Pesca
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_pesca_1_alltime_name%§7 %ajlb_lb_mcmmo_level_pesca_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_pesca_2_alltime_name%§7 %ajlb_lb_mcmmo_level_pesca_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_pesca_3_alltime_name%§7 %ajlb_lb_mcmmo_level_pesca_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_pesca_4_alltime_name%§7 %ajlb_lb_mcmmo_level_pesca_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_pesca_5_alltime_name%§7 %ajlb_lb_mcmmo_level_pesca_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_pesca_6_alltime_name%§7 %ajlb_lb_mcmmo_level_pesca_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_pesca_7_alltime_name%§7 %ajlb_lb_mcmmo_level_pesca_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_pesca_8_alltime_name%§7 %ajlb_lb_mcmmo_level_pesca_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_pesca_9_alltime_name%§7 %ajlb_lb_mcmmo_level_pesca_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_pesca_10_alltime_name%§7 %ajlb_lb_mcmmo_level_pesca_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_pesca%. %player_name% &7%mcmmo_level_pesca%
+      '32':
+        material: OAK_SAPLING
+        stack: 1
+        name: §6Herbalismo
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_herbalismo_1_alltime_name%§7 %ajlb_lb_mcmmo_level_herbalismo_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_herbalismo_2_alltime_name%§7 %ajlb_lb_mcmmo_level_herbalismo_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_herbalismo_3_alltime_name%§7 %ajlb_lb_mcmmo_level_herbalismo_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_herbalismo_4_alltime_name%§7 %ajlb_lb_mcmmo_level_herbalismo_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_herbalismo_5_alltime_name%§7 %ajlb_lb_mcmmo_level_herbalismo_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_herbalismo_6_alltime_name%§7 %ajlb_lb_mcmmo_level_herbalismo_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_herbalismo_7_alltime_name%§7 %ajlb_lb_mcmmo_level_herbalismo_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_herbalismo_8_alltime_name%§7 %ajlb_lb_mcmmo_level_herbalismo_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_herbalismo_9_alltime_name%§7 %ajlb_lb_mcmmo_level_herbalismo_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_herbalismo_10_alltime_name%§7 %ajlb_lb_mcmmo_level_herbalismo_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_herbalismo%. %player_name% &7%mcmmo_level_herbalismo%
+      '24':
+        material: BOW
+        stack: 1
+        name: §6Arquearia
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_arquearia_1_alltime_name%§7 %ajlb_lb_mcmmo_level_arquearia_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_arquearia_2_alltime_name%§7 %ajlb_lb_mcmmo_level_arquearia_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_arquearia_3_alltime_name%§7 %ajlb_lb_mcmmo_level_arquearia_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_arquearia_4_alltime_name%§7 %ajlb_lb_mcmmo_level_arquearia_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_arquearia_5_alltime_name%§7 %ajlb_lb_mcmmo_level_arquearia_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_arquearia_6_alltime_name%§7 %ajlb_lb_mcmmo_level_arquearia_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_arquearia_7_alltime_name%§7 %ajlb_lb_mcmmo_level_arquearia_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_arquearia_8_alltime_name%§7 %ajlb_lb_mcmmo_level_arquearia_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_arquearia_9_alltime_name%§7 %ajlb_lb_mcmmo_level_arquearia_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_arquearia_10_alltime_name%§7 %ajlb_lb_mcmmo_level_arquearia_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_arquearia%. %player_name% &7%mcmmo_level_arquearia%
+      '33':
+        material: BONE
+        stack: 1
+        name: §6Adestramento
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_adestramento_1_alltime_name%§7 %ajlb_lb_mcmmo_level_adestramento_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_adestramento_2_alltime_name%§7 %ajlb_lb_mcmmo_level_adestramento_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_adestramento_3_alltime_name%§7 %ajlb_lb_mcmmo_level_adestramento_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_adestramento_4_alltime_name%§7 %ajlb_lb_mcmmo_level_adestramento_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_adestramento_5_alltime_name%§7 %ajlb_lb_mcmmo_level_adestramento_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_adestramento_6_alltime_name%§7 %ajlb_lb_mcmmo_level_adestramento_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_adestramento_7_alltime_name%§7 %ajlb_lb_mcmmo_level_adestramento_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_adestramento_8_alltime_name%§7 %ajlb_lb_mcmmo_level_adestramento_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_adestramento_9_alltime_name%§7 %ajlb_lb_mcmmo_level_adestramento_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_adestramento_10_alltime_name%§7 %ajlb_lb_mcmmo_level_adestramento_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_Adestramento%. %player_name% &7%mcmmo_level_Adestramento%
+      '21':
+        material: GOLDEN_SHOVEL
+        stack: 1
+        name: §6Escavação
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_escavação_1_alltime_name%§7 %ajlb_lb_mcmmo_level_escavação_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_escavação_2_alltime_name%§7 %ajlb_lb_mcmmo_level_escavação_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_escavação_3_alltime_name%§7 %ajlb_lb_mcmmo_level_escavação_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_escavação_4_alltime_name%§7 %ajlb_lb_mcmmo_level_escavação_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_escavação_5_alltime_name%§7 %ajlb_lb_mcmmo_level_escavação_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_escavação_6_alltime_name%§7 %ajlb_lb_mcmmo_level_escavação_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_escavação_7_alltime_name%§7 %ajlb_lb_mcmmo_level_escavação_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_escavação_8_alltime_name%§7 %ajlb_lb_mcmmo_level_escavação_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_escavação_9_alltime_name%§7 %ajlb_lb_mcmmo_level_escavação_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_escavação_10_alltime_name%§7 %ajlb_lb_mcmmo_level_escavação_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_escavação%. %player_name% &7%mcmmo_level_escavação%
+      '29':
+        material: GOLDEN_SWORD
+        stack: 1
+        name: §6Espadas
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_espadas_1_alltime_name%§7 %ajlb_lb_mcmmo_level_espadas_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_espadas_2_alltime_name%§7 %ajlb_lb_mcmmo_level_espadas_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_espadas_3_alltime_name%§7 %ajlb_lb_mcmmo_level_espadas_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_espadas_4_alltime_name%§7 %ajlb_lb_mcmmo_level_espadas_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_espadas_5_alltime_name%§7 %ajlb_lb_mcmmo_level_espadas_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_espadas_6_alltime_name%§7 %ajlb_lb_mcmmo_level_espadas_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_espadas_7_alltime_name%§7 %ajlb_lb_mcmmo_level_espadas_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_espadas_8_alltime_name%§7 %ajlb_lb_mcmmo_level_espadas_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_espadas_9_alltime_name%§7 %ajlb_lb_mcmmo_level_espadas_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_espadas_10_alltime_name%§7 %ajlb_lb_mcmmo_level_espadas_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_espadas%. %player_name% &7%mcmmo_level_espadas%
+      '30':
+        material: GOLDEN_AXE
+        stack: 1
+        name: §6Machados
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_machados_1_alltime_name%§7 %ajlb_lb_mcmmo_level_machados_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_machados_2_alltime_name%§7 %ajlb_lb_mcmmo_level_machados_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_machados_3_alltime_name%§7 %ajlb_lb_mcmmo_level_machados_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_machados_4_alltime_name%§7 %ajlb_lb_mcmmo_level_machados_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_machados_5_alltime_name%§7 %ajlb_lb_mcmmo_level_machados_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_machados_6_alltime_name%§7 %ajlb_lb_mcmmo_level_machados_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_machados_7_alltime_name%§7 %ajlb_lb_mcmmo_level_machados_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_machados_8_alltime_name%§7 %ajlb_lb_mcmmo_level_machados_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_machados_9_alltime_name%§7 %ajlb_lb_mcmmo_level_machados_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_machados_10_alltime_name%§7 %ajlb_lb_mcmmo_level_machados_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_machados%. %player_name% &7%mcmmo_level_machados%
+      '41':
+        material: GOLD_BLOCK
+        stack: 1
+        name: §6Recuperação
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_recuperação_1_alltime_name%§7 %ajlb_lb_mcmmo_level_recuperação_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_recuperação_2_alltime_name%§7 %ajlb_lb_mcmmo_level_recuperação_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_recuperação_3_alltime_name%§7 %ajlb_lb_mcmmo_level_recuperação_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_recuperação_4_alltime_name%§7 %ajlb_lb_mcmmo_level_recuperação_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_recuperação_5_alltime_name%§7 %ajlb_lb_mcmmo_level_recuperação_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_recuperação_6_alltime_name%§7 %ajlb_lb_mcmmo_level_recuperação_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_recuperação_7_alltime_name%§7 %ajlb_lb_mcmmo_level_recuperação_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_recuperação_8_alltime_name%§7 %ajlb_lb_mcmmo_level_recuperação_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_recuperação_9_alltime_name%§7 %ajlb_lb_mcmmo_level_recuperação_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_recuperação_10_alltime_name%§7 %ajlb_lb_mcmmo_level_recuperação_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_recuperação%. %player_name% &7%mcmmo_level_recuperação%
+      '39':
+        material: ANVIL
+        stack: 1
+        name: §6Reparação
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_reparação_1_alltime_name%§7 %ajlb_lb_mcmmo_level_reparação_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_reparação_2_alltime_name%§7 %ajlb_lb_mcmmo_level_reparação_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_reparação_3_alltime_name%§7 %ajlb_lb_mcmmo_level_reparação_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_reparação_4_alltime_name%§7 %ajlb_lb_mcmmo_level_reparação_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_reparação_5_alltime_name%§7 %ajlb_lb_mcmmo_level_reparação_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_reparação_6_alltime_name%§7 %ajlb_lb_mcmmo_level_reparação_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_reparação_7_alltime_name%§7 %ajlb_lb_mcmmo_level_reparação_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_reparação_8_alltime_name%§7 %ajlb_lb_mcmmo_level_reparação_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_reparação_9_alltime_name%§7 %ajlb_lb_mcmmo_level_reparação_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_reparação_10_alltime_name%§7 %ajlb_lb_mcmmo_level_reparação_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_reparação%. %player_name% &7%mcmmo_level_reparação%
+      '31':
+        material: SHIELD
+        stack: 1
+        name: §6Desarme
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_desarmado_1_alltime_name%§7 %ajlb_lb_mcmmo_level_desarmado_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_desarmado_2_alltime_name%§7 %ajlb_lb_mcmmo_level_desarmado_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_desarmado_3_alltime_name%§7 %ajlb_lb_mcmmo_level_desarmado_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_desarmado_4_alltime_name%§7 %ajlb_lb_mcmmo_level_desarmado_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_desarmado_5_alltime_name%§7 %ajlb_lb_mcmmo_level_desarmado_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_desarmado_6_alltime_name%§7 %ajlb_lb_mcmmo_level_desarmado_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_desarmado_7_alltime_name%§7 %ajlb_lb_mcmmo_level_desarmado_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_desarmado_8_alltime_name%§7 %ajlb_lb_mcmmo_level_desarmado_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_desarmado_9_alltime_name%§7 %ajlb_lb_mcmmo_level_desarmado_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_desarmado_10_alltime_name%§7 %ajlb_lb_mcmmo_level_desarmado_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_desarmado%. %player_name% &7%mcmmo_level_desarmado%
+      '40':
+        material: OAK_LOG
+        name: §6Lenhagem
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_lenhador_1_alltime_name%§7 %ajlb_lb_mcmmo_level_lenhador_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_lenhador_2_alltime_name%§7 %ajlb_lb_mcmmo_level_lenhador_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_lenhador_3_alltime_name%§7 %ajlb_lb_mcmmo_level_lenhador_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_lenhador_4_alltime_name%§7 %ajlb_lb_mcmmo_level_lenhador_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_lenhador_5_alltime_name%§7 %ajlb_lb_mcmmo_level_lenhador_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_lenhador_6_alltime_name%§7 %ajlb_lb_mcmmo_level_lenhador_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_lenhador_7_alltime_name%§7 %ajlb_lb_mcmmo_level_lenhador_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_lenhador_8_alltime_name%§7 %ajlb_lb_mcmmo_level_lenhador_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_lenhador_9_alltime_name%§7 %ajlb_lb_mcmmo_level_lenhador_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_lenhador_10_alltime_name%§7 %ajlb_lb_mcmmo_level_lenhador_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_lenhador%. %player_name% &7%mcmmo_level_lenhador%
+        stack: 1
+      '22':
+        material: FURNACE
+        name: §6Fundição
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_level_fundição_1_alltime_name%§7 %ajlb_lb_mcmmo_level_fundição_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_level_fundição_2_alltime_name%§7 %ajlb_lb_mcmmo_level_fundição_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_level_fundição_3_alltime_name%§7 %ajlb_lb_mcmmo_level_fundição_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_level_fundição_4_alltime_name%§7 %ajlb_lb_mcmmo_level_fundição_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_level_fundição_5_alltime_name%§7 %ajlb_lb_mcmmo_level_fundição_5_alltime_value%
+        - §f6. §a%ajlb_lb_mcmmo_level_fundição_6_alltime_name%§7 %ajlb_lb_mcmmo_level_fundição_6_alltime_value%
+        - §f7. §a%ajlb_lb_mcmmo_level_fundição_7_alltime_name%§7 %ajlb_lb_mcmmo_level_fundição_7_alltime_value%
+        - §f8. §a%ajlb_lb_mcmmo_level_fundição_8_alltime_name%§7 %ajlb_lb_mcmmo_level_fundição_8_alltime_value%
+        - §f9. §a%ajlb_lb_mcmmo_level_fundição_9_alltime_name%§7 %ajlb_lb_mcmmo_level_fundição_9_alltime_value%
+        - §f10. §a%ajlb_lb_mcmmo_level_fundição_10_alltime_name%§7 %ajlb_lb_mcmmo_level_fundição_10_alltime_value%
+        - §f...
+        - §f%mcmmo_rank_fundição%. %player_name% &7%mcmmo_level_fundição%
+        stack: 1
+      '13':
+        material: cps= %ajlb_lb_mcmmo_power_level_1_alltime_name%
+        stack: 1
+        name: §6&lTop Levels
+        lore:
+        - §f1. §a%ajlb_lb_mcmmo_power_level_1_alltime_name%§7 %ajlb_lb_mcmmo_power_level_1_alltime_value%
+        - §f2. §a%ajlb_lb_mcmmo_power_level_2_alltime_name%§7 %ajlb_lb_mcmmo_power_level_2_alltime_value%
+        - §f3. §a%ajlb_lb_mcmmo_power_level_3_alltime_name%§7 %ajlb_lb_mcmmo_power_level_3_alltime_value%
+        - §f4. §a%ajlb_lb_mcmmo_power_level_4_alltime_name%§7 %ajlb_lb_mcmmo_power_level_4_alltime_value%
+        - §f5. §a%ajlb_lb_mcmmo_power_level_5_alltime_name%§7 %ajlb_lb_mcmmo_power_level_5_alltime_value%
+        - §f...
+        - §f %player_name% &7%mcmmo_power_level%

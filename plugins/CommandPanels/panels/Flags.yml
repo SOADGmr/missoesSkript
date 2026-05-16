@@ -1,0 +1,81 @@
+panels:
+  panel-1:
+    perm: default
+    rows: 4
+    title: '&8Generated panel-1'
+    empty: BLACK_STAINED_GLASS_PANE
+    item:
+      '10':
+        material: GOLDEN_SWORD
+        stack: 1
+        name: §a§l AllowPvP
+        lore:
+        - §fAtiva | Desativa o Pvp em seu Terreno
+      '11':
+        material: ENDER_PEARL
+        stack: 1
+        name: §a§l NoEnter
+        lore:
+        - §f Ativa | Desativa o uso de Perolas do Fim em seu terreno
+      '12':
+        material: OAK_DOOR
+        stack: 1
+        name: §a§l NoEnderPearl
+        lore:
+        - §f Ativa | Desativa o Pvp em seu Terreno
+      '13':
+        material: ICE
+        stack: 1
+        name: §a§l NoIceForm
+        lore:
+        - §f Ativa | Desativa a geração de gelo em seu terreno
+      '14':
+        material: STRING
+        stack: 1
+        name: §a§l NoItemDrop
+        lore:
+        - §f Ativa | Desativa o drop de itens em seu terreno
+      '15':
+        material: DIAMOND
+        stack: 1
+        name: §a§l NoItemPickup
+        lore:
+        - §f Ativa | Desativa a recolha de itens em seu terreno
+      '16':
+        material: SNOW
+        stack: 1
+        name: §a§l NoSnowForm
+        lore:
+        - §f Ativa | Desativa a geração de neve em seu terreno
+      '20':
+        material: WARPED_SIGN
+        stack: 1
+        name: §a§l EnterMessage
+        lore:
+        - §f Manda uma mensagem no chat para o player
+        - §f quando entra em seu terreno
+        - §5 §5§oSomente Vips
+      '21':
+        material: CRIMSON_SIGN
+        stack: 1
+        name: §a§l ExitMessage
+        lore:
+        - §f Manda uma mensagem no chat para o player
+        - §f quando sai de seu terreno
+        - §5 §5§oSomente Vips
+      '23':
+        material: IRON_DOOR
+        stack: 1
+        name: §a§l NoEnterPlayer
+        lore:
+        - §f Impede que um player especifico entre em seu terreno
+        - ''
+        - §5 §5§oSomente Vips
+      '24':
+        material: VINE
+        stack: 1
+        name: §a§l NoVineGrowth
+        lore:
+        - §f Impede que as Vinhas crescam em seu terreno
+        - ''
+        - §5 §5§oSomente Vips

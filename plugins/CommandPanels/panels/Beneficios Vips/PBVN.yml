@@ -1,0 +1,878 @@
+panels:
+  PBVN:
+    perm: default
+    rows: 6
+    title: '&8Benefícios Vip Netherite'
+    commands:
+    - PBVN
+    empty: BLACK_STAINED_GLASS_PANE
+    item:
+      '12':
+        material: WHITE_STAINED_GLASS
+        stack: 1
+        name: §5Tapete Mágico
+        lore:
+        - §6Use /mc e ative uma
+        - §6plataforma de vidro abaixo de
+        - §6seus pés que te ajudam a voar
+      '21':
+        material: ENDER_CHEST
+        stack: 1
+        name: §5Baú do Fim Remoto
+        lore:
+        - §6use /ec e acesse seu baú
+        - §6do fim de onde estiver
+      '23':
+        material: CHEST
+        stack: 1
+        name: §5Kits Exclusivos
+        commands:
+        - console= cp PBVNK %cp-player-name%
+        lore:
+        - §6Clique para visualizar
+        - §6os kits disponiveis para este plano
+      '24':
+        material: SPAWNER
+        stack: 1
+        name: §5Retirar Spawners
+        lore:
+        - §6Permissão para retirar Mob Spawners utilizando uma
+        - §bPicareta de Diamante com Toque Suave
+      '29':
+        material: COMPASS
+        stack: 1
+        name: §5Comando /back
+        lore:
+        - §6Comando para voltar onde o player estava
+        - §6antes de realizar o ultimo teleporte e ao morrer
+      '33':
+        material: RED_BED
+        stack: 1
+        name: §550 Homes
+        lore:
+        - §6Limite de 50 Homes
+      '39':
+        material: TRADER_LLAMA_SPAWN_EGG
+        stack: 1
+        name: §5Pets Exclusivos
+        commands:
+        - console= cp ListarPets %cp-player-name%
+        lore:
+        - §6Vips tem acesso a alguns pets exclusivos, listados na /warp pets
+      '40':
+        material: CRYING_OBSIDIAN
+        stack: 1
+        name: §5Loja Vip
+        lore:
+        - §6Acesso a uma loja exclusiva apenas para vips
+        - §6a loja contém encantamentos e itens mais baratos e raros
+      '41':
+        material: GHAST_SPAWN_EGG
+        stack: 1
+        name: §5Pets Bebês
+        lore:
+        - §6Pode ter pets bebês
+      '14':
+        material: ORANGE_SHULKER_BOX
+        stack: 1
+        name: §5Elevadores Coloridos
+        lore:
+        - §6Faça elevadores coloridos
+        - §6não apenas branco
+      '20':
+        material: STONECUTTER
+        stack: 1
+        name: §5Ferramentas no Tapete
+        lore:
+        - §6/mc light - Adiciona uma luz ao seu tapete
+        - §6/mc tools - Adiciona um baú do fim crafting table ao seu tapete
+      '22':
+        material: NETHER_STAR
+        stack: 1
+        name: §5Passe Vip
+        lore:
+        - §6Entre no servidor mesmo quando estiver lotado
+      '13':
+        material: OAK_SIGN
+        stack: 1
+        name: §5Nickname Personalizado
+        lore:
+        - §6Use /nick para alterar o seu nickname no chat
+      '11':
+        material: WATER_BUCKET
+        stack: 1
+        name: §5No kick AFK
+        lore:
+        - §6Não seja kickado por ficar
+        - §615 minutos parado
+      '15':
+        material: IRON_BLOCK
+        stack: 1
+        name: §5Condense
+        lore:
+        - §6Use /condense e transforme
+        - §6tudo que for possivel no seu inventário
+        - §6em blocos, como Minerios, Trigo, outros
+      '19':
+        material: BARRIER
+        stack: 1
+        name: §5Limpar Inventário
+        lore:
+        - §6Use /clear e apague todos
+        - §6os itens de seu inventário
+      '25':
+        material: ENDER_PEARL
+        stack: 1
+        name: §5Teleporte Instantâneo
+        lore:
+        - §6Sem tempo de espera para
+        - §6se teleportar usando /home, /warp, /tpa e /back
+      '28':
+        material: CRAFTING_TABLE
+        stack: 1
+        name: §5Mesa de Trabalho remota
+        lore:
+        - §6Abra uma Mesa de Trabalho de onde estiver
+        - §6Use /craft
+      '30':
+        material: EXPERIENCE_BOTTLE
+        stack: 1
+        name: §5Keep XP
+        lore:
+        - §6Não perca seus XPs quando morrer
+      '32':
+        material: ORANGE_DYE
+        stack: 1
+        name: §5Escrever Colorido
+        lore:
+        - §6Use códigos de cores
+        - §6no chat e em placas
+        - §6para escrever colorido
+      '34':
+        material: ANVIL
+        stack: 1
+        name: §5Reparar
+        lore:
+        - §6use /reparar e repare
+        - §6sua ferramenta de onde estiver
+      '38':
+        material: CONDUIT
+        stack: 1
+        name: §5Bonus McMMO
+        lore:
+        - §6Suba de nivel com 2x a velocidade
+        - §6padrão de McMMO
+      '42':
+        material: SKELETON_SKULL
+        stack: 1
+        name: §5Usar Cabeças de Blocos
+        lore:
+        - §6Use /hat com um bloco | item na mão
+        - §6para colocá-lo em sua cabeça
+      '31':
+        material: LAVA_BUCKET
+        stack: 1
+        name: §53 Tags AFK
+        lore:
+        - §6Player tem direito a 3 tags §7[AFK]
+        - §6para utilizar na conta que quiser
+        - §6A tag torna a conta imuni a Kick por Afk
+  PBVNK:
+    perm: default
+    rows: 6
+    title: '&8Kits do Vip Netherite'
+    commands:
+    - PBVNK
+    empty: BLACK_STAINED_GLASS_PANE
+    item:
+      '13':
+        material: BRICKS
+        stack: 1
+        name: §5Kit Blocos
+        commands:
+        - console= cp PBVNKBlocos %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '21':
+        material: DIAMOND_PICKAXE
+        stack: 1
+        name: §5Kit Tools
+        commands:
+        - console= cp PBVNKTools %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '22':
+        material: NETHERITE_INGOT
+        stack: 1
+        name: §5Kit Minérios
+        commands:
+        - console= cp PBVNKMinerios %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '23':
+        material: APPLE
+        stack: 1
+        name: §5Kit Comida
+        commands:
+        - console= cp PBVNKComida %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '30':
+        material: TRIPWIRE_HOOK
+        stack: 1
+        name: §5Kit Semanal
+        commands:
+        - console= cp PBVNKSemanal %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '31':
+        material: SHORT_GRASS
+        stack: 1
+        name: §5Kit Matinho
+        commands:
+        - console= cp PBVNKMatinho %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '32':
+        material: EXPERIENCE_BOTTLE
+        stack: 1
+        name: §5Kit Pots
+        commands:
+        - console= cp PBVNKPots %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVN %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+  PBVNKBlocos:
+    perm: default
+    rows: 6
+    title: '&8Kit Blocos'
+    commands:
+    - PBVNKBlocos
+    empty: BLACK_STAINED_GLASS_PANE
+    item:
+      '12':
+        material: BOOKSHELF
+        stack: 64
+        name: ''
+      '14':
+        material: SCAFFOLDING
+        stack: 64
+        name: ''
+      '20':
+        material: ENCHANTING_TABLE
+        stack: 1
+        name: ''
+      '21':
+        material: SEA_LANTERN
+        stack: 64
+        name: ''
+      '22':
+        material: BEACON
+        stack: 1
+        name: ''
+      '23':
+        material: SPONGE
+        stack: 64
+        name: ''
+      '24':
+        material: ENDER_CHEST
+        stack: 16
+        name: ''
+      '30':
+        material: COBWEB
+        stack: 64
+        name: ''
+      '31':
+        material: QUARTZ_BLOCK
+        stack: 64
+        name: ''
+      '32':
+        material: HAY_BLOCK
+        stack: 64
+        name: ''
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVNK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVNKTools %cp-player-name%
+  PBVNKTools:
+    perm: default
+    rows: 6
+    title: '&8Kit Ferramentas'
+    commands:
+    - PBVNKTools
+    empty: BLACK_STAINED_GLASS_PANE
+    item:
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVNKBlocos %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVNK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVNKMinerios %cp-player-name%
+      '4':
+        material: FISHING_ROD
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lNetherite§3]
+        lore:
+        - §6Durabilidade III
+        - §6Isca III
+        - §6Sorte do mar III
+      '11':
+        material: DIAMOND_PICKAXE
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lPicareta§3]
+        lore:
+        - §6Furtune III
+        - §6Durabilidade III
+        - §6Eficiência V
+      '12':
+        material: DIAMOND_AXE
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lMachado§3]
+        lore:
+        - §6Durabilidade III
+        - §6Eficiência V
+        - §6Furtune I
+      '13':
+        material: DIAMOND_HOE
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lEnxada§3]
+        lore:
+        - §6Durabilidade III
+      '14':
+        material: DIAMOND_SHOVEL
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lPá§3]
+        lore:
+        - §6Durabilidade III
+        - §6Eficiência V
+        - §6Toque suave
+      '15':
+        material: DIAMOND_PICKAXE
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lPicareta§3]
+        lore:
+        - §6Durabilidade III
+        - §6Eficiência V
+        - §6Toque suave
+      '19':
+        material: TRIDENT
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lNetherite§3]
+        lore:
+        - §6Durabilidade III
+        - §6Penetração V
+      '20':
+        material: DIAMOND_HELMET
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lNetherite§3]
+        lore:
+        - §6Durabilidade III
+        - §6Proteção IV
+      '21':
+        material: DIAMOND_CHESTPLATE
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lNetherite§3]
+        lore:
+        - §6Durabilidade III
+        - §6Proteção IV
+      '22':
+        material: SHIELD
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lNetherite§3]
+        lore:
+        - §6Durabilidade III
+      '23':
+        material: DIAMOND_LEGGINGS
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lNetherite§3]
+        lore:
+        - §6Durabilidade III
+        - §6Proteção IV
+      '24':
+        material: DIAMOND_BOOTS
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lNetherite§3]
+        lore:
+        - §6Durabilidade III
+        - §6Proteção IV
+      '25':
+        material: DIAMOND_SWORD
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lEspada§3]
+        lore:
+        - §6Durabilidade III
+        - §6Saque III
+        - §6Especto flamejante II
+        - §6Afiação V
+      '29':
+        material: BOW
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lArco§3]
+        lore:
+        - §6Durabilidade III
+        - §6Força V
+        - §6Infinidade
+        - §6Chama
+      '30':
+        material: SHEARS
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lNetherite§3]
+        lore:
+        - §6Durabilidade III
+        - §6Eficiência IV
+      '31':
+        material: ARROW
+        stack: 64
+        name: ''
+      '32':
+        material: FLINT_AND_STEEL
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lNetherite§3]
+        lore:
+        - §6Durabilidade III
+      '33':
+        material: CROSSBOW
+        stack: 1
+        enchanted: 'true'
+        name: §3[§8§lNetherite§3]
+        lore:
+        - §6Durabilidade III
+        - §6Carga rápida III
+  PBVNKMinerios:
+    perm: default
+    rows: 6
+    title: '&8Kit Minérios'
+    commands:
+    - PBVNKMinerios
+    empty: BLACK_STAINED_GLASS_PANE
+    item:
+      '11':
+        material: IRON_INGOT
+        stack: 64
+        name: ''
+      '12':
+        material: IRON_INGOT
+        stack: 32
+        name: ''
+      '13':
+        material: NETHERITE_INGOT
+        stack: 4
+        name: ''
+      '14':
+        material: IRON_INGOT
+        stack: 32
+        name: ''
+      '15':
+        material: IRON_INGOT
+        stack: 64
+        name: ''
+      '19':
+        material: IRON_INGOT
+        stack: 16
+        name: ''
+      '20':
+        material: IRON_INGOT
+        stack: 32
+        name: ''
+      '21':
+        material: DIAMOND
+        stack: 36
+        name: ''
+      '22':
+        material: EMERALD
+        stack: 64
+        name: ''
+      '23':
+        material: DIAMOND
+        stack: 36
+        name: ''
+      '24':
+        material: IRON_INGOT
+        stack: 32
+        name: ''
+      '25':
+        material: IRON_INGOT
+        stack: 16
+        name: ''
+      '29':
+        material: GOLD_INGOT
+        stack: 32
+        name: ''
+      '30':
+        material: GOLD_INGOT
+        stack: 32
+        name: ''
+      '31':
+        material: GOLD_INGOT
+        stack: 16
+        name: ''
+      '32':
+        material: GOLD_INGOT
+        stack: 32
+        name: ''
+      '33':
+        material: GOLD_INGOT
+        stack: 32
+        name: ''
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVNKTools %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVNK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVNKComida %cp-player-name%
+  PBVNKComida:
+    perm: default
+    rows: 6
+    title: '&8Kit Comida'
+    commands:
+    - PBVNKComida
+    empty: BLACK_STAINED_GLASS_PANE
+    item:
+      '12':
+        material: APPLE
+        stack: 64
+        name: ''
+      '13':
+        material: CAKE
+        stack: 32
+        name: ''
+      '14':
+        material: GOLDEN_APPLE
+        stack: 48
+        name: ''
+      '20':
+        material: COOKED_BEEF
+        stack: 64
+        name: ''
+      '21':
+        material: COOKED_BEEF
+        stack: 64
+        name: ''
+      '22':
+        material: ENCHANTED_GOLDEN_APPLE
+        stack: 4
+        name: ''
+      '23':
+        material: COOKED_PORKCHOP
+        stack: 64
+        name: ''
+      '24':
+        material: COOKED_PORKCHOP
+        stack: 64
+        name: ''
+      '30':
+        material: BREAD
+        stack: 64
+        name: ''
+      '32':
+        material: MELON_SLICE
+        stack: 64
+        name: ''
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVNKMinerios %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVNK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVNKSemanal %cp-player-name%
+  PBVNKSemanal:
+    perm: default
+    rows: 6
+    title: '&8Kit Semanal'
+    commands:
+    - PBVNKSemanal
+    empty: BLACK_STAINED_GLASS_PANE
+    item:
+      '21':
+        material: COOKED_PORKCHOP
+        stack: 64
+        name: ''
+      '22':
+        material: TRIPWIRE_HOOK
+        stack: 6
+        name: §aKey Vip
+        lore:
+        - §6Para validar a key
+        - §6contate um administrador
+      '23':
+        material: PHANTOM_MEMBRANE
+        stack: 64
+        name: ''
+      '31':
+        material: NAME_TAG
+        stack: 5
+        name: ''
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVNKMinerios %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVNK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVNKMatinho %cp-player-name%
+  PBVNKMatinho:
+    perm: default
+    rows: 6
+    title: '&8Kit Matinho'
+    commands:
+    - PBVNKMatinho
+    empty: BLACK_STAINED_GLASS_PANE
+    item:
+      '12':
+        material: SUGAR_CANE
+        stack: 32
+        name: ''
+      '13':
+        material: SPRUCE_SAPLING
+        stack: 8
+        name: ''
+      '14':
+        material: BAMBOO
+        stack: 16
+        name: ''
+      '19':
+        material: POTATO
+        stack: 32
+        name: ''
+      '20':
+        material: JUNGLE_SAPLING
+        stack: 8
+        name: ''
+      '21':
+        material: ACACIA_SAPLING
+        stack: 8
+        name: ''
+      '22':
+        material: DARK_OAK_SAPLING
+        stack: 8
+        name: ''
+      '23':
+        material: OAK_SAPLING
+        stack: 8
+        name: ''
+      '24':
+        material: BIRCH_SAPLING
+        stack: 8
+        name: ''
+      '25':
+        material: CARROT
+        stack: 32
+        name: ''
+      '28':
+        material: NETHER_WART
+        stack: 32
+        name: ''
+      '29':
+        material: WHEAT_SEEDS
+        stack: 32
+        name: ''
+      '30':
+        material: BEETROOT_SEEDS
+        stack: 32
+        name: ''
+      '31':
+        material: COCOA_BEANS
+        stack: 32
+        name: ''
+      '32':
+        material: MELON_SEEDS
+        stack: 32
+        name: ''
+      '33':
+        material: PUMPKIN_SEEDS
+        stack: 32
+        name: ''
+      '34':
+        material: SWEET_BERRIES
+        stack: 8
+        name: ''
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVNKSemanal %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVNK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVNKPots %cp-player-name%
+  PBVNKPots:
+    perm: default
+    rows: 6
+    title: '&8Kit Pots'
+    commands:
+    - PBVNKPots
+    empty: BLACK_STAINED_GLASS_PANE
+    item:
+      '13':
+        material: EXPERIENCE_BOTTLE
+        stack: 64
+        name: ''
+      '22':
+        material: BREWING_STAND
+        stack: 10
+        name: ''
+      '12':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Resistência ao Fogo (3:00)
+      '14':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Supersalto (3:00)
+      '20':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Vida Instantânea
+      '21':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Velocidade (3:00)
+      '23':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Visão Noturna (3:00)
+      '24':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Queda Lenta (1:30)
+      '30':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Força (3:00)
+      '31':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Invisibilidade (3:00)
+      '32':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Regeneração (0:45)
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVNKMatinho %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVNK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior

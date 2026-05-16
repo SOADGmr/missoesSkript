@@ -1,0 +1,761 @@
+panels:
+  PBVO:
+    perm: default
+    rows: 6
+    title: '&eBenefícios Vip Ouro'
+    commands:
+    - PBVO
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '22':
+        material: OAK_SIGN
+        stack: 1
+        name: §5Nickname Personalizado
+        lore:
+        - §6Use /nick para alterar o seu nickname no chat
+      '23':
+        material: CHEST
+        stack: 1
+        name: §5Kits Exclusivos
+        commands:
+        - console= cp PBVOK %cp-player-name%
+        lore:
+        - §6Clique para visualizar
+        - §6os kits disponiveis para este plano
+      '24':
+        material: SPAWNER
+        stack: 1
+        name: §5Retirar Spawners
+        lore:
+        - §6Permissão para retirar Mob Spawners utilizando uma
+        - §bPicareta de Diamante com Toque Suave
+      '21':
+        material: WHITE_STAINED_GLASS
+        stack: 1
+        name: §5Tapete Mágico
+        lore:
+        - §6Use /mc e ative uma
+        - §6plataforma de vidro abaixo de
+        - §6seus pés que te ajudam a voar
+      '31':
+        material: CRYING_OBSIDIAN
+        stack: 1
+        name: §5Loja Vip
+        lore:
+        - §6Acesso a uma loja exclusiva apenas para vips
+        - §6a loja contém encantamentos e itens mais baratos e raros
+      '20':
+        material: TRADER_LLAMA_SPAWN_EGG
+        stack: 1
+        name: §5Pets Exclusivos
+        commands:
+        - console= cp ListarPets %cp-player-name%
+        lore:
+        - §6Vips tem acesso a alguns pets exclusivos, listados na /warp pets
+      '32':
+        material: RED_BED
+        stack: 1
+        name: §520 Homes
+        lore:
+        - §6Limite de 20 Homes
+      '12':
+        material: SKELETON_SKULL
+        stack: 1
+        name: §5Usar Cabeças de Blocos
+        lore:
+        - §6Use /hat com um bloco | item na mão
+        - §6para colocá-lo em sua cabeça
+      '14':
+        material: BARRIER
+        stack: 1
+        name: §5Limpar Inventário
+        lore:
+        - §6Use /clear e apague todos
+        - §6os itens de seu inventário
+      '33':
+        material: CRAFTING_TABLE
+        stack: 1
+        name: §5Mesa de Trabalho remota
+        lore:
+        - §6Abra uma Mesa de Trabalho de onde estiver
+        - §6Use /craft
+      '29':
+        material: ENDER_PEARL
+        stack: 1
+        name: §5Teleporte Instantâneo
+        lore:
+        - §6Sem tempo de espera para
+        - §6se teleportar usando /home, /warp ou /tpa
+      '30':
+        material: GREEN_BANNER
+        banner: []
+        stack: 1
+        name: §5Flags Especiais
+        lore:
+        - §6Permisao para adicionar flags especiais ao seu terreno
+        - '§6Flags Especiais:'
+        - §6EnterMessage
+        - §eExibe uma mensagem ao entrar no terreno
+        - §6ExitMessage
+        - §eExibe uma mensagem ao sair do terreno
+        - §6NoEnterPlayer
+        - §eProibe um Player especifico de entrar no terreno
+        - §6NoVineGrowth
+        - §eImpede que as Vinhas crescam no terreno
+      '13':
+        material: NETHER_STAR
+        stack: 1
+        name: §5Passe Vip
+        lore:
+        - §6Entre no servidor mesmo quando estiver lotado
+      '39':
+        material: NAME_TAG
+        stack: 1
+        name: §5Colorir nomes de Pets
+        lore:
+        - §6Pode dar nome aos pets usando codigos de cores
+      '41':
+        material: ORANGE_DYE
+        stack: 1
+        name: §5Escrever Colorido
+        lore:
+        - §6Use códigos de cores para escrever colorido no chat
+  PBVOK:
+    perm: default
+    rows: 6
+    title: '&eKits do Vip Ouro'
+    commands:
+    - PBVOK
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '13':
+        material: BRICKS
+        stack: 1
+        name: §5Kit Blocos
+        commands:
+        - console= cp PBVOKBlocos %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '21':
+        material: GOLDEN_PICKAXE
+        stack: 1
+        name: §5Kit Tools
+        commands:
+        - console= cp PBVOKTools %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '22':
+        material: GOLD_INGOT
+        stack: 1
+        name: §5Kit Minérios
+        commands:
+        - console= cp PBVOKMinerios %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '23':
+        material: APPLE
+        stack: 1
+        name: §5Kit Comida
+        commands:
+        - console= cp PBVOKComida %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '30':
+        material: TRIPWIRE_HOOK
+        stack: 1
+        name: §5Kit Semanal
+        commands:
+        - console= cp PBVOKSemanal %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '31':
+        material: SHORT_GRASS
+        stack: 1
+        name: §5Kit Matinho
+        commands:
+        - console= cp PBVOKMatinho %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '32':
+        material: EXPERIENCE_BOTTLE
+        stack: 1
+        name: §5Kit Pots
+        commands:
+        - console= cp PBVOKPots %cp-player-name%
+        lore:
+        - §6Clique para Visualizar
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVO %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+  PBVOKBlocos:
+    perm: default
+    rows: 6
+    title: '&eKit Blocos'
+    commands:
+    - PBVOKBlocos
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVOK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVOKTools %cp-player-name%
+      '12':
+        material: BOOKSHELF
+        stack: 27
+        name: ''
+      '14':
+        material: SCAFFOLDING
+        stack: 27
+        name: ''
+      '20':
+        material: ENCHANTING_TABLE
+        stack: 1
+        name: ''
+      '21':
+        material: SEA_LANTERN
+        stack: 27
+        name: ''
+      '22':
+        material: QUARTZ_BLOCK
+        stack: 27
+        name: ''
+      '23':
+        material: SPONGE
+        stack: 27
+        name: ''
+      '24':
+        material: ENDER_CHEST
+        stack: 7
+        name: ''
+      '30':
+        material: COBWEB
+        stack: 27
+        name: ''
+      '32':
+        material: HAY_BLOCK
+        stack: 27
+        name: ''
+  PBVOKTools:
+    perm: default
+    rows: 6
+    title: '&eKit Ferramentas'
+    commands:
+    - PBVOKTools
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVOKBlocos %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVOK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVOKMinerios %cp-player-name%
+      '19':
+        material: FISHING_ROD
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lOuro§3]
+        lore:
+        - §6Durabilidade III
+      '11':
+        material: GOLDEN_PICKAXE
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lPicareta§3]
+        lore:
+        - §6Durabilidade III
+        - §6Eficiência IV
+      '12':
+        material: GOLDEN_AXE
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lMachado§3]
+        lore:
+        - §6Eficiência III
+        - §6Durabilidade III
+      '13':
+        material: GOLDEN_HOE
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lEnxada§3]
+        lore:
+        - §6Durabilidade III
+      '14':
+        material: GOLDEN_SHOVEL
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lPá§3]
+        lore:
+        - §6Durabilidade III
+        - §6Eficiência IV
+      '15':
+        material: GOLDEN_SWORD
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lEspada§3]
+        lore:
+        - §6Aspecto flamejante I
+        - §6Durabilidade III
+        - §6Afiação III
+      '20':
+        material: GOLDEN_HELMET
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lOuro§3]
+        lore:
+        - §6Durabilidade III
+        - §6Proteção III
+      '21':
+        material: GOLDEN_CHESTPLATE
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lOuro§3]
+        lore:
+        - §6Durabilidade III
+        - §6Proteção III
+      '22':
+        material: SHIELD
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lOuro§3]
+        lore:
+        - §6Durabilidade III
+      '23':
+        material: GOLDEN_LEGGINGS
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lOuro§3]
+        lore:
+        - §6Durabilidade III
+        - §6Proteção III
+      '24':
+        material: GOLDEN_BOOTS
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lOuro§3]
+        lore:
+        - §6Durabilidade III
+        - §6Proteção III
+      '25':
+        material: FLINT_AND_STEEL
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lOuro§3]
+        lore:
+        - §6Durabilidade III
+      '30':
+        material: BOW
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lArco§3]
+        lore:
+        - §6Durabilidade III
+        - §6Forçã III
+      '31':
+        material: ARROW
+        stack: 32
+        name: ''
+      '32':
+        material: SHEARS
+        stack: 1
+        enchanted: 'true'
+        name: §3[§e§lOuro§3]
+        lore:
+        - §6Durabilidade III
+  PBVOKMinerios:
+    perm: default
+    rows: 6
+    title: '&eKit Minérios'
+    commands:
+    - PBVOKMinerios
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVOKTools %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVOK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVOKComida %cp-player-name%
+      '12':
+        material: GOLD_INGOT
+        stack: 24
+        name: ''
+      '13':
+        material: IRON_INGOT
+        stack: 54
+        name: ''
+      '14':
+        material: GOLD_INGOT
+        stack: 24
+        name: ''
+      '20':
+        material: GOLD_INGOT
+        stack: 64
+        name: ''
+      '21':
+        material: IRON_INGOT
+        stack: 54
+        name: ''
+      '22':
+        material: DIAMOND
+        stack: 24
+        name: ''
+      '23':
+        material: IRON_INGOT
+        stack: 54
+        name: ''
+      '24':
+        material: GOLD_INGOT
+        stack: 64
+        name: ''
+      '30':
+        material: GOLD_INGOT
+        stack: 24
+        name: ''
+      '31':
+        material: IRON_INGOT
+        stack: 54
+        name: ''
+      '32':
+        material: GOLD_INGOT
+        stack: 24
+        name: ''
+  PBVOKComida:
+    perm: default
+    rows: 6
+    title: '&eKit Comida'
+    commands:
+    - PBVOKComida
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '12':
+        material: APPLE
+        stack: 64
+        name: ''
+      '13':
+        material: CAKE
+        stack: 32
+        name: ''
+      '14':
+        material: GOLDEN_APPLE
+        stack: 48
+        name: ''
+      '20':
+        material: COOKED_BEEF
+        stack: 64
+        name: ''
+      '21':
+        material: COOKED_BEEF
+        stack: 64
+        name: ''
+      '22':
+        material: ENCHANTED_GOLDEN_APPLE
+        stack: 4
+        name: ''
+      '23':
+        material: COOKED_PORKCHOP
+        stack: 64
+        name: ''
+      '24':
+        material: COOKED_PORKCHOP
+        stack: 64
+        name: ''
+      '30':
+        material: BREAD
+        stack: 64
+        name: ''
+      '32':
+        material: MELON_SLICE
+        stack: 64
+        name: ''
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVOKMinerios %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVOK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVOKSemanal %cp-player-name%
+  PBVOKSemanal:
+    perm: default
+    rows: 6
+    title: '&eKit Semanal'
+    commands:
+    - PBVOKSemanal
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVOKMinerios %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVOK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVOKMatinho %cp-player-name%
+      '21':
+        material: COOKED_PORKCHOP
+        stack: 8
+        name: ''
+      '22':
+        material: TRIPWIRE_HOOK
+        stack: 2
+        enchanted: 'true'
+        name: §fVip Crate Key
+        lore:
+        - §7Right-Click on a "§fVip§7" crate
+        - §7to win an item!
+        - ''
+      '23':
+        material: PHANTOM_MEMBRANE
+        stack: 8
+        name: ''
+      '31':
+        material: NAME_TAG
+        stack: 2
+        name: ''
+  PBVOKMatinho:
+    perm: default
+    rows: 6
+    title: '&eKit Matinho'
+    commands:
+    - PBVOKMatinho
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '12':
+        material: SUGAR_CANE
+        stack: 32
+        name: ''
+      '13':
+        material: SPRUCE_SAPLING
+        stack: 8
+        name: ''
+      '14':
+        material: BAMBOO
+        stack: 16
+        name: ''
+      '19':
+        material: POTATO
+        stack: 32
+        name: ''
+      '20':
+        material: JUNGLE_SAPLING
+        stack: 8
+        name: ''
+      '21':
+        material: ACACIA_SAPLING
+        stack: 8
+        name: ''
+      '22':
+        material: DARK_OAK_SAPLING
+        stack: 8
+        name: ''
+      '23':
+        material: OAK_SAPLING
+        stack: 8
+        name: ''
+      '24':
+        material: BIRCH_SAPLING
+        stack: 8
+        name: ''
+      '25':
+        material: CARROT
+        stack: 32
+        name: ''
+      '28':
+        material: NETHER_WART
+        stack: 32
+        name: ''
+      '29':
+        material: WHEAT_SEEDS
+        stack: 32
+        name: ''
+      '30':
+        material: BEETROOT_SEEDS
+        stack: 32
+        name: ''
+      '31':
+        material: COCOA_BEANS
+        stack: 32
+        name: ''
+      '32':
+        material: MELON_SEEDS
+        stack: 32
+        name: ''
+      '33':
+        material: PUMPKIN_SEEDS
+        stack: 32
+        name: ''
+      '34':
+        material: SWEET_BERRIES
+        stack: 8
+        name: ''
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVOKSemanal %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVOK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
+      '50':
+        material: PAPER
+        stack: 1
+        name: §aPróximo Kit
+        commands:
+        - console= cp PBVOKPots %cp-player-name%
+  PBVOKPots:
+    perm: default
+    rows: 6
+    title: '&eKit Pots'
+    commands:
+    - PBVOKPots
+    empty: YELLOW_STAINED_GLASS_PANE
+    item:
+      '13':
+        material: EXPERIENCE_BOTTLE
+        stack: 64
+        name: ''
+      '22':
+        material: BREWING_STAND
+        stack: 10
+        name: ''
+      '12':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Resistência ao Fogo (3:00)
+      '14':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Supersalto (3:00)
+      '20':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Vida Instantânea
+      '21':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Velocidade (3:00)
+      '23':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Visão Noturna (3:00)
+      '24':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Queda Lenta (1:30)
+      '30':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Força (3:00)
+      '31':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Invisibilidade (3:00)
+      '32':
+        material: POTION
+        stack: 10
+        name: ''
+        lore:
+        - §9Regeneração (0:45)
+      '48':
+        material: PAPER
+        stack: 1
+        name: §aKit Anterior
+        commands:
+        - console= cp PBVOKMatinho %cp-player-name%
+      '49':
+        material: MAP
+        stack: 1
+        name: §bVoltar
+        commands:
+        - console= cp PBVOK %cp-player-name%
+        lore:
+        - §6Voltar ao menu Anterior
