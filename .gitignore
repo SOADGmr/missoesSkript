@@ -4,6 +4,5 @@
 # Abre exceção para o próprio arquivo do Git
 !.gitignore
 
-# Abre o caminho correto com "plugins" (p minúsculo)
 !/plugins/Skript/scripts/Jobs/
 !/plugins/Skript/scripts/Jobs/**
