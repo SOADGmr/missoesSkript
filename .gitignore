@@ -1,0 +1,12 @@
+# Ignora tudo na raiz por padrão
+/*
+
+# Abre exceção para o próprio arquivo do Git
+!.gitignore
+
+# Abre o caminho correto com "plugins" (p minúsculo)
+!/plugins/
+!/plugins/Skript/
+!/plugins/Skript/scripts/
+!/plugins/Skript/scripts/Jobs/
+!/plugins/Skript/scripts/Jobs/**
