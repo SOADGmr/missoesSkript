@@ -1,13 +1,13 @@
 # ========================================================================
-# CONTRATOS SEMANAIS - MINERADOR
+# CONTRATOS SEMANAIS - MINERADOR (V2 - ENTREGAS DIRETAS E ANTI-DUPLICAÇÃO)
 # Caminho: /plugins/Skript/scripts/Jobs/Contratos/Semanais/minerador_semanal.sk
 # ========================================================================
 
 on load:
-    # 1. LIMPEZA SEGURA (Impede missões duplicadas no /sk reload)
+    # 1. LIMPEZA SEGURA GLOBAL (Impede missões duplicadas no /sk reload)
     delete {pool_semanal::minerador::*}
     
-    # Varre a memória e apaga os rastros antigos dos contratos de minerador preventivamente
+    # Varre a memória e apaga os rastros antigos preventivamente (Aviso de loop-index corrigido)
     loop {semanal_meta::*}:
         if loop-index contains "semanal_minerador":
             delete {semanal_meta::%loop-index%::*}
@@ -25,28 +25,23 @@ on load:
     registrarMetaBase("minerador_minerar_ouro", "minerar", "gold ore,deepslate gold ore", "Minério de Ouro", "Extrair @alvo@ minérios de ouro")
     registrarMetaBase("minerador_coletar_lava", "coletar", "lava bucket", "Balde de Lava", "Coletar @alvo@ baldes de lava")
     
-    # --- NOVAS METAS BASE ADICIONADAS ---
     registrarMetaBase("minerador_minerar_cobre", "minerar", "copper ore,deepslate copper ore", "Minério de Cobre", "Extrair @alvo@ minérios de cobre")
     registrarMetaBase("minerador_minerar_debris", "minerar", "ancient debris", "Detritos Ancestrais", "Extrair @alvo@ detritos ancestrais")
     registrarMetaBase("minerador_minerar_ouro_nether", "minerar", "nether gold ore", "Ouro do Nether", "Extrair @alvo@ minérios de ouro do nether")
     
-    registrarMetaBase("minerador_fundir_ferro", "fundir", "iron ingot", "Barra de Ferro", "Fundir @alvo@ barras de ferro")
-    registrarMetaBase("minerador_fundir_cobre", "fundir", "copper ingot", "Barra de Cobre", "Fundir @alvo@ barras de cobre")
-    registrarMetaBase("minerador_fundir_ouro", "fundir", "gold ingot", "Barra de Ouro", "Fundir @alvo@ barras de ouro")
-    
-    registrarMetaBase("minerador_craftar_ouro", "craftar", "gold ingot", "Barra de Ouro", "Montar @alvo@ barras de ouro")
-    registrarMetaBase("minerador_craftar_netherite", "craftar", "netherite ingot", "Barra de Netherite", "Forjar @alvo@ barras de netherite")
-    registrarMetaBase("minerador_craftar_picareta_netherite", "forjar", "netherite pickaxe", "Picareta de Netherite", "Forjar @alvo@ picaretas de netherite")
-    
+    # Exaustão não é craft, então mantemos
     registrarMetaBase("minerador_quebrar_picareta_diamante", "quebrar_ferramenta", "diamond pickaxe", "Picareta Exausta", "Quebrar @alvo@ picaretas de diamante por exaustão")
 
     # ========================================================================
     # 3. CONTRATOS (MISSÕES COMPOSTAS)
+    # ATENÇÃO: As sub-listas recebem delete explícito antes do add!
     # ========================================================================
     
     # --- CONTRATO 1: Expansão da Mina Principal ---
     delete {semanal_meta::semanal_minerador_expansao::*}
+    delete {semanal_meta::semanal_minerador_expansao::metas_raw::*}
     delete {entrega_registry::semanal_minerador_expansao::*}
+    delete {entrega_registry::semanal_minerador_expansao::requisitos::*}
     
     add "semanal_minerador_expansao" to {pool_semanal::minerador::*}
     set {semanal_meta::semanal_minerador_expansao::nome} to "&6Expansão da Mina Principal"
@@ -56,13 +51,15 @@ on load:
     addMetaSemanal("semanal_minerador_expansao", "minerador_minerar_ferro", 128, 256)
     addMetaSemanal("semanal_minerador_expansao", "minerador_coletar_lava", 15, 30)
 
-    vincularEntrega("semanal_minerador_expansao", 11, 0, "O Sindicato agradece seus esforços, minerador.")
+    vincularEntrega("semanal_minerador_expansao", 11, 0, "O Sindicato agradece os seus esforços, minerador.")
     addRequisitoEntrega("semanal_minerador_expansao", "stone,cobblestone", 64, "Pedras ou Pedregulhos")
     addRequisitoEntrega("semanal_minerador_expansao", "raw iron", 32, "Ferro Bruto")
 
     # --- CONTRATO 2: Febre do Ouro ---
     delete {semanal_meta::semanal_minerador_febre_ouro::*}
+    delete {semanal_meta::semanal_minerador_febre_ouro::metas_raw::*}
     delete {entrega_registry::semanal_minerador_febre_ouro::*}
+    delete {entrega_registry::semanal_minerador_febre_ouro::requisitos::*}
     
     add "semanal_minerador_febre_ouro" to {pool_semanal::minerador::*}
     set {semanal_meta::semanal_minerador_febre_ouro::nome} to "&eFebre do Ouro"
@@ -76,7 +73,9 @@ on load:
 
     # --- CONTRATO 3: Alicerces da Indústria ---
     delete {semanal_meta::semanal_minerador_alicerces::*}
+    delete {semanal_meta::semanal_minerador_alicerces::metas_raw::*}
     delete {entrega_registry::semanal_minerador_alicerces::*}
+    delete {entrega_registry::semanal_minerador_alicerces::requisitos::*}
 
     add "semanal_minerador_alicerces" to {pool_semanal::minerador::*}
     set {semanal_meta::semanal_minerador_alicerces::nome} to "&8Alicerces da Indústria"
@@ -93,22 +92,27 @@ on load:
 
     # --- CONTRATO 4: Mestre de Fundição ---
     delete {semanal_meta::semanal_minerador_fundicao::*}
+    delete {semanal_meta::semanal_minerador_fundicao::metas_raw::*}
     delete {entrega_registry::semanal_minerador_fundicao::*}
+    delete {entrega_registry::semanal_minerador_fundicao::requisitos::*}
 
     add "semanal_minerador_fundicao" to {pool_semanal::minerador::*}
     set {semanal_meta::semanal_minerador_fundicao::nome} to "&cMestre de Fundição"
     set {semanal_meta::semanal_minerador_fundicao::desc} to "&7Transforme minério bruto em metal puro|&7para as forjas da vila."
     
-    addMetaSemanal("semanal_minerador_fundicao", "minerador_fundir_ferro", 256, 512)
-    addMetaSemanal("semanal_minerador_fundicao", "minerador_fundir_cobre", 256, 512)
+    # Modificado: Coletar os minérios no lugar de rastrear a fornalha
+    addMetaSemanal("semanal_minerador_fundicao", "minerador_minerar_ferro", 256, 512)
+    addMetaSemanal("semanal_minerador_fundicao", "minerador_minerar_cobre", 256, 512)
     
     vincularEntrega("semanal_minerador_fundicao", 11, 0, "O calor das forjas saúda o seu trabalho incansável.")
-    addRequisitoEntrega("semanal_minerador_fundicao", "iron ingot", 64, "Barras de Ferro")
-    addRequisitoEntrega("semanal_minerador_fundicao", "copper ingot", 64, "Barras de Cobre")
+    addRequisitoEntrega("semanal_minerador_fundicao", "iron ingot", 128, "Barras de Ferro")
+    addRequisitoEntrega("semanal_minerador_fundicao", "copper ingot", 128, "Barras de Cobre")
 
     # --- CONTRATO 5: Relíquias das Profundezas ---
     delete {semanal_meta::semanal_minerador_reliquias::*}
+    delete {semanal_meta::semanal_minerador_reliquias::metas_raw::*}
     delete {entrega_registry::semanal_minerador_reliquias::*}
+    delete {entrega_registry::semanal_minerador_reliquias::requisitos::*}
 
     add "semanal_minerador_reliquias" to {pool_semanal::minerador::*}
     set {semanal_meta::semanal_minerador_reliquias::nome} to "&5Relíquias das Profundezas"
@@ -125,33 +129,43 @@ on load:
 
     # --- CONTRATO 6: Alquimia Metálica ---
     delete {semanal_meta::semanal_minerador_alquimia::*}
+    delete {semanal_meta::semanal_minerador_alquimia::metas_raw::*}
     delete {entrega_registry::semanal_minerador_alquimia::*}
+    delete {entrega_registry::semanal_minerador_alquimia::requisitos::*}
 
     add "semanal_minerador_alquimia" to {pool_semanal::minerador::*}
     set {semanal_meta::semanal_minerador_alquimia::nome} to "&dAlquimia Metálica"
     set {semanal_meta::semanal_minerador_alquimia::desc} to "&7A arte de refinar os materiais mais|&7nobres conhecidos pelo homem."
     
-    addMetaSemanal("semanal_minerador_alquimia", "minerador_fundir_ouro", 256, 384)
-    addMetaSemanal("semanal_minerador_alquimia", "minerador_craftar_netherite", 4, 16)
-    # Sem entrega física, conforme o design original
+    # Modificado: Apenas mineração, a fundição fica para a entrega
+    addMetaSemanal("semanal_minerador_alquimia", "minerador_minerar_ouro", 256, 384)
+    addMetaSemanal("semanal_minerador_alquimia", "minerador_minerar_debris", 16, 32)
+    
+    vincularEntrega("semanal_minerador_alquimia", 11, 0, "Obras de arte pura. O Sindicato lucrará muito com isto!")
+    addRequisitoEntrega("semanal_minerador_alquimia", "gold ingot", 64, "Barras de Ouro")
+    addRequisitoEntrega("semanal_minerador_alquimia", "netherite ingot", 4, "Barras de Netherite")
 
     # --- CONTRATO 7: Corrida do Ouro Infernal ---
     delete {semanal_meta::semanal_minerador_corrida_nether::*}
+    delete {semanal_meta::semanal_minerador_corrida_nether::metas_raw::*}
     delete {entrega_registry::semanal_minerador_corrida_nether::*}
+    delete {entrega_registry::semanal_minerador_corrida_nether::requisitos::*}
 
     add "semanal_minerador_corrida_nether" to {pool_semanal::minerador::*}
     set {semanal_meta::semanal_minerador_corrida_nether::nome} to "&4Corrida do Ouro Infernal"
     set {semanal_meta::semanal_minerador_corrida_nether::desc} to "&7O Nether transborda ouro, e nós queremos|&7cada grama dele."
     
-    addMetaSemanal("semanal_minerador_corrida_nether", "minerador_minerar_ouro_nether", 64, 128)
-    addMetaSemanal("semanal_minerador_corrida_nether", "minerador_craftar_ouro", 16, 64)
+    # Modificado: Meta de craft removida, aumentada a coleta
+    addMetaSemanal("semanal_minerador_corrida_nether", "minerador_minerar_ouro_nether", 128, 256)
     
     vincularEntrega("semanal_minerador_corrida_nether", 11, 0, "Você sobreviveu ao calor insuportável e trouxe lucros!")
-    addRequisitoEntrega("semanal_minerador_corrida_nether", "gold ingot", 16, "Barras de Ouro")
+    addRequisitoEntrega("semanal_minerador_corrida_nether", "gold ingot", 64, "Barras de Ouro")
 
     # --- CONTRATO 8: Exaustão do Minerador ---
     delete {semanal_meta::semanal_minerador_exaustao::*}
+    delete {semanal_meta::semanal_minerador_exaustao::metas_raw::*}
     delete {entrega_registry::semanal_minerador_exaustao::*}
+    delete {entrega_registry::semanal_minerador_exaustao::requisitos::*}
 
     add "semanal_minerador_exaustao" to {pool_semanal::minerador::*}
     set {semanal_meta::semanal_minerador_exaustao::nome} to "&7Exaustão do Minerador"
@@ -163,18 +177,23 @@ on load:
     addMetaSemanal("semanal_minerador_exaustao", "minerador_minerar_cobre", 256, 384)
     addMetaSemanal("semanal_minerador_exaustao", "minerador_minerar_carvao", 64, 128)
     addMetaSemanal("semanal_minerador_exaustao", "minerador_minerar_ouro", 256, 384)
-    # Sem entrega física, conforme o design original
+    # Sem entrega física (O objetivo é apenas o desafio bruto de sobrevivência e exaustão)
 
     # --- CONTRATO 9: O Legado de Netherite ---
     delete {semanal_meta::semanal_minerador_legado_netherite::*}
+    delete {semanal_meta::semanal_minerador_legado_netherite::metas_raw::*}
     delete {entrega_registry::semanal_minerador_legado_netherite::*}
+    delete {entrega_registry::semanal_minerador_legado_netherite::requisitos::*}
 
     add "semanal_minerador_legado_netherite" to {pool_semanal::minerador::*}
     set {semanal_meta::semanal_minerador_legado_netherite::nome} to "&8O Legado de Netherite"
     set {semanal_meta::semanal_minerador_legado_netherite::desc} to "&7Forje a ferramenta lendária que define|&7um Mestre Minerador."
     
-    addMetaSemanal("semanal_minerador_legado_netherite", "minerador_craftar_netherite", 4, 9)
-    addMetaSemanal("semanal_minerador_legado_netherite", "minerador_craftar_picareta_netherite", 1, 3)
-    # Sem entrega física, conforme o design original
+    # Modificado: Removido rastreio de forja. Recolhe matérias-primas e entrega a picareta pronta
+    addMetaSemanal("semanal_minerador_legado_netherite", "minerador_minerar_debris", 12, 24)
+    addMetaSemanal("semanal_minerador_legado_netherite", "minerador_minerar_ouro", 128, 256)
     
-    send "&e[DesertSky-Jobs] &aMódulo Semanal carregado: &fMinerador (9 Missões Completas e Seguras)" to console
+    vincularEntrega("semanal_minerador_legado_netherite", 11, 0, "O legado da nossa guilda está seguro na tua forja.")
+    addRequisitoEntrega("semanal_minerador_legado_netherite", "netherite pickaxe", 1, "Picareta de Netherite")
+    
+    send "&e[DesertSky-Jobs] &aMódulo Semanal carregado: &fMinerador (9 Missões - Atualizado p/ V5.1)" to console
