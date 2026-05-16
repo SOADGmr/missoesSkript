@@ -1,0 +1,21 @@
+# =============================================================================
+# DESERTSKY - GESTOR DE PERMISSÕES
+# Caminho: /plugins/Skript/scripts/Jobs/core/Permissoes.sk
+# Função: Bridge segura entre Skript e LuckPerms
+# =============================================================================
+
+# Função para dar uma permissão (Node) via LuckPerms silenciosamente
+function darPermissao(p: player, node: text):
+    execute console command "lp user %{_p}% permission set %{_node}% true"
+
+# Função para remover uma permissão via LuckPerms silenciosamente
+function tirarPermissao(p: player, node: text):
+    execute console command "lp user %{_p}% permission unset %{_node}%"
+
+# Função para conceder acesso às vilas (Baseado no Job)
+# Exemplo de uso: darAcessoVila(player, "minerador")
+function darAcessoVila(p: player, job: text):
+    set {_node} to "desertsky.vila.acesso.%{_job}%"
+    darPermissao({_p}, {_node})
+    # Opcional: Feedback no console para debug
+    # send "&8[Permissões] Acesso à vila %{_job}% concedido a %{_p}%." to console

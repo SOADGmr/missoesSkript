@@ -1,0 +1,168 @@
+# =============================================================================
+# DESERTSKY - SUBMENU DE ACOMPANHAMENTO (V5.1 - FIX NAVEGAÇÃO E PLACEHOLDERS)
+# Caminho: /plugins/Skript/scripts/Jobs/Menus/Menu_Progresso.sk
+# =============================================================================
+
+# --- FUNÇÃO AUXILIAR PARA IDENTIFICAR JOBS DO JOGADOR ---
+function getPlayerJobByTier(p: player, tier: integer) :: text:
+    set {_jobs_raw} to placeholder "%%jobsr_user_jobs%%" from {_p}
+    set {_jobs_low} to {_jobs_raw} in lowercase
+    
+    if {_tier} is 2:
+        set {_list::*} to "minerador", "lenhador", "escavador", "pescador" and "fazendeiro"
+    else if {_tier} is 3:
+        set {_list::*} to "bruxo", "construtor" and "mago"
+        
+    # Usa 'contains' para ignorar formatações, cores ou leveis do PlaceholderAPI
+    loop {_list::*}:
+        if {_jobs_low} contains loop-value:
+            return loop-value
+            
+    return ""
+
+# --- COMANDO PRINCIPAL COM ARGUMENTOS DE NAVEGAÇÃO ---
+command /diario_progresso [<text>] [<integer>]:
+    executable by: player
+    trigger:
+        set {_job} to arg-1 ? "explorador"
+        set {_page} to arg-2 ? 1
+        
+        set {_gui} to a new chest inventory with 5 rows named "&8&lProgresso: %{_job}%"
+        
+        # 1. FUNDO E MOLDURA
+        loop 45 times:
+            set slot (loop-number - 1) of {_gui} to gray stained glass pane named " "
+
+        # 2. BOTÕES DE NAVEGAÇÃO DE TIERS (TOPO)
+        
+        # [A] Explorador (Sempre visível)
+        set {_item_a} to golden boots named "&f&lLinhagem: &eExplorador" with lore "&7Missões iniciais de sobrevivência.", "" and "&eClique para visualizar!"
+        if {_job} is "explorador":
+            enchant {_item_a} with efficiency 1 # Brilho visual para aba ativa
+        set slot 2 of {_gui} to {_item_a}
+
+        # [B] Profissão Tier 2
+        set {_job_t2} to getPlayerJobByTier(player, 2)
+        if {_job_t2} is not "":
+            set {_icon} to iron pickaxe # Padrão (caso algo falhe)
+            if {_job_t2} is "minerador":
+                set {_icon} to golden pickaxe
+            else if {_job_t2} is "lenhador":
+                set {_icon} to golden axe
+            else if {_job_t2} is "escavador":
+                set {_icon} to golden shovel
+            else if {_job_t2} is "pescador":
+                set {_icon} to fishing rod
+            else if {_job_t2} is "fazendeiro":
+                set {_icon} to golden hoe
+                
+            set {_item_b} to {_icon} named "&f&lLinhagem: &e%{_job_t2}%" with lore "&7Missões da sua especialização.", "" and "&eClique para visualizar!"
+            if {_job} is {_job_t2}:
+                enchant {_item_b} with efficiency 1
+            set slot 4 of {_gui} to {_item_b}
+
+        # [C] Profissão Tier 3
+        set {_job_t3} to getPlayerJobByTier(player, 3)
+        if {_job_t3} is not "":
+            set {_icon3} to potion item # Correção: Usando "potion item" para o Skript não confundir com dano de poção
+            if {_job_t3} is "construtor":
+                set {_icon3} to bricks block # FIX: Especificando "brick block" em vez de apenas "bricks"
+            else if {_job_t3} is "mago":
+                set {_icon3} to enchanted book
+                
+            set {_item_c} to {_icon3} named "&f&lLinhagem: &e%{_job_t3}%" with lore "&7Missões de maestria arcana/técnica.", "" and "&eClique para visualizar!"
+            if {_job} is {_job_t3}:
+                enchant {_item_c} with efficiency 1
+            set slot 6 of {_gui} to {_item_c}
+
+        # 3. MOTOR DE MISSÕES E PAGINAÇÃO
+        set {_lvl_core} to {nivel::%{_job}%::%uuid of player%} ? 1
+        # Retrocompatibilidade com explorador base
+        if {_job} is "explorador":
+            set {_lvl_core} to {nivel::%uuid of player%} ? 1
+
+        set {_missoes::*} to {registry::missoes::%{_job}%::lista::*}
+        set {_total_missoes} to size of {_missoes::*}
+        set {_start} to ({_page} - 1) * 21
+        
+        set {_slot} to 10
+        loop 21 times:
+            set {_index} to {_start} + loop-number
+            if {_index} <= {_total_missoes}:
+                set {_missao_id} to {_missoes::%{_index}%}
+                
+                set {_nome} to {registry::missao::%{_job}%::%{_missao_id}%::nome} ? "Nova Missão"
+                set {_lore} to {registry::missao::%{_job}%::%{_missao_id}%::lore} ? "..."
+                set {_desc} to {registry::missao::%{_job}%::%{_missao_id}%::desc} ? "Objetivo oculto."
+                
+                if {_missao_id} is less than {_lvl_core}:
+                    set slot {_slot} of {_gui} to book named "&a&lMissão %{_missao_id}%: &2%{_nome}%" with lore "&7&o'%{_lore}%'", "", "&f&lObjetivo:", "&8- %{_desc}%", "" and "&7Status: &aConcluída"
+                else if {_missao_id} is {_lvl_core}:
+                    set slot {_slot} of {_gui} to knowledge book named "&e&lMissão %{_missao_id}%: &6%{_nome}%" with lore "&7&o'%{_lore}%'", "", "&f&lObjetivo:", "&7- %{_desc}%", "" and "&7Status: &eEm Andamento"
+                else:
+                    set slot {_slot} of {_gui} to map named "&c&lMissão %{_missao_id}%: &4???" with lore "&7Status: &cBloqueada" and "&7Conclua as missões anteriores."
+
+            # Pular bordas laterais do inventário
+            add 1 to {_slot}
+            if {_slot} is 17:
+                set {_slot} to 19
+            else if {_slot} is 26:
+                set {_slot} to 28
+
+        # 4. CONTROLES DE PÁGINA E VOLTAR
+        
+        # [D] Página Anterior (Usando Item Normal)
+        if {_page} > 1:
+            set {_prev} to {_page} - 1
+            set slot 36 of {_gui} to arrow named "&aPágina Anterior" with lore "&7Voltar para a página %{_prev}%"
+        
+        # [E] Próxima Página (Usando Item Normal)
+        if {_total_missoes} > ({_page} * 21):
+            set {_next} to {_page} + 1
+            set slot 44 of {_gui} to arrow named "&aPróxima Página" with lore "&7Ir para a página %{_next}%"
+
+        set slot 40 of {_gui} to arrow named "&cVoltar" with lore "&7Clique para voltar ao Diário."
+        
+        open {_gui} to player
+
+on inventory click:
+    if name of event-inventory contains "&8&lProgresso:":
+        cancel event
+        
+        # Limpeza segura do nome do inventário
+        set {_cur_job} to uncolored name of event-inventory
+        replace all "Progresso: " with "" in {_cur_job}
+        
+        set {_page_raw} to line 1 of lore of event-slot
+        
+        # Clique em Linhagens (A, B, C)
+        if index of event-slot is 2:
+            execute player command "/diario_progresso explorador 1"
+        else if index of event-slot is 4:
+            if event-slot is not gray stained glass pane named " ":
+                set {_j2} to getPlayerJobByTier(player, 2)
+                execute player command "/diario_progresso %{_j2}% 1"
+        else if index of event-slot is 6:
+            if event-slot is not gray stained glass pane named " ":
+                set {_j3} to getPlayerJobByTier(player, 3)
+                execute player command "/diario_progresso %{_j3}% 1"
+            
+        # Paginação (D, E)
+        else if index of event-slot is 36:
+            if event-slot is not gray stained glass pane named " ":
+                set {_p} to uncolored {_page_raw}
+                replace all "Voltar para a página " with "" in {_p}
+                replace all "." with "" in {_p} # Trava extra de segurança anti-ponto
+                set {_p_num} to {_p} parsed as integer
+                execute player command "/diario_progresso %{_cur_job}% %{_p_num}%"
+        else if index of event-slot is 44:
+            if event-slot is not gray stained glass pane named " ":
+                set {_p} to uncolored {_page_raw}
+                replace all "Ir para a página " with "" in {_p}
+                replace all "." with "" in {_p} # Trava extra de segurança anti-ponto
+                set {_p_num} to {_p} parsed as integer
+                execute player command "/diario_progresso %{_cur_job}% %{_p_num}%"
+                
+        # Voltar
+        else if index of event-slot is 40:
+            execute player command "/diario"

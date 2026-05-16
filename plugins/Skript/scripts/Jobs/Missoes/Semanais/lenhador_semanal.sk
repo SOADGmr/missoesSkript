@@ -1,0 +1,186 @@
+# ========================================================================
+# CONTRATOS SEMANAIS - LENHADOR
+# Caminho: /plugins/Skript/scripts/Jobs/Missoes/Semanais/lenhador_semanal.sk
+# ========================================================================
+
+on load:
+    # 1. LIMPEZA SEGURA GLOBAL
+    delete {pool_semanal::lenhador::*}
+    
+    # Limpeza preventiva em loop (Anti-Duplicação)
+    loop {semanal_meta::*}:
+        if loop-index contains "semanal_lenhador":
+            delete {semanal_meta::%loop-index%::*}
+            
+    loop {entrega_registry::*}:
+        if loop-index contains "semanal_lenhador":
+            delete {entrega_registry::%loop-index%::*}
+    
+    # ========================================================================
+    # 2. INGREDIENTES (METAS BASE DO LENHADOR)
+    # ========================================================================
+    # --- COLETAR TRONCOS E RAÍZES ---
+    registrarMetaBase("lenhador_coletar_oak", "minerar", "oak log", "Madeira de Carvalho", "Cortar @alvo@ madeiras de carvalho")
+    registrarMetaBase("lenhador_coletar_birch", "minerar", "birch log", "Madeira de Bétula", "Cortar @alvo@ madeiras de bétula")
+    registrarMetaBase("lenhador_coletar_spruce", "minerar", "spruce log", "Madeira de Pinheiro", "Cortar @alvo@ madeiras de pinheiro")
+    registrarMetaBase("lenhador_coletar_jungle", "minerar", "jungle log", "Madeira da Selva", "Cortar @alvo@ madeiras da selva")
+    registrarMetaBase("lenhador_coletar_dark_oak", "minerar", "dark oak log", "Carvalho Escuro", "Cortar @alvo@ madeiras de carvalho escuro")
+    registrarMetaBase("lenhador_coletar_acacia", "minerar", "acacia log", "Madeira de Acácia", "Cortar @alvo@ madeiras de acácia")
+    registrarMetaBase("lenhador_coletar_cherry", "minerar", "cherry log", "Madeira de Cerejeira", "Cortar @alvo@ madeiras de cerejeira")
+    registrarMetaBase("lenhador_coletar_mangrove", "minerar", "mangrove log", "Madeira de Mangue", "Cortar @alvo@ madeiras de mangue")
+    registrarMetaBase("lenhador_coletar_mangrove_roots", "minerar", "mangrove roots,muddy mangrove roots", "Raízes de Mangue", "Extrair @alvo@ raízes de mangue")
+    
+    # --- MONTAR CERCAS ---
+    registrarMetaBase("lenhador_montar_oak_fence", "construir", "oak fence", "Cerca de Carvalho", "Instalar @alvo@ cercas de carvalho")
+    registrarMetaBase("lenhador_montar_birch_fence", "construir", "birch fence", "Cerca de Bétula", "Instalar @alvo@ cercas de bétula")
+    registrarMetaBase("lenhador_montar_spruce_fence", "construir", "spruce fence", "Cerca de Pinheiro", "Instalar @alvo@ cercas de pinheiro")
+    registrarMetaBase("lenhador_montar_jungle_fence", "construir", "jungle fence", "Cerca da Selva", "Instalar @alvo@ cercas da selva")
+    registrarMetaBase("lenhador_montar_dark_oak_fence", "construir", "dark oak fence", "Cerca de Carv. Escuro", "Instalar @alvo@ cercas de carvalho escuro")
+    registrarMetaBase("lenhador_montar_acacia_fence", "construir", "acacia fence", "Cerca de Acácia", "Instalar @alvo@ cercas de acácia")
+    registrarMetaBase("lenhador_montar_cherry_fence", "construir", "cherry fence", "Cerca de Cerejeira", "Instalar @alvo@ cercas de cerejeira")
+    registrarMetaBase("lenhador_montar_mangrove_fence", "construir", "mangrove fence", "Cerca de Mangue", "Instalar @alvo@ cercas de mangue")
+
+    # --- PLANTAR MUDAS (REFLORESTAMENTO) ---
+    registrarMetaBase("lenhador_plantar_oak", "plantar", "oak sapling", "Muda de Carvalho", "Plantar @alvo@ mudas de carvalho")
+    registrarMetaBase("lenhador_plantar_birch", "plantar", "birch sapling", "Muda de Bétula", "Plantar @alvo@ mudas de bétula")
+    registrarMetaBase("lenhador_plantar_spruce", "plantar", "spruce sapling", "Muda de Pinheiro", "Plantar @alvo@ mudas de pinheiro")
+    registrarMetaBase("lenhador_plantar_jungle", "plantar", "jungle sapling", "Muda da Selva", "Plantar @alvo@ mudas da selva")
+    registrarMetaBase("lenhador_plantar_dark_oak", "plantar", "dark oak sapling", "Muda de Carv. Escuro", "Plantar @alvo@ mudas de carvalho escuro")
+    registrarMetaBase("lenhador_plantar_acacia", "plantar", "acacia sapling", "Muda de Acácia", "Plantar @alvo@ mudas de acácia")
+    registrarMetaBase("lenhador_plantar_cherry", "plantar", "cherry sapling", "Muda de Cerejeira", "Plantar @alvo@ mudas de cerejeira")
+    registrarMetaBase("lenhador_plantar_mangrove", "plantar", "mangrove propagule", "Propágulo de Mangue", "Plantar @alvo@ propágulos de mangue")
+
+    # --- ESFORÇO E PROCESSAMENTO ---
+    registrarMetaBase("lenhador_quebrar_machado", "quebrar_ferramenta", "iron axe,diamond axe", "Machado Exausto", "Quebrar @alvo@ machados por exaustão")
+    registrarMetaBase("lenhador_craftar_oak_planks", "craftar", "oak planks", "Tábuas de Carvalho", "Processar @alvo@ tábuas de carvalho")
+    registrarMetaBase("lenhador_craftar_spruce_planks", "craftar", "spruce planks", "Tábuas de Pinheiro", "Processar @alvo@ tábuas de pinheiro")
+
+
+    # ========================================================================
+    # 3. CONTRATOS (MISSÕES COMPOSTAS)
+    # ========================================================================
+    
+    # --- CONTRATO 1: Desmatamento Controlado ---
+    delete {semanal_meta::semanal_lenhador_desmatamento::*}
+    delete {semanal_meta::semanal_lenhador_desmatamento::metas_raw::*}
+    delete {entrega_registry::semanal_lenhador_desmatamento::*}
+    delete {entrega_registry::semanal_lenhador_desmatamento::requisitos::*}
+    
+    add "semanal_lenhador_desmatamento" to {pool_semanal::lenhador::*}
+    set {semanal_meta::semanal_lenhador_desmatamento::nome} to "&2Desmatamento Controlado"
+    set {semanal_meta::semanal_lenhador_desmatamento::desc} to "&7Precisamos limpar uma área densa para|&7a nova vila de exploradores."
+    
+    addMetaSemanal("semanal_lenhador_desmatamento", "lenhador_coletar_oak", 500, 800)
+    addMetaSemanal("semanal_lenhador_desmatamento", "lenhador_coletar_birch", 500, 800)
+    addMetaSemanal("semanal_lenhador_desmatamento", "lenhador_montar_oak_fence", 50, 100)
+    addMetaSemanal("semanal_lenhador_desmatamento", "lenhador_montar_birch_fence", 50, 100)
+
+    # --- CONTRATO 2: Reserva de Inverno ---
+    delete {semanal_meta::semanal_lenhador_inverno::*}
+    delete {semanal_meta::semanal_lenhador_inverno::metas_raw::*}
+    delete {entrega_registry::semanal_lenhador_inverno::*}
+    delete {entrega_registry::semanal_lenhador_inverno::requisitos::*}
+    
+    add "semanal_lenhador_inverno" to {pool_semanal::lenhador::*}
+    set {semanal_meta::semanal_lenhador_inverno::nome} to "&bReserva de Inverno"
+    set {semanal_meta::semanal_lenhador_inverno::desc} to "&7O frio está a chegar. Precisamos de lenha|&7forte para as lareiras da cidade."
+    
+    addMetaSemanal("semanal_lenhador_inverno", "lenhador_coletar_spruce", 600, 1000)
+    addMetaSemanal("semanal_lenhador_inverno", "lenhador_coletar_oak", 500, 800)
+    addMetaSemanal("semanal_lenhador_inverno", "lenhador_montar_oak_fence", 50, 100)
+    addMetaSemanal("semanal_lenhador_inverno", "lenhador_montar_spruce_fence", 50, 100)
+
+    # --- CONTRATO 3: Expedição Tropical ---
+    delete {semanal_meta::semanal_lenhador_tropical::*}
+    delete {semanal_meta::semanal_lenhador_tropical::metas_raw::*}
+    delete {entrega_registry::semanal_lenhador_tropical::*}
+    delete {entrega_registry::semanal_lenhador_tropical::requisitos::*}
+
+    add "semanal_lenhador_tropical" to {pool_semanal::lenhador::*}
+    set {semanal_meta::semanal_lenhador_tropical::nome} to "&aExpedição Tropical"
+    set {semanal_meta::semanal_lenhador_tropical::desc} to "&7A madeira da selva e do carvalho escuro|&7são muito valorizadas no mercado.|&7Traga o suficiente para um navio."
+    
+    addMetaSemanal("semanal_lenhador_tropical", "lenhador_coletar_jungle", 600, 1000)
+    addMetaSemanal("semanal_lenhador_tropical", "lenhador_coletar_dark_oak", 500, 800)
+    addMetaSemanal("semanal_lenhador_tropical", "lenhador_montar_jungle_fence", 50, 100)
+    addMetaSemanal("semanal_lenhador_tropical", "lenhador_montar_dark_oak_fence", 50, 100)
+
+    # --- CONTRATO 4: Cores da Primavera ---
+    delete {semanal_meta::semanal_lenhador_primavera::*}
+    delete {semanal_meta::semanal_lenhador_primavera::metas_raw::*}
+    delete {entrega_registry::semanal_lenhador_primavera::*}
+    delete {entrega_registry::semanal_lenhador_primavera::requisitos::*}
+
+    add "semanal_lenhador_primavera" to {pool_semanal::lenhador::*}
+    set {semanal_meta::semanal_lenhador_primavera::nome} to "&dCores da Primavera"
+    set {semanal_meta::semanal_lenhador_primavera::desc} to "&7A nobreza exige madeiras exóticas|&7para a decoração dos seus jardins.|&7O esforço será bem recompensado."
+    
+    addMetaSemanal("semanal_lenhador_primavera", "lenhador_coletar_acacia", 500, 800)
+    addMetaSemanal("semanal_lenhador_primavera", "lenhador_coletar_cherry", 500, 800)
+    addMetaSemanal("semanal_lenhador_primavera", "lenhador_montar_acacia_fence", 50, 100)
+    addMetaSemanal("semanal_lenhador_primavera", "lenhador_montar_cherry_fence", 50, 100)
+
+    # --- CONTRATO 5: Raízes do Pântano ---
+    delete {semanal_meta::semanal_lenhador_pantano::*}
+    delete {semanal_meta::semanal_lenhador_pantano::metas_raw::*}
+    delete {entrega_registry::semanal_lenhador_pantano::*}
+    delete {entrega_registry::semanal_lenhador_pantano::requisitos::*}
+
+    add "semanal_lenhador_pantano" to {pool_semanal::lenhador::*}
+    set {semanal_meta::semanal_lenhador_pantano::nome} to "&3Raízes do Pântano"
+    set {semanal_meta::semanal_lenhador_pantano::desc} to "&7O manguezal esconde recursos vitais|&7para a construção de palafitas.|&7Enfrenta a lama e traz a madeira."
+    
+    addMetaSemanal("semanal_lenhador_pantano", "lenhador_coletar_mangrove", 200, 400)
+    addMetaSemanal("semanal_lenhador_pantano", "lenhador_coletar_mangrove_roots", 500, 800)
+    addMetaSemanal("semanal_lenhador_pantano", "lenhador_montar_mangrove_fence", 50, 100)
+
+    # --- CONTRATO 6: Reflorestamento Global ---
+    delete {semanal_meta::semanal_lenhador_reflorestamento::*}
+    delete {semanal_meta::semanal_lenhador_reflorestamento::metas_raw::*}
+    delete {entrega_registry::semanal_lenhador_reflorestamento::*}
+    delete {entrega_registry::semanal_lenhador_reflorestamento::requisitos::*}
+
+    add "semanal_lenhador_reflorestamento" to {pool_semanal::lenhador::*}
+    set {semanal_meta::semanal_lenhador_reflorestamento::nome} to "&aReflorestamento Global"
+    set {semanal_meta::semanal_lenhador_reflorestamento::desc} to "&7Um bom lenhador não apenas corta,|&7mas também garante o futuro da floresta.|&7Espalha sementes por todo o mundo."
+    
+    addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_mangrove", 25, 50)
+    addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_oak", 25, 50)
+    addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_spruce", 25, 50)
+    addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_birch", 25, 50)
+    addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_jungle", 25, 50)
+    addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_acacia", 25, 50)
+    addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_dark_oak", 25, 50)
+    addMetaSemanal("semanal_lenhador_reflorestamento", "lenhador_plantar_cherry", 25, 50)
+
+    # --- CONTRATO 7: O Mestre do Machado ---
+    delete {semanal_meta::semanal_lenhador_mestre::*}
+    delete {semanal_meta::semanal_lenhador_mestre::metas_raw::*}
+    delete {entrega_registry::semanal_lenhador_mestre::*}
+    delete {entrega_registry::semanal_lenhador_mestre::requisitos::*}
+
+    add "semanal_lenhador_mestre" to {pool_semanal::lenhador::*}
+    set {semanal_meta::semanal_lenhador_mestre::nome} to "&6O Mestre do Machado"
+    set {semanal_meta::semanal_lenhador_mestre::desc} to "&7Mostra a tua força derrubando|&7as maiores árvores que encontrares.|&7A tua ferramenta vai sofrer as consequências."
+    
+    addMetaSemanal("semanal_lenhador_mestre", "lenhador_quebrar_machado", 1, 2)
+    addMetaSemanal("semanal_lenhador_mestre", "lenhador_coletar_oak", 1000, 2000)
+
+    # --- CONTRATO 8: O Sindicato da Madeira ---
+    delete {semanal_meta::semanal_lenhador_sindicato::*}
+    delete {semanal_meta::semanal_lenhador_sindicato::metas_raw::*}
+    delete {entrega_registry::semanal_lenhador_sindicato::*}
+    delete {entrega_registry::semanal_lenhador_sindicato::requisitos::*}
+
+    add "semanal_lenhador_sindicato" to {pool_semanal::lenhador::*}
+    set {semanal_meta::semanal_lenhador_sindicato::nome} to "&eO Sindicato da Madeira"
+    set {semanal_meta::semanal_lenhador_sindicato::desc} to "&7Uma encomenda massiva chegou à vila.|&7Precisamos de todos os tipos de|&7madeira processada urgentemente."
+    
+    addMetaSemanal("semanal_lenhador_sindicato", "lenhador_craftar_oak_planks", 2000, 3000)
+    addMetaSemanal("semanal_lenhador_sindicato", "lenhador_craftar_spruce_planks", 2000, 3000)
+    
+    vincularEntrega("semanal_lenhador_sindicato", 21, 0, "A serraria agradece a sua entrega massiva!")
+    addRequisitoEntrega("semanal_lenhador_sindicato", "oak planks", 256, "Tábuas de Carvalho (4 Packs)")
+    addRequisitoEntrega("semanal_lenhador_sindicato", "spruce planks", 256, "Tábuas de Pinheiro (4 Packs)")
+
+    send "&e[DesertSky-Jobs] &aMódulo Semanal carregado: &fLenhador (8 Missões)" to console

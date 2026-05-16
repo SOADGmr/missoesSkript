@@ -1,0 +1,230 @@
+# =============================================================================
+# DESERTSKY - CORE PRINCIPAL (V4.3 - PERSISTÊNCIA & ANTI-CHEAT)
+# Caminho: /plugins/Skript/scripts/Jobs/core/Core.sk
+# =============================================================================
+
+on script load:
+    set {DS_Server_Ready} to false
+    send "&e[DesertSky-Core] &fA aguardar carregamento de variáveis..." to console
+    # Aguarda 15 segundos para garantir que o variables.csv foi lido pelo Skript
+    wait 15 seconds
+    set {DS_Server_Ready} to true
+    send "&a[DesertSky-Core] &fSistema pronto e variáveis carregadas." to console
+
+# =============================================================================
+# DEFESA GLOBAL ANTI-CHEAT (METADATA)
+# Marca qualquer bloco colocado por jogadores na memória temporária do servidor.
+# Isso impede que eles coloquem minérios/madeiras para quebrar de novo nas missões.
+# =============================================================================
+on place:
+    set metadata "desertsky_placed" of event-block to true
+
+# Função para garantir que o nível é lido corretamente de qualquer fonte
+function getPlayerLevel(p: player) :: number:
+    set {_uuid} to uuid of {_p}
+    # Hierarquia de verificação para evitar resets
+    set {_lvl} to {nivel::explorador::%{_uuid}%} ? {nivel::%{_uuid}%} ? 1
+    return {_lvl}
+
+# Força o Skript a guardar variáveis no disco periodicamente
+every 10 minutes:
+    execute console command "sk save variables"
+    send "&8[DesertSky-Core] Variáveis guardadas no disco com sucesso." to console
+
+# --- 1. GLOBAL REGISTRY (MECÂNICA DE HERANÇA OTIMIZADA) ---
+function registrarMissao(id: integer, job: text, min_level: integer, nome: text, lore: text, desc: text):
+    # [ANTI-LAG] Só faz a gravação no disco se a variável não existir ou tiver sido alterada
+    if {registry::missao::%{_job}%::%{_id}%::job} is not {_job}:
+        set {registry::missao::%{_job}%::%{_id}%::job} to {_job}
+        
+    if {registry::missao::%{_job}%::%{_id}%::min_level} is not {_min_level}:
+        set {registry::missao::%{_job}%::%{_id}%::min_level} to {_min_level}
+        
+    if {registry::missao::%{_job}%::%{_id}%::nome} is not {_nome}:
+        set {registry::missao::%{_job}%::%{_id}%::nome} to {_nome}
+        
+    if {registry::missao::%{_job}%::%{_id}%::lore} is not {_lore}:
+        set {registry::missao::%{_job}%::%{_id}%::lore} to {_lore}
+        
+    if {registry::missao::%{_job}%::%{_id}%::desc} is not {_desc}:
+        set {registry::missao::%{_job}%::%{_id}%::desc} to {_desc}
+    
+    # Adiciona à lista iterável se não existir
+    if {registry::missoes::%{_job}%::lista::*} does not contain {_id}:
+        add {_id} to {registry::missoes::%{_job}%::lista::*}
+
+# --- 2. FUNÇÕES TÉCNICAS (ESTRATÉGIA DO ADAPTADOR) ---
+function checkJob(p: player, job: text) :: boolean:
+    set {_current_job} to placeholder "%%jobsr_user_jobs%%" from {_p}
+    if {_current_job} contains {_job}:
+        return true
+    return false
+
+function getJobLevel(p: player, job: text) :: number:
+    set {_lvl} to placeholder "%%jobsr_user_level_%{_job}%%%" from {_p}
+    return ({_lvl} parsed as number)
+
+function getStatusMissao(p: player, id: integer) :: text:
+    set {_status} to {missao::status::%{_id}%::%uuid of {_p}%}
+    if {_status} is not set:
+        return "disponivel"
+    return {_status}
+
+# --- 3. SISTEMA DE LAZY RESET (ANTI-LAG) ---
+on join:
+    set {_hoje} to now formatted as "dd/MM/yyyy"
+    set {_uuid} to uuid of player
+    if {last_reset::%{_uuid}%} is not {_hoje}:
+        set {last_reset::%{_uuid}%} to {_hoje}
+        send "&6&l[DIÁRIO] &7Um novo dia amanheceu no deserto. Suas tarefas diárias foram atualizadas." to player
+
+# --- 4. HIGIENE E PREVENÇÃO DE MEMORY LEAKS ---
+on quit:
+    delete {temp_progresso::%uuid of player%}
+
+on script load:
+    send "&e[DesertSky-Core] &fIniciando limpeza de registro..." to console
+    delete {registry::missoes::lista::*}
+    send "&a[DesertSky-Core] &fCore carregado com sucesso." to console
+
+# --- 5. ACTION BAR ENGINE (MOTOR VISUAL) ---
+function mostrarProgresso(p: player, titulo: text, atual: number, meta: number):
+    # Proteção matemática para evitar falhas ou ecrãs com texto infinito
+    if {_meta} <= 0:
+        set {_meta} to 1
+    if {_atual} > {_meta}:
+        set {_atual} to {_meta}
+        
+    set {_porcentagem} to ({_atual} / {_meta})
+    set {_barras_totais} to 10
+    set {_barras_verdes} to round({_porcentagem} * {_barras_totais})
+    set {_barras_cinzas} to {_barras_totais} - {_barras_verdes}
+    
+    set {_bar_string} to ""
+    
+    # Constrói a UI da barra (Verde para feito, Cinza para faltante)
+    loop {_barras_verdes} times:
+        set {_bar_string} to "%{_bar_string}%&a|"
+    loop {_barras_cinzas} times:
+        set {_bar_string} to "%{_bar_string}%&7|"
+        
+    # Arredonda os números para não aparecerem decimais horríveis no ecrã (ex: 5.43324)
+    set {_atual_format} to round({_atual})
+    set {_meta_format} to round({_meta})
+    
+    # Envia a Action Bar super polida
+    send action bar "&6&l%{_titulo}% &8[&f%{_bar_string}%&8] &e%{_atual_format}%&6/&e%{_meta_format}%" to {_p}
+
+# --- 6. FUNÇÃO DE CONCLUSÃO PADRÃO ---
+function concluirMissaoPrincipal(p: player, id: integer, job: text, proximo_nivel: integer):
+    set {_uuid} to uuid of {_p}
+    
+    # Atualiza base de dados
+    set {missao::%{_job}%::%{_id}%::%{_uuid}%::status} to "concluida"
+    set {nivel::%{_job}%::%{_uuid}%} to {_proximo_nivel}
+    
+    # Retrocompatibilidade com Explorador Base
+    if {_job} is "explorador":
+        set {nivel::%{_uuid}%} to {_proximo_nivel}
+        set {missao::status::%{_id}%::%{_uuid}%} to "concluida"
+        
+    # Efeitos Visuais & Sonoros Globais
+    play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 1.0 to {_p}
+    send title "&a&lMISSÃO CONCLUÍDA!" with subtitle "&7Avançaste para o Nível %{_proximo_nivel}%." to {_p} for 4 seconds
+    send "" to {_p}
+    send "&e&l[DIÁRIO] &7A Missão %{_id}% da linhagem %{_job}% foi concluída!" to {_p}
+    send "&e&l[DIÁRIO] &7Usa &f/diario &7para visualizar o teu próximo objetivo." to {_p}
+    send "" to {_p}
+
+# =============================================================================
+# --- 7. API DE NÍVEIS E PROFISSÕES (V5.0) ---
+# =============================================================================
+
+# Retorna a lista de profissões ativas do jogador (Dinâmico via JobsReborn)
+function getJobsAtivos(p: player) :: strings:
+    # Lê DIRETAMENTE do JobsReborn (Fonte da Verdade) e converte para minúsculas
+    set {_jobs_reborn} to placeholder "%%jobsr_user_jobs%%" from {_p} in lowercase
+    
+    # Todos são Exploradores por base
+    set {_ativos::*} to "explorador"
+    
+    # Lista de todas as profissões para cruzar dados
+    set {_todas::*} to "minerador", "lenhador", "escavador", "fazendeiro", "pescador", "construtor", "bruxo" and "mago"
+    
+    # Se o JobsReborn confirmar que o jogador tem o job, adicionamos à lista do menu
+    loop {_todas::*}:
+        if {_jobs_reborn} contains loop-value:
+            add loop-value to {_ativos::*}
+            
+    return {_ativos::*}
+
+# Retorna o nível de uma profissão específica de forma segura
+function getNivelJob(p: player, job: text) :: integer:
+    set {_uuid} to uuid of {_p}
+    # Se a variável não existir, o nível padrão é 1
+    if {nivel::%{_job}%::%{_uuid}%} is not set:
+        return 1
+    return {nivel::%{_job}%::%{_uuid}%}
+
+# Define o nível de uma profissão (Usado por missões principais e comandos admin)
+function setNivelJob(p: player, job: text, nivel: integer):
+    set {_uuid} to uuid of {_p}
+    set {nivel::%{_job}%::%{_uuid}%} to {_nivel}
+    
+    # (Removida a linha antiga que gravava variáveis redundantes)
+
+# Adiciona XP/Nível (Apenas soma +1, excelente para economia de processamento)
+function addNivelJob(p: player, job: text):
+    set {_uuid} to uuid of {_p}
+    add 1 to {nivel::%{_job}%::%{_uuid}%}
+
+# =============================================================================
+# --- NOVO: FORMATADOR VISUAL DE PROFISSÕES ---
+# =============================================================================
+# Converte o nome interno do job para a versão Small Caps com Cores
+function formatarNomeJob(job: text) :: text:
+    if {_job} is "explorador":
+        return "<#ff5555>ᴇxᴘʟᴏʀᴀᴅᴏʀ"
+    else if {_job} is "minerador":
+        return "<#ffcc00>ᴍɪɴᴇʀᴀᴅᴏʀ"
+    else if {_job} is "lenhador":
+        return "<#883300>ʟᴇɴʜᴀᴅᴏʀ"
+    else if {_job} is "escavador":
+        return "<#ff7744>ᴇsᴄᴀᴠᴀᴅᴏʀ"
+    else if {_job} is "fazendeiro":
+        return "<#00cc22>ꜰᴀᴢᴇɴᴅᴇɪʀᴏ"
+    else if {_job} is "pescador":
+        return "<#0077ff>ᴘᴇsᴄᴀᴅᴏʀ"
+    else if {_job} is "construtor":
+        return "<#00cccc>ᴄᴏɴsᴛʀᴜᴛᴏʀ"
+    else if {_job} is "bruxo":
+        return "<#ccff22>ʙʀᴜxᴏ"
+    else if {_job} is "mago":
+        return "<#ff3399>ᴍᴀɢᴏ"
+    
+    return "&7&l%{_job}%"
+
+# =============================================================================
+# --- NOVO: FILTRO DE TIERS ---
+# =============================================================================
+
+# Retorna o nome da profissão que o jogador tem num Tier específico
+function getJobPorTier(p: player, tier: integer) :: text:
+    set {_ativos::*} to getJobsAtivos({_p})
+    
+    # Define quem pertence a que Tier
+    if {_tier} is 1:
+        set {_tier_jobs::*} to "explorador"
+    else if {_tier} is 2:
+        set {_tier_jobs::*} to "minerador", "lenhador", "escavador", "fazendeiro", "pescador" and "construtor"
+    else if {_tier} is 3:
+        set {_tier_jobs::*} to "bruxo" and "mago"
+        
+    # Cruza os dados: vê qual profissão do jogador está na lista deste Tier
+    loop {_ativos::*}:
+        if {_tier_jobs::*} contains loop-value:
+            # Substituímos a lógica antiga pela nossa nova função de formatação!
+            return formatarNomeJob(loop-value)
+            
+    # Se ele não tiver nenhuma profissão deste Tier, retorna também num formato bonito
+    return "&8&lɴᴀᴏ ᴇsᴄᴏʟʜɪᴅᴏ"

@@ -1,0 +1,89 @@
+# =============================================================================
+# DESERTSKY - MISSÃO 01: EXPLORADOR
+# Caminho: /plugins/Skript/scripts/Jobs/missoes/Explorador/01_explorador.sk
+# Objetivo: 1º Usar /rtp | 2º Caminhar 500 blocos
+# =============================================================================
+
+on script load:
+    # A missão agora informa seus próprios metadados (Título, Lore e Objetivo)!
+    registrarMissao(1, "explorador", 1, "Em busca de um local", "Oh não, onde estou... está escurecendo.. preciso encontrar um local.", "Execute /rtp e ande 500 blocos.")
+
+# -----------------------------------------------------------------------------
+# OBJETIVO 1: USAR O /RTP
+# Escuta o comando do jogador para validar a primeira etapa
+# -----------------------------------------------------------------------------
+on command:
+    # Verifica se o comando digitado foi "rtp" (Ignora maiúsculas/minúsculas)
+    if command is "rtp":
+        set {_lvl} to {nivel::%uuid of player%} ? 1
+        
+        if {_lvl} is 1:
+            if {missao::explorador::1::%uuid of player%::status} is "em_andamento":
+                # Verifica se ele ainda não cumpriu essa etapa
+                if {missao::explorador::1::%uuid of player%::rtp_uso} is not set:
+                    set {missao::explorador::1::%uuid of player%::rtp_uso} to true
+                    
+                    send "" to player
+                    send "&e&l[DIÁRIO] &7Boa sorte lá fora! Agora, inicie a sua exploração e caminhe &a500 blocos&7." to player
+                    play sound "entity.experience_orb.pickup" with volume 1.0 and pitch 1.0 to player
+
+# -----------------------------------------------------------------------------
+# OBJETIVO 2: MOTOR DE PROGRESSO ASSÍNCRONO (Caminhar)
+# Executa a cada 2 segundos. Totalmente imune a TPS drops do "on any move".
+# -----------------------------------------------------------------------------
+every 2 seconds:
+    loop all players:
+        # Puxa o nível atual. Se for null, assume 1.
+        set {_lvl} to {nivel::%uuid of loop-player%} ? 1
+        
+        # Só processa se o jogador estiver ativamente na Missão 1
+        if {_lvl} is 1:
+            
+            # Auto-iniciar a missão para novatos
+            if {missao::explorador::1::%uuid of loop-player%::status} is not set:
+                set {missao::explorador::1::%uuid of loop-player%::status} to "em_andamento"
+                set {missao::explorador::1::%uuid of loop-player%::progresso} to 0
+                
+            if {missao::explorador::1::%uuid of loop-player%::status} is "em_andamento":
+                
+                # ETAPA 1: O Jogador precisa usar o /rtp primeiro
+                if {missao::explorador::1::%uuid of loop-player%::rtp_uso} is not set:
+                    send action bar "&6&lMissão 1: &eInicie digitando &f/rtp" to loop-player
+                    
+                # ETAPA 2: O Jogador já usou o /rtp, começa a contar a distância
+                else:
+                    set {_loc_atual} to location of loop-player
+                    set {_loc_antiga} to {temp_progresso::missao1::last_loc::%uuid of loop-player%}
+                    
+                    if {_loc_antiga} is set:
+                        # Trava interdimensional (impede bugs ao usar portais)
+                        if world of {_loc_atual} is world of {_loc_antiga}:
+                            set {_dist} to distance between {_loc_atual} and {_loc_antiga}
+                            
+                            # Filtro Anti-Teleport/RTP/Elytra
+                            # Velocidade de corrida = ~5.6 blocos/s. Em 2s = 11.2 blocos.
+                            # Limite de segurança de 25 blocos garante que não andem de RTP/Fly.
+                            if {_dist} is between 0.5 and 25:
+                                
+                                add {_dist} to {missao::explorador::1::%uuid of loop-player%::progresso}
+                                set {_atual} to {missao::explorador::1::%uuid of loop-player%::progresso}
+                                
+                                # Renderiza a UI nativa da Action Bar via Core
+                                mostrarProgresso(loop-player, "A Longa Caminhada", {_atual}, 500)
+                                
+                                # Checagem de Conclusão
+                                if {_atual} >= 500:
+                                    # 1. Limpeza de Variáveis
+                                    delete {missao::explorador::1::%uuid of loop-player%::progresso}
+                                    delete {missao::explorador::1::%uuid of loop-player%::rtp_uso}
+                                    delete {temp_progresso::missao1::last_loc::%uuid of loop-player%}
+                                    
+                                    # 2. Conclusão da Missão (Sobe para o Nível 2)
+                                    concluirMissaoPrincipal(loop-player, 1, "explorador", 2)
+                                    
+                    # Salva o "passo" atual para comparar no próximo ciclo
+                    set {temp_progresso::missao1::last_loc::%uuid of loop-player%} to {_loc_atual}
+
+# Higiene de RAM: Remove dados desnecessários quando o jogador sai
+on quit:
+    delete {temp_progresso::missao1::last_loc::%uuid of player%}

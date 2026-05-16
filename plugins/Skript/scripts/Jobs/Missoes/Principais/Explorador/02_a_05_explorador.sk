@@ -1,0 +1,102 @@
+# =============================================================================
+# DESERTSKY - MISSÕES 02 A 05: O DESPERTAR DO SOBREVIVENTE
+# Caminho: /plugins/Skript/scripts/Jobs/missoes/Explorador/02_ao_05_explorador.sk
+# =============================================================================
+
+on script load:
+    # Registro das missões no Global Registry do Core
+    registrarMissao(2, "explorador", 2, "Matéria Prima", "A madeira é a base de toda civilização.", "Colete 16 blocos de madeira bruta.")
+    registrarMissao(3, "explorador", 3, "Mãos à Obra", "Uma bancada improvisada pode salvar vidas.", "Crafte 1 Bancada de Trabalho e 1 Picareta de Madeira.")
+    registrarMissao(4, "explorador", 4, "Idade da Pedra", "A madeira é frágil, o deserto exige algo mais sólido.", "Minerar 16 pedras (Pedregulho).")
+    registrarMissao(5, "explorador", 5, "Arsenal de Pedra", "Agora estás pronto para os perigos reais.", "Crafte: Picareta, Pá, Machado, Espada e Enxada de Pedra.")
+
+# -----------------------------------------------------------------------------
+# MISSÃO 02: COLETAR 16 MADEIRAS
+# -----------------------------------------------------------------------------
+on mine:
+    # [DEFESA ANTI-CHEAT] Impede que conte blocos colocados pelo próprio jogador
+    if metadata "desertsky_placed" of event-block is true:
+        stop
+
+    # Uso de lista explícita para evitar erros de aliases na 1.20.6
+    if event-block is oak log, spruce log, birch log, jungle log, acacia log, dark oak log, mangrove log or cherry log:
+        set {_uuid} to uuid of player
+        if {nivel::%{_uuid}%} is 2:
+            # Inicialização
+            if {missao::explorador::2::%{_uuid}%::status} is not set:
+                set {missao::explorador::2::%{_uuid}%::status} to "em_andamento"
+                set {missao::explorador::2::%{_uuid}%::progresso} to 0
+            
+            # Contagem
+            add 1 to {missao::explorador::2::%{_uuid}%::progresso}
+            set {_atual} to {missao::explorador::2::%{_uuid}%::progresso}
+            
+            mostrarProgresso(player, "Coletando Madeira", {_atual}, 16)
+            
+            if {_atual} >= 16:
+                delete {missao::explorador::2::%{_uuid}%::progresso}
+                concluirMissaoPrincipal(player, 2, "explorador", 3)
+
+# -----------------------------------------------------------------------------
+# MISSÃO 03: CRAFTAR BANCADA E PICARETA DE MADEIRA
+# -----------------------------------------------------------------------------
+on craft:
+    set {_uuid} to uuid of player
+    if {nivel::%{_uuid}%} is 3:
+        if event-item is crafting table:
+            if {missao::explorador::3::%{_uuid}%::bancada} is not set:
+                set {missao::explorador::3::%{_uuid}%::bancada} to true
+                send "&e&l[DIÁRIO] &7Bancada construída! Agora crafte a &fPicareta de Madeira&7."
+                
+        if event-item is wooden pickaxe:
+            if {missao::explorador::3::%{_uuid}%::bancada} is true:
+                delete {missao::explorador::3::%{_uuid}%::bancada}
+                concluirMissaoPrincipal(player, 3, "explorador", 4)
+            else:
+                send "&c[!] Você precisa craftar a Bancada de Trabalho primeiro!"
+
+# -----------------------------------------------------------------------------
+# MISSÃO 04: MINERAR 16 PEDRAS
+# -----------------------------------------------------------------------------
+on mine:
+    # [DEFESA ANTI-CHEAT] Impede que conte blocos colocados pelo próprio jogador
+    if metadata "desertsky_placed" of event-block is true:
+        stop
+
+    if event-block is stone or cobblestone:
+        set {_uuid} to uuid of player
+        if {nivel::%{_uuid}%} is 4:
+            if {missao::explorador::4::%{_uuid}%::status} is not set:
+                set {missao::explorador::4::%{_uuid}%::status} to "em_andamento"
+                set {missao::explorador::4::%{_uuid}%::progresso} to 0
+                
+            add 1 to {missao::explorador::4::%{_uuid}%::progresso}
+            set {_atual} to {missao::explorador::4::%{_uuid}%::progresso}
+            
+            mostrarProgresso(player, "Minerando Pedra", {_atual}, 16)
+            
+            if {_atual} >= 16:
+                delete {missao::explorador::4::%{_uuid}%::progresso}
+                concluirMissaoPrincipal(player, 4, "explorador", 5)
+
+# -----------------------------------------------------------------------------
+# MISSÃO 05: ARSENAL COMPLETO DE PEDRA
+# -----------------------------------------------------------------------------
+on craft:
+    set {_uuid} to uuid of player
+    if {nivel::%{_uuid}%} is 5:
+        # Lista de itens necessários
+        set {_items::*} to stone pickaxe, stone shovel, stone axe, stone sword and stone hoe
+        
+        if {_items::*} contains event-item:
+            # Registra o item craftado numa lista temporária na variável da missão
+            set {_item_name} to "%event-item%"
+            if {missao::explorador::5::%{_uuid}%::crafts::*} does not contain {_item_name}:
+                add {_item_name} to {missao::explorador::5::%{_uuid}%::crafts::*}
+                
+                set {_total} to size of {missao::explorador::5::%{_uuid}%::crafts::*}
+                mostrarProgresso(player, "Arsenal de Pedra", {_total}, 5)
+                
+                if {_total} >= 5:
+                    delete {missao::explorador::5::%{_uuid}%::crafts::*}
+                    concluirMissaoPrincipal(player, 5, "explorador", 6)

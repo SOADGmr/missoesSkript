@@ -1,0 +1,161 @@
+# =============================================================================
+# DESERTSKY - MISSÕES 06 A 10: COLONIZAÇÃO E SOBREVIVÊNCIA
+# Caminho: /plugins/Skript/scripts/Jobs/missoes/Explorador/06_ao_10_explorador.sk
+# =============================================================================
+
+on script load:
+    registrarMissao(6, "explorador", 6, "Marcando Território", "Ter um lugar para voltar é essencial no deserto.", "Use o comando /sethome para marcar a sua base.")
+    registrarMissao(7, "explorador", 7, "Instinto de Sobrevivência", "À noite, o deserto revela os seus dentes.", "Mate 5 Zumbis e coma 1 Carne Podre.")
+    registrarMissao(8, "explorador", 8, "Fundação da Cabana", "Madeira no chão é o início de um lar.", "Coloque 30 blocos de madeira no chão.")
+    registrarMissao(9, "explorador", 9, "Recursos do Oásis", "Areia para o vidro, madeira para o teto.", "Colete 10 Areias e 10 Madeiras Brutas.")
+    registrarMissao(10, "explorador", 10, "Lar, Doce Lar", "Um teto, uma fornalha e um baú. Agora sim.", "Crafte e instale: 1 Fornalha, 4 Baús, 1 Porta e 4 Vidros.")
+
+# -----------------------------------------------------------------------------
+# MISSÃO 06: USAR /SETHOME
+# -----------------------------------------------------------------------------
+on command:
+    if command is "sethome":
+        set {_uuid} to uuid of player
+        if {nivel::%{_uuid}%} is 6:
+            concluirMissaoPrincipal(player, 6, "explorador", 7)
+
+# -----------------------------------------------------------------------------
+# MISSÃO 07: MATAR 5 ZUMBIS E COMER CARNE PODRE
+# -----------------------------------------------------------------------------
+on death of zombie:
+    attacker is a player
+    set {_uuid} to uuid of attacker
+    if {nivel::%{_uuid}%} is 7:
+        if {missao::explorador::7::%{_uuid}%::kills} is not set:
+            set {missao::explorador::7::%{_uuid}%::kills} to 0
+        
+        add 1 to {missao::explorador::7::%{_uuid}%::kills}
+        set {_kills} to {missao::explorador::7::%{_uuid}%::kills}
+        
+        if {_kills} < 5:
+            mostrarProgresso(attacker, "Caçando Zumbis", {_kills}, 5)
+        else if {_kills} is 5:
+            send "&e&l[DIÁRIO] &7Zumbis eliminados! Agora, prove que é um sobrevivente e &fcoma 1 Carne Podre&7." to attacker
+
+on consume of rotten flesh:
+    set {_uuid} to uuid of player
+    if {nivel::%{_uuid}%} is 7:
+        if {missao::explorador::7::%{_uuid}%::kills} >= 5:
+            delete {missao::explorador::7::%{_uuid}%::kills}
+            concluirMissaoPrincipal(player, 7, "explorador", 8)
+        else:
+            send "&c[!] Você ainda precisa abater os zumbis antes de se alimentar!"
+
+# -----------------------------------------------------------------------------
+# MISSÃO 08: COLOCAR 30 BLOCOS DE MADEIRA
+# -----------------------------------------------------------------------------
+on place:
+    # Lista explícita de troncos e tábuas para evitar erro de alias
+    if event-block is oak log, spruce log, birch log, jungle log, acacia log, dark oak log, mangrove log, cherry log, oak planks, spruce planks, birch planks, jungle planks, acacia planks, dark oak planks, mangrove planks or cherry planks:
+        set {_uuid} to uuid of player
+        if {nivel::%{_uuid}%} is 8:
+            add 1 to {missao::explorador::8::%{_uuid}%::progresso}
+            set {_atual} to {missao::explorador::8::%{_uuid}%::progresso}
+            
+            mostrarProgresso(player, "Construindo Estrutura", {_atual}, 30)
+            
+            if {_atual} >= 30:
+                delete {missao::explorador::8::%{_uuid}%::progresso}
+                concluirMissaoPrincipal(player, 8, "explorador", 9)
+
+# [DEFESA ANTI-CHEAT] Remove progresso se o jogador tentar colocar e quebrar a mesma madeira
+on block break:
+    if event-block is oak log, spruce log, birch log, jungle log, acacia log, dark oak log, mangrove log, cherry log, oak planks, spruce planks, birch planks, jungle planks, acacia planks, dark oak planks, mangrove planks or cherry planks:
+        set {_uuid} to uuid of player
+        if {nivel::%{_uuid}%} is 8:
+            if {missao::explorador::8::%{_uuid}%::progresso} > 0:
+                remove 1 from {missao::explorador::8::%{_uuid}%::progresso}
+                mostrarProgresso(player, "Estrutura Danificada", {missao::explorador::8::%{_uuid}%::progresso}, 30)
+
+# -----------------------------------------------------------------------------
+# MISSÃO 09: COLETAR 10 AREIAS E 10 MADEIRAS
+# -----------------------------------------------------------------------------
+on mine:
+    # [DEFESA ANTI-CHEAT] Impede que conte blocos colocados pelo próprio jogador
+    if metadata "desertsky_placed" of event-block is true:
+        stop
+
+    set {_uuid} to uuid of player
+    if {nivel::%{_uuid}%} is 9:
+        if event-block is sand:
+            add 1 to {missao::explorador::9::%{_uuid}%::areia}
+        else if event-block is oak log, spruce log, birch log, jungle log, acacia log, dark oak log, mangrove log or cherry log:
+            add 1 to {missao::explorador::9::%{_uuid}%::madeira}
+        
+        set {_a} to {missao::explorador::9::%{_uuid}%::areia} ? 0
+        set {_m} to {missao::explorador::9::%{_uuid}%::madeira} ? 0
+        
+        # Correção de sintaxe para blocos de controle de limite
+        if {_a} > 10:
+            set {_a} to 10
+        if {_m} > 10:
+            set {_m} to 10
+        
+        mostrarProgresso(player, "Coleta de Materiais", ({_a} + {_m}), 20)
+        
+        if {_a} >= 10:
+            if {_m} >= 10:
+                delete {missao::explorador::9::%{_uuid}%::areia}
+                delete {missao::explorador::9::%{_uuid}%::madeira}
+                concluirMissaoPrincipal(player, 9, "explorador", 10)
+
+# -----------------------------------------------------------------------------
+# MISSÃO 10: CRAFTAR E INSTALAR ITENS DA CASA
+# -----------------------------------------------------------------------------
+on place:
+    set {_uuid} to uuid of player
+    if {nivel::%{_uuid}%} is 10:
+        set {_b} to event-block
+        
+        # Verificação manual de itens para garantir compatibilidade
+        if {_b} is furnace:
+            set {missao::explorador::10::%{_uuid}%::fornalha} to true
+        else if {_b} is chest:
+            add 1 to {missao::explorador::10::%{_uuid}%::baus}
+        else if {_b} is oak door, spruce door, birch door, jungle door, acacia door, dark oak door, mangrove door or cherry door:
+            set {missao::explorador::10::%{_uuid}%::porta} to true
+        else if {_b} is glass or glass pane:
+            add 1 to {missao::explorador::10::%{_uuid}%::vidros}
+            
+        # Lógica de contagem robusta
+        set {_f} to 0
+        if {missao::explorador::10::%{_uuid}%::fornalha} is true:
+            set {_f} to 1
+            
+        set {_p} to 0
+        if {missao::explorador::10::%{_uuid}%::porta} is true:
+            set {_p} to 1
+            
+        set {_bau_count} to {missao::explorador::10::%{_uuid}%::baus} ? 0
+        if {_bau_count} > 4:
+            set {_bau_count} to 4
+            
+        set {_vid_count} to {missao::explorador::10::%{_uuid}%::vidros} ? 0
+        if {_vid_count} > 4:
+            set {_vid_count} to 4
+        
+        set {_total} to ({_f} + {_p} + {_bau_count} + {_vid_count})
+        mostrarProgresso(player, "Instalando Mobília", {_total}, 10)
+        
+        if {_total} >= 10:
+            delete {missao::explorador::10::%{_uuid}%::*}
+            concluirMissaoPrincipal(player, 10, "explorador", 11)
+
+# [DEFESA ANTI-CHEAT] Remove progresso se o jogador quebrar os móveis da Missão 10
+on block break:
+    set {_uuid} to uuid of player
+    if {nivel::%{_uuid}%} is 10:
+        set {_b} to event-block
+        if {_b} is furnace:
+            delete {missao::explorador::10::%{_uuid}%::fornalha}
+        else if {_b} is chest:
+            if {missao::explorador::10::%{_uuid}%::baus} > 0:
+                remove 1 from {missao::explorador::10::%{_uuid}%::baus}
+        else if {_b} is glass or glass pane:
+            if {missao::explorador::10::%{_uuid}%::vidros} > 0:
+                remove 1 from {missao::explorador::10::%{_uuid}%::vidros}

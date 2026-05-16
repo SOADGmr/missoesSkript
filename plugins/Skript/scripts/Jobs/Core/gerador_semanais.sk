@@ -1,0 +1,397 @@
+# ========================================================================
+# MOTOR DE MISSÕES SEMANAIS - DESERTSKY (V5 - MOTOR MODULAR PURO)
+# Arquivo: gerador_semanais.sk
+# Função: Lógica central, eventos, action bar e sincronização.
+# ========================================================================
+
+on load:
+    # Apenas registra os NPCs de entrega. 
+    # As missões e limpeza de variáveis agora são geridas pelos módulos de cada job.
+    registrarNPC(11, "Almoxarife")
+    registrarNPC(21, "Almoxarife")
+    registrarNPC(31, "Almoxarife")
+    registrarNPC(41, "Almoxarife")
+    registrarNPC(51, "Almoxarife")
+    registrarNPC(61, "Almoxarife")
+    registrarNPC(71, "Almoxarife")
+    registrarNPC(81, "Almoxarife")
+    
+    send "&e[DesertSky-Jobs] &aMotor Semanal V5 carregado (Modo Modular Puro)!" to console
+
+# ========================================================================
+# FUNÇÕES DE REGISTRO E COMPILAÇÃO (API PARA OS MÓDULOS)
+# ========================================================================
+
+function registrarMetaBase(id: text, acao: text, tipos_str: text, nome_curto: text, desc: text):
+    set {meta_base::%{_id}%::acao} to {_acao}
+    set {meta_base::%{_id}%::nome_curto} to {_nome_curto}
+    set {meta_base::%{_id}%::desc} to {_desc}
+    set {_tipos::*} to {_tipos_str} split at ","
+    delete {meta_base::%{_id}%::tipos::*}
+    loop {_tipos::*}:
+        add loop-value to {meta_base::%{_id}%::tipos::*}
+
+function addMetaSemanal(id_contrato: text, id_meta: text, min: number, max: number):
+    add "%{_id_meta}%|%{_min}%|%{_max}%" to {semanal_meta::%{_id_contrato}%::metas_raw::*}
+
+function sortearSemanal(p: player, job: text):
+    set {_tamanho} to size of {pool_semanal::%{_job}%::*}
+    if {_tamanho} is 0:
+        stop
+    
+    set {_index} to a random integer between 1 and {_tamanho}
+    set {_contrato_id} to {pool_semanal::%{_job}%::%{_index}%}
+
+    set {missao::semanal::%{_p}%::%{_job}%::id} to {_contrato_id}
+    set {missao::semanal::%{_p}%::%{_job}%::status} to "em_andamento"
+
+    # --- NOVA LIMPEZA PROFUNDA (Apaga as metas da semana anterior) ---
+    delete {missao::semanal::%{_p}%::%{_job}%::meta::*}
+    loop 20 times:
+        delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::id}
+        delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::alvo}
+        delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::progresso}
+
+    # --- FÓRMULA DE PAGAMENTO SEMANAL ---
+    set {_lvl} to getNivelJob({_p}, {_job})
+    
+    if {_lvl} < 100:
+        set {_percent_semanal2} to 0.25*0.30 # 7,5%
+        set {_ajuste2} to 1.6875
+        set {_percent_semanal3} to 0.35*0.30 # 10,5%
+        set {_ajuste3} to 2.3625
+    else:
+        set {_percent_semanal2} to 0.35*0.50 # 17,5%
+        set {_ajuste2} to 3.9375
+        set {_percent_semanal3} to 0.45*0.50 # 22,5%
+        set {_ajuste3} to 5.0625
+    
+    if {_job} is "bruxo" or "mago":
+        set {_money} to (({salario}*{_percent_semanal3})/4) + ({_ajuste3}*{_lvl})
+    else:
+        set {_money} to (({salario}*{_percent_semanal2})/4) + ({_ajuste2}*{_lvl})
+        
+    set {missao::semanal::%{_p}%::%{_job}%::recompensa_dinheiro} to {_money}
+
+    set {_meta_index} to 1
+    loop {semanal_meta::%{_contrato_id}%::metas_raw::*}:
+        set {_parts::*} to loop-value split at "|"
+        set {_meta_id} to {_parts::1}
+        set {_min} to {_parts::2} parsed as number
+        set {_max} to {_parts::3} parsed as number
+        
+        set {_alvo_sorteado} to a random integer between {_min} and {_max}
+        
+        set {missao::semanal::%{_p}%::%{_job}%::meta::%{_meta_index}%::id} to {_meta_id}
+        set {missao::semanal::%{_p}%::%{_job}%::meta::%{_meta_index}%::alvo} to {_alvo_sorteado}
+        set {missao::semanal::%{_p}%::%{_job}%::meta::%{_meta_index}%::progresso} to 0
+        
+        add 1 to {_meta_index}
+
+    send "" to {_p}
+    send "&6&l[CONTRATO SEMANAL] &7Novo contrato de %{_job}% disponível!" to {_p}
+    send "&7Missão: &f%{semanal_meta::%{_contrato_id}%::nome}%" to {_p}
+    send "&7Abra a &eCentral de Contratos &7para ver os objetivos." to {_p}
+    send "" to {_p}
+
+# ========================================================================
+# CONSTRUTOR DE LORE DINÂMICA (Para a GUI)
+# ========================================================================
+
+function formatarLoreSemanal(p: player, job: text) :: texts:
+    set {_contrato_id} to {missao::semanal::%{_p}%::%{_job}%::id}
+    set {_desc_base} to {semanal_meta::%{_contrato_id}%::desc}
+    
+    set {_lore::*} to {_desc_base} split at "|"
+    add "" to {_lore::*}
+    add "&f&lObjetivos:" to {_lore::*}
+
+    set {_index} to 1
+    while {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::id} is set:
+        set {_meta_id} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::id}
+        set {_alvo} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::alvo}
+        set {_progresso} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::progresso}
+        
+        set {_desc_meta} to {meta_base::%{_meta_id}%::desc}
+        replace all "@alvo@" with "%{_alvo}%" in {_desc_meta}
+        
+        if {_progresso} >= {_alvo}:
+            add "&8[&a&l✔&8] &a%{_desc_meta}% &8(%{_progresso}%/%{_alvo}%)" to {_lore::*}
+        else:
+            add "&8[&c&l✖&8] &7%{_desc_meta}% &8(%{_progresso}%/%{_alvo}%)" to {_lore::*}
+            
+        add 1 to {_index}
+
+    if {missao::semanal::%{_p}%::%{_job}%::status} is "aguardando_entrega":
+        add "" to {_lore::*}
+        set {_npc_id} to {entrega_registry::%{_contrato_id}%::npc}
+        set {_npc_nome} to {npc_nome::%{_npc_id}%} ? "NPC"
+        add "&8[&e&l!&8] &eAguardando Entrega Física" to {_lore::*}
+        add "&7Leve os materiais para &f%{_npc_nome}% (NPC %{_npc_id}%)" to {_lore::*}
+        
+    add "" to {_lore::*}
+    
+    set {_money} to {missao::semanal::%{_p}%::%{_job}%::recompensa_dinheiro} ? 100
+    add "&eRecompensa: &a$%{_money}% &e+ &b1x Job Key" to {_lore::*}
+    
+    return {_lore::*}
+
+# ========================================================================
+# MOTOR DE PROGRESSO E CONCLUSÃO SEMANAL (AÇÃO E ACTION BAR)
+# ========================================================================
+
+function addProgressoSemanal(p: player, job: text, acao: text, tipo_alvo: text, qtd: number):
+    if {missao::semanal::%{_p}%::%{_job}%::status} is "em_andamento":
+        set {_index} to 1
+        
+        while {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::id} is set:
+            set {_meta_id} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::id}
+            
+            if {meta_base::%{_meta_id}%::acao} is {_acao}:
+                
+                set {_match} to false
+                if {meta_base::%{_meta_id}%::tipos::*} contains "any":
+                    set {_match} to true
+                else if {meta_base::%{_meta_id}%::tipos::*} contains {_tipo_alvo}:
+                    set {_match} to true
+                    
+                if {_match} is true:
+                    set {_prog_atual} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::progresso}
+                    set {_alvo_max} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::alvo}
+                    
+                    if {_prog_atual} < {_alvo_max}:
+                        add {_qtd} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::progresso}
+                        
+                        # --- EXIBIÇÃO DA ACTION BAR ---
+                        set {_prog_novo} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::progresso}
+                        set {_nome_curto} to {meta_base::%{_meta_id}%::nome_curto}
+                        
+                        mostrarProgresso({_p}, "&6&l[SEMANAL] &f%{_nome_curto}%", {_prog_novo}, {_alvo_max})
+                        
+                        verificarConclusaoSemanal({_p}, {_job})
+            
+            add 1 to {_index}
+
+function verificarConclusaoSemanal(p: player, job: text):
+    set {_todas_concluidas} to true
+    set {_index} to 1
+    
+    while {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::id} is set:
+        set {_prog} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::progresso}
+        set {_alvo} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::alvo}
+        
+        if {_prog} < {_alvo}:
+            set {_todas_concluidas} to false
+            stop loop
+            
+        add 1 to {_index}
+        
+    if {_todas_concluidas} is true:
+        set {_contrato_id} to {missao::semanal::%{_p}%::%{_job}%::id}
+        
+        if {entrega_registry::%{_contrato_id}%::npc} is set:
+            set {missao::semanal::%{_p}%::%{_job}%::status} to "aguardando_entrega"
+            set {missao::status::%{_contrato_id}%::%uuid of {_p}%} to "aguardando_entrega"
+            
+            set {_npc_id} to {entrega_registry::%{_contrato_id}%::npc}
+            set {_npc_nome} to {npc_nome::%{_npc_id}%} ? "o NPC responsável"
+            
+            play sound "entity.player.levelup" with volume 1.0 and pitch 0.5 to {_p}
+            send "" to {_p}
+            send "&6&l[CONTRATO SEMANAL] &7Fase de coleta concluída!" to {_p}
+            send "&7Vá até a vila e entregue os materiais para &e%{_npc_nome}% (NPC %{_npc_id}%)&7." to {_p}
+            send "" to {_p}
+            
+        else:
+            set {missao::semanal::%{_p}%::%{_job}%::status} to "concluida"
+            
+            set {_money} to {missao::semanal::%{_p}%::%{_job}%::recompensa_dinheiro} ? 100
+            
+            execute console command "eco give %{_p}% %{_money}%"
+            execute console command "crate key give %{_p}% jobkey 1"
+            
+            play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 1.0 to {_p}
+            send "" to {_p}
+            send "&6&l[CONTRATO SEMANAL] &7O contrato '&f%{semanal_meta::%{_contrato_id}%::nome}%&7' foi finalizado!" to {_p}
+            send "&a&l+ $%{_money}%" to {_p}
+            send "&b&l+ 1x Job Key" to {_p}
+            send "" to {_p}
+
+# ========================================================================
+# EVENTOS DISPARADORES PARA A MISSÃO SEMANAL (TODOS OS JOBS)
+# ========================================================================
+
+on tool break:
+    set {_tipo} to "%type of event-item%"
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+    if {_jobs_low} contains "minerador":
+        addProgressoSemanal(player, "minerador", "quebrar_ferramenta", {_tipo}, 1)
+    if {_jobs_low} contains "lenhador":
+        addProgressoSemanal(player, "lenhador", "quebrar_ferramenta", {_tipo}, 1)
+
+# 8. FUNDIÇÃO E FORJA (Rastreia quando o jogador tira o item pronto da fornalha ou mesa)
+on inventory click:
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+    
+    # 8.1 - Fornalhas (Fundir)
+    if event-inventory's type is furnace inventory or blast furnace inventory:
+        if index of event-slot is 2: # Slot de Saída (Onde fica o item pronto)
+            if event-item is not air:
+                set {_tipo} to "%type of event-item%"
+                set {_qtd} to item amount of event-item
+                if {_jobs_low} contains "minerador":
+                    addProgressoSemanal(player, "minerador", "fundir", {_tipo}, {_qtd})
+                    
+    # 8.2 - Mesa de Ferraria (Forjar/Upgrade Netherite)
+    else if event-inventory's type is smithing inventory:
+        if index of event-slot is 3: # Slot de Saída da Mesa de Ferraria
+            if event-item is not air:
+                set {_tipo} to "%type of event-item%"
+                set {_qtd} to item amount of event-item
+                if {_jobs_low} contains "minerador":
+                    addProgressoSemanal(player, "minerador", "forjar", {_tipo}, {_qtd})
+on mine:
+    if metadata "desertsky_placed" of event-block is true:
+        stop
+    set {_tipo} to "%type of event-block%"
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+    if {_jobs_low} contains "minerador":
+        addProgressoSemanal(player, "minerador", "minerar", {_tipo}, 1)
+    if {_jobs_low} contains "lenhador":
+        addProgressoSemanal(player, "lenhador", "minerar", {_tipo}, 1)
+    if {_jobs_low} contains "escavador":
+        addProgressoSemanal(player, "escavador", "minerar", {_tipo}, 1)
+    if {_jobs_low} contains "fazendeiro":
+        addProgressoSemanal(player, "fazendeiro", "minerar", {_tipo}, 1)
+
+on bucket fill:
+    if event-block is lava:
+        set {_tipo} to "lava bucket"
+        set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+        if {_jobs_low} contains "minerador":
+            addProgressoSemanal(player, "minerador", "coletar", {_tipo}, 1)
+
+on pick up:
+    if player's tool is fishing rod:
+        set {_tipo} to "%type of event-item%"
+        set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+        if {_jobs_low} contains "pescador":
+            addProgressoSemanal(player, "pescador", "pescar", {_tipo}, 1)
+
+on place:
+    set metadata "desertsky_placed" of event-block to true
+    set {_tipo} to "%type of event-block%"
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+    
+    # Eventos do Construtor
+    if {_jobs_low} contains "construtor":
+        addProgressoSemanal(player, "construtor", "construir", {_tipo}, 1)
+        
+    # Eventos do Lenhador (Plantar saplings e colocar cercas)
+    if {_jobs_low} contains "lenhador":
+        addProgressoSemanal(player, "lenhador", "construir", {_tipo}, 1)
+        addProgressoSemanal(player, "lenhador", "plantar", {_tipo}, 1)
+
+
+on craft:
+    set {_tipo} to "%type of event-item%"
+    set {_qtd} to item amount of event-item
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+    
+    if {_jobs_low} contains "bruxo":
+        addProgressoSemanal(player, "bruxo", "craftar", {_tipo}, {_qtd})
+        
+    if {_jobs_low} contains "lenhador":
+        addProgressoSemanal(player, "lenhador", "craftar", {_tipo}, {_qtd})
+
+on enchant:
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+    if {_jobs_low} contains "mago":
+        addProgressoSemanal(player, "mago", "encantar", "any", 1)
+
+# ========================================================================
+# 7. MOTOR DE RESET SEMANAL (LAZY RESET)
+# ========================================================================
+on join:
+    wait 5 seconds
+    set {_uuid} to uuid of player
+    set {_semana_atual} to now formatted as "ww/yyyy"
+    
+    if {last_semanal_reset::%{_uuid}%} is not {_semana_atual}:
+        set {last_semanal_reset::%{_uuid}%} to {_semana_atual}
+        
+        play sound "entity.player.levelup" with volume 0.5 and pitch 0.8 to player
+        
+        set {_jobs} to placeholder "%%jobsr_user_jobs%%" from player
+        set {_jobs_low} to {_jobs} in lowercase
+        
+        if {_jobs_low} contains "minerador":
+            sortearSemanal(player, "minerador")
+        if {_jobs_low} contains "lenhador":
+            sortearSemanal(player, "lenhador")
+        if {_jobs_low} contains "escavador":
+            sortearSemanal(player, "escavador")
+        if {_jobs_low} contains "fazendeiro":
+            sortearSemanal(player, "fazendeiro")
+        if {_jobs_low} contains "pescador":
+            sortearSemanal(player, "pescador")
+        if {_jobs_low} contains "construtor":
+            sortearSemanal(player, "construtor")
+        if {_jobs_low} contains "bruxo":
+            sortearSemanal(player, "bruxo")
+        if {_jobs_low} contains "mago":
+            sortearSemanal(player, "mago")
+
+command /forca_semanal <text>:
+    permission: desertsky.admin
+    trigger:
+        sortearSemanal(player, arg-1)
+
+command /reset_semanal_global:
+    permission: desertsky.admin
+    trigger:
+        loop all players:
+            delete {last_semanal_reset::%uuid of loop-player%}
+        send "&a[!] Reset de semana forçado para todos os jogadores." to player
+        send "&7Para verem o efeito, eles precisam relogar no servidor." to player
+        
+command /completar_coleta_semanal <text>:
+    permission: desertsky.admin
+    trigger:
+        set {_job} to arg-1 in lowercase
+        
+        if {missao::semanal::%player%::%{_job}%::status} is "em_andamento":
+            set {_index} to 1
+            while {missao::semanal::%player%::%{_job}%::meta::%{_index}%::id} is set:
+                set {_alvo} to {missao::semanal::%player%::%{_job}%::meta::%{_index}%::alvo}
+                set {missao::semanal::%player%::%{_job}%::meta::%{_index}%::progresso} to {_alvo}
+                add 1 to {_index}
+            
+            verificarConclusaoSemanal(player, {_job})
+            send "&a[Debug] &fA fase de coleta de %{_job}% foi preenchida artificialmente." to player
+        else:
+            send "&c[!] Você não tem uma missão semanal de %{_job}% na fase de coleta." to player
+
+# ========================================================================
+# 8. SINCRONIZADOR DE ENTREGAS (INTEGRAÇÃO COM MOTOR UNIVERSAL)
+# ========================================================================
+every 3 seconds:
+    loop all players:
+        set {_p} to loop-player
+        set {_uuid} to uuid of {_p}
+        set {_todos_jobs::*} to "minerador", "lenhador", "escavador", "fazendeiro", "pescador", "construtor", "bruxo" and "mago"
+        
+        loop {_todos_jobs::*}:
+            set {_job} to loop-value-2
+            if {missao::semanal::%{_p}%::%{_job}%::status} is "aguardando_entrega":
+                set {_contrato_id} to {missao::semanal::%{_p}%::%{_job}%::id}
+                
+                if {missao::status::%{_contrato_id}%::%{_uuid}%} is "concluida":
+                    set {missao::semanal::%{_p}%::%{_job}%::status} to "concluida"
+                    
+                    set {_money} to {missao::semanal::%{_p}%::%{_job}%::recompensa_dinheiro} ? 100
+                    execute console command "eco give %{_p}% %{_money}%"
+                    
+                    execute console command "crate key give %{_p}% jobkey 1"
+                    send "&a&l+ $%{_money}% &7(Pagamento do Sindicato)" to {_p}
+                    send "&b&l+ 1x Job Key &7(Bônus de Contrato Semanal)" to {_p}

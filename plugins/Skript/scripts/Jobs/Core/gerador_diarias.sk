@@ -1,0 +1,430 @@
+# ============================================================================
+# ARQUIVO: gerador_diarias.sk (Versão Aleatória & Escalável)
+# DIRETÓRIO: /scripts/Jobs/Core/
+# DESCRIÇÃO: Motor de geração com Alvos Randômicos e Recompensas Dinâmicas.
+# ============================================================================
+
+# ============================================================================
+# 1. REGISTRO DA POOL DE MISSÕES SECUNDÁRIAS (DATA-DRIVEN)
+# ============================================================================
+on load:
+    # Limpa as pools anteriores para evitar duplicações em reloads
+    delete {pool::minerador::*}
+    delete {pool::lenhador::*}
+    delete {pool::escavador::*}
+    delete {pool::fazendeiro::*}
+    delete {pool::pescador::*}
+    delete {pool::construtor::*}
+    delete {pool::bruxo::*}
+    delete {pool::mago::*}
+    set {salario} to 6000
+
+    # =========================================================
+    # MISSÕES TIER 2
+    # =========================================================
+
+    # ---------------------------------------------------------
+    # POOL: MINERADOR
+    # ---------------------------------------------------------
+    add "minerador_ferro" to {pool::minerador::*}
+    set {diaria_meta::minerador_ferro::nome} to "Febre do Ferro"
+    set {diaria_meta::minerador_ferro::descricao} to "Minere @alvo@ Minérios de Ferro."
+    set {diaria_meta::minerador_ferro::alvo_min} to 15
+    set {diaria_meta::minerador_ferro::alvo_max} to 30
+    clear {diaria_meta::minerador_ferro::alvo_tipos::*}
+    add iron ore to {diaria_meta::minerador_ferro::alvo_tipos::*}
+    add deepslate iron ore to {diaria_meta::minerador_ferro::alvo_tipos::*}
+    set {diaria_meta::minerador_ferro::acao_requirida} to "minerar"
+
+    add "minerador_carvao" to {pool::minerador::*}
+    set {diaria_meta::minerador_carvao::nome} to "Operário do Carvão"
+    set {diaria_meta::minerador_carvao::descricao} to "Minere @alvo@ Minérios de Carvão."
+    set {diaria_meta::minerador_carvao::alvo_min} to 32
+    set {diaria_meta::minerador_carvao::alvo_max} to 64
+    clear {diaria_meta::minerador_carvao::alvo_tipos::*}
+    add coal ore to {diaria_meta::minerador_carvao::alvo_tipos::*}
+    add deepslate coal ore to {diaria_meta::minerador_carvao::alvo_tipos::*}
+    set {diaria_meta::minerador_carvao::acao_requirida} to "minerar"
+
+    add "minerador_diamante" to {pool::minerador::*}
+    set {diaria_meta::minerador_diamante::nome} to "Busca Preciosa"
+    set {diaria_meta::minerador_diamante::descricao} to "Minere @alvo@ Minérios de Diamante."
+    set {diaria_meta::minerador_diamante::alvo_min} to 3
+    set {diaria_meta::minerador_diamante::alvo_max} to 8
+    clear {diaria_meta::minerador_diamante::alvo_tipos::*}
+    add diamond ore to {diaria_meta::minerador_diamante::alvo_tipos::*}
+    add deepslate diamond ore to {diaria_meta::minerador_diamante::alvo_tipos::*}
+    set {diaria_meta::minerador_diamante::acao_requirida} to "minerar"
+
+    # ---------------------------------------------------------
+    # POOL: LENHADOR
+    # ---------------------------------------------------------
+    add "lenhador_carvalho" to {pool::lenhador::*}
+    set {diaria_meta::lenhador_carvalho::nome} to "Madeira Clássica"
+    set {diaria_meta::lenhador_carvalho::descricao} to "Corte @alvo@ Madeiras de Carvalho."
+    set {diaria_meta::lenhador_carvalho::alvo_min} to 64
+    set {diaria_meta::lenhador_carvalho::alvo_max} to 128
+    clear {diaria_meta::lenhador_carvalho::alvo_tipos::*}
+    add oak log to {diaria_meta::lenhador_carvalho::alvo_tipos::*}
+    set {diaria_meta::lenhador_carvalho::acao_requirida} to "minerar"
+
+    add "lenhador_pinheiro" to {pool::lenhador::*}
+    set {diaria_meta::lenhador_pinheiro::nome} to "Madeira Fria"
+    set {diaria_meta::lenhador_pinheiro::descricao} to "Corte @alvo@ Madeiras de Pinheiro."
+    set {diaria_meta::lenhador_pinheiro::alvo_min} to 64
+    set {diaria_meta::lenhador_pinheiro::alvo_max} to 128
+    clear {diaria_meta::lenhador_pinheiro::alvo_tipos::*}
+    add spruce log to {diaria_meta::lenhador_pinheiro::alvo_tipos::*}
+    set {diaria_meta::lenhador_pinheiro::acao_requirida} to "minerar"
+
+    # ---------------------------------------------------------
+    # POOL: ESCAVADOR
+    # ---------------------------------------------------------
+    add "escavador_terra" to {pool::escavador::*}
+    set {diaria_meta::escavador_terra::nome} to "Limpeza de Terreno"
+    set {diaria_meta::escavador_terra::descricao} to "Escave @alvo@ blocos de Terra ou Grama."
+    set {diaria_meta::escavador_terra::alvo_min} to 128
+    set {diaria_meta::escavador_terra::alvo_max} to 256
+    clear {diaria_meta::escavador_terra::alvo_tipos::*}
+    add dirt to {diaria_meta::escavador_terra::alvo_tipos::*}
+    add grass block to {diaria_meta::escavador_terra::alvo_tipos::*}
+    set {diaria_meta::escavador_terra::acao_requirida} to "minerar"
+
+    add "escavador_areia" to {pool::escavador::*}
+    set {diaria_meta::escavador_areia::nome} to "Recursos do Deserto"
+    set {diaria_meta::escavador_areia::descricao} to "Escave @alvo@ blocos de Areia."
+    set {diaria_meta::escavador_areia::alvo_min} to 128
+    set {diaria_meta::escavador_areia::alvo_max} to 256
+    clear {diaria_meta::escavador_areia::alvo_tipos::*}
+    add sand to {diaria_meta::escavador_areia::alvo_tipos::*}
+    set {diaria_meta::escavador_areia::acao_requirida} to "minerar"
+
+    # ---------------------------------------------------------
+    # POOL: FAZENDEIRO
+    # ---------------------------------------------------------
+    add "fazendeiro_trigo" to {pool::fazendeiro::*}
+    set {diaria_meta::fazendeiro_trigo::nome} to "Colheita Dourada"
+    set {diaria_meta::fazendeiro_trigo::descricao} to "Colha @alvo@ Trigos."
+    set {diaria_meta::fazendeiro_trigo::alvo_min} to 64
+    set {diaria_meta::fazendeiro_trigo::alvo_max} to 128
+    clear {diaria_meta::fazendeiro_trigo::alvo_tipos::*}
+    add wheat to {diaria_meta::fazendeiro_trigo::alvo_tipos::*}
+    set {diaria_meta::fazendeiro_trigo::acao_requirida} to "minerar"
+
+    add "fazendeiro_cenoura" to {pool::fazendeiro::*}
+    set {diaria_meta::fazendeiro_cenoura::nome} to "O Ouro Laranja"
+    set {diaria_meta::fazendeiro_cenoura::descricao} to "Colha @alvo@ Cenouras."
+    set {diaria_meta::fazendeiro_cenoura::alvo_min} to 64
+    set {diaria_meta::fazendeiro_cenoura::alvo_max} to 128
+    clear {diaria_meta::fazendeiro_cenoura::alvo_tipos::*}
+    add carrots to {diaria_meta::fazendeiro_cenoura::alvo_tipos::*}
+    set {diaria_meta::fazendeiro_cenoura::acao_requirida} to "minerar"
+
+    # ---------------------------------------------------------
+    # POOL: PESCADOR
+    # ---------------------------------------------------------
+    add "pescador_peixes" to {pool::pescador::*}
+    set {diaria_meta::pescador_peixes::nome} to "Dia Produtivo"
+    set {diaria_meta::pescador_peixes::descricao} to "Pesque @alvo@ peixes."
+    set {diaria_meta::pescador_peixes::alvo_min} to 10
+    set {diaria_meta::pescador_peixes::alvo_max} to 25
+    clear {diaria_meta::pescador_peixes::alvo_tipos::*}
+    add cod to {diaria_meta::pescador_peixes::alvo_tipos::*}
+    add salmon to {diaria_meta::pescador_peixes::alvo_tipos::*}
+    add tropical fish to {diaria_meta::pescador_peixes::alvo_tipos::*}
+    add pufferfish to {diaria_meta::pescador_peixes::alvo_tipos::*}
+    set {diaria_meta::pescador_peixes::acao_requirida} to "pescar"
+
+    # =========================================================
+    # MISSÕES TIER 3
+    # =========================================================
+
+    # ---------------------------------------------------------
+    # POOL: CONSTRUTOR
+    # ---------------------------------------------------------
+    add "construtor_pedra" to {pool::construtor::*}
+    set {diaria_meta::construtor_pedra::nome} to "Fundação Sólida"
+    set {diaria_meta::construtor_pedra::descricao} to "Coloque @alvo@ blocos de Pedra, Pedregulho ou Tijolo."
+    set {diaria_meta::construtor_pedra::alvo_min} to 64
+    set {diaria_meta::construtor_pedra::alvo_max} to 128
+    clear {diaria_meta::construtor_pedra::alvo_tipos::*}
+    add stone bricks to {diaria_meta::construtor_pedra::alvo_tipos::*}
+    add stone to {diaria_meta::construtor_pedra::alvo_tipos::*}
+    add cobblestone to {diaria_meta::construtor_pedra::alvo_tipos::*}
+    set {diaria_meta::construtor_pedra::acao_requirida} to "construir"
+
+    add "construtor_madeira" to {pool::construtor::*}
+    set {diaria_meta::construtor_madeira::nome} to "Paredes Aconchegantes"
+    set {diaria_meta::construtor_madeira::descricao} to "Coloque @alvo@ Tábuas de Carvalho ou Pinheiro."
+    set {diaria_meta::construtor_madeira::alvo_min} to 128
+    set {diaria_meta::construtor_madeira::alvo_max} to 256
+    clear {diaria_meta::construtor_madeira::alvo_tipos::*}
+    add oak planks to {diaria_meta::construtor_madeira::alvo_tipos::*}
+    add spruce planks to {diaria_meta::construtor_madeira::alvo_tipos::*}
+    set {diaria_meta::construtor_madeira::acao_requirida} to "construir"
+
+    # ---------------------------------------------------------
+    # POOL: BRUXO
+    # ---------------------------------------------------------
+    add "bruxo_fermentado" to {pool::bruxo::*}
+    set {diaria_meta::bruxo_fermentado::nome} to "Ingrediente Obscuro"
+    set {diaria_meta::bruxo_fermentado::descricao} to "Crafte @alvo@ Olhos de Aranha Fermentados."
+    set {diaria_meta::bruxo_fermentado::alvo_min} to 5
+    set {diaria_meta::bruxo_fermentado::alvo_max} to 15
+    clear {diaria_meta::bruxo_fermentado::alvo_tipos::*}
+    add fermented spider eye to {diaria_meta::bruxo_fermentado::alvo_tipos::*}
+    set {diaria_meta::bruxo_fermentado::acao_requirida} to "craftar"
+
+    add "bruxo_magma" to {pool::bruxo::*}
+    set {diaria_meta::bruxo_magma::nome} to "Essência Quente"
+    set {diaria_meta::bruxo_magma::descricao} to "Crafte @alvo@ Cremes de Magma."
+    set {diaria_meta::bruxo_magma::alvo_min} to 10
+    set {diaria_meta::bruxo_magma::alvo_max} to 25
+    clear {diaria_meta::bruxo_magma::alvo_tipos::*}
+    add magma cream to {diaria_meta::bruxo_magma::alvo_tipos::*}
+    set {diaria_meta::bruxo_magma::acao_requirida} to "craftar"
+
+    # ---------------------------------------------------------
+    # POOL: MAGO
+    # ---------------------------------------------------------
+    add "mago_encantador" to {pool::mago::*}
+    set {diaria_meta::mago_encantador::nome} to "Conhecimento Arcano"
+    set {diaria_meta::mago_encantador::descricao} to "Encante @alvo@ itens na Mesa de Encantamentos."
+    set {diaria_meta::mago_encantador::alvo_min} to 3
+    set {diaria_meta::mago_encantador::alvo_max} to 8
+    clear {diaria_meta::mago_encantador::alvo_tipos::*}
+    set {diaria_meta::mago_encantador::acao_requirida} to "encantar"
+
+    send "&e[DesertSky-Jobs] &aPool de Diárias recarregada com recompensas por nível!" to console
+
+
+# ============================================================================
+# 2. FUNÇÃO DE SORTEIO E ATRIBUIÇÃO
+# ============================================================================
+function sortearDiaria(p: player, job: text):
+    set {_uuid} to uuid of {_p}
+    set {_hoje} to {last_reset::%{_uuid}%}
+    
+    # Só sorteia se a data salva na diária for diferente de hoje
+    if {diaria::%{_job}%::%{_uuid}%::data} is not {_hoje}:
+
+        # Sorteia uma ID do pool
+        set {_tarefa} to a random element out of {pool::%{_job}%::*}
+
+        # Gera o alvo numérico randômico entre o Mínimo e Máximo
+        set {_min} to {diaria_meta::%{_tarefa}%::alvo_min}
+        set {_max} to {diaria_meta::%{_tarefa}%::alvo_max}
+        set {_alvo_sorteado} to a random integer between {_min} and {_max}
+
+        # --- NOVA FÓRMULA DE PAGAMENTO (BASEADA NO NÍVEL DA PROFISSÃO E TIER) ---
+        set {_lvl} to getNivelJob({_p}, {_job})
+    
+        if {_lvl} < 100:
+            set {_percent_semanal2} to 0.25*0.30 # 7,5%
+            set {_ajuste2} to 0.3375
+            set {_percent_semanal3} to 0.35*0.30 # 10,5%
+            set {_ajuste3} to 0.4725
+        else:
+            set {_percent_semanal2} to 0.35*0.50 # 17,5%
+            set {_ajuste2} to 0.7875
+            set {_percent_semanal3} to 0.45*0.50 # 22,5%
+            set {_ajuste3} to 1.0125
+        
+        if {_job} is "bruxo" or "mago":
+            set {_money} to (({salario}*{_percent_semanal3})/20) + ({_ajuste3}*{_lvl})
+        else:
+            set {_money} to (({salario}*{_percent_semanal2})/20) + ({_ajuste2}*{_lvl})
+        # -----------------------------------------------------------------
+
+        # Gera a descrição dinâmica (Substitui o @alvo@ na frase)
+        set {_desc_dinamica} to {diaria_meta::%{_tarefa}%::descricao}
+        replace all "@alvo@" with "%{_alvo_sorteado}%" in {_desc_dinamica}
+
+        # Salva TUDO no banco de dados PESSOAL do jogador
+        set {diaria::%{_job}%::%{_uuid}%::tarefa} to {_tarefa}
+        set {diaria::%{_job}%::%{_uuid}%::progresso} to 0
+        set {diaria::%{_job}%::%{_uuid}%::status} to "pendente"
+        set {diaria::%{_job}%::%{_uuid}%::data} to {_hoje}
+        set {diaria::%{_job}%::%{_uuid}%::alvo} to {_alvo_sorteado}
+        set {diaria::%{_job}%::%{_uuid}%::recompensa} to {_money}
+        set {diaria::%{_job}%::%{_uuid}%::descricao} to {_desc_dinamica}
+
+        set {_nome_tarefa} to {diaria_meta::%{_tarefa}%::nome}
+
+        send "" to {_p}
+        send "&b&l[NOVA DIÁRIA] &7Novo contrato de &f%{_job}%&7!" to {_p}
+        send "&7Objetivo: &f%{_nome_tarefa}% &8(&e0/%{_alvo_sorteado}%&8)" to {_p}
+        send "&7Detalhes: &f%{_desc_dinamica}%" to {_p}
+        send "&7Recompensa: &a$%{_money}%" to {_p}
+        send "" to {_p}
+        play sound "entity.experience_orb.pickup" to {_p}
+
+
+# ============================================================================
+# 3. GATILHO DE LOGIN (LAZY RESET PARA DIÁRIAS)
+# ============================================================================
+on join:
+    wait 3 seconds
+    set {_uuid} to uuid of player
+    
+    # Puxa os jobs atuais do jogador usando o Placeholder do Jobs Reborn
+    set {_jobs} to placeholder "%%jobsr_user_jobs%%" from player
+    set {_jobs_low} to {_jobs} in lowercase
+    
+    # Dispara o sorteio independente para cada profissão que ele possua
+    if {_jobs_low} contains "minerador":
+        sortearDiaria(player, "minerador")
+    if {_jobs_low} contains "lenhador":
+        sortearDiaria(player, "lenhador")
+    if {_jobs_low} contains "escavador":
+        sortearDiaria(player, "escavador")
+    if {_jobs_low} contains "fazendeiro":
+        sortearDiaria(player, "fazendeiro")
+    if {_jobs_low} contains "pescador":
+        sortearDiaria(player, "pescador")
+    if {_jobs_low} contains "construtor":
+        sortearDiaria(player, "construtor")
+    if {_jobs_low} contains "bruxo":
+        sortearDiaria(player, "bruxo")
+    if {_jobs_low} contains "mago":
+        sortearDiaria(player, "mago")
+
+# ============================================================================
+# 4. OUVINTES UNIVERSAIS (ALTA PERFORMANCE - O(1))
+# ============================================================================
+
+# 4.1 OUVINTE DE QUEBRA DE BLOCOS (Minerador, Lenhador, Escavador, Fazendeiro)
+on mine:
+    # [ANTI-TRAPAÇA] Bloqueia o progresso se o bloco foi colocado por um jogador.
+    if metadata "desertsky_placed" of event-block is true:
+        stop
+
+    set {_uuid} to uuid of player
+
+    if {diaria::minerador::%{_uuid}%::status} is "pendente":
+        set {_id_minerador} to {diaria::minerador::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_minerador}%::acao_requirida} is "minerar":
+            if {diaria_meta::%{_id_minerador}%::alvo_tipos::*} contains event-block's type:
+                addProgressoDiaria(player, "minerador", {_id_minerador}, 1)
+
+    if {diaria::lenhador::%{_uuid}%::status} is "pendente":
+        set {_id_lenhador} to {diaria::lenhador::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_lenhador}%::acao_requirida} is "minerar":
+            if {diaria_meta::%{_id_lenhador}%::alvo_tipos::*} contains event-block's type:
+                addProgressoDiaria(player, "lenhador", {_id_lenhador}, 1)
+
+    if {diaria::escavador::%{_uuid}%::status} is "pendente":
+        set {_id_escavador} to {diaria::escavador::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_escavador}%::acao_requirida} is "minerar":
+            if {diaria_meta::%{_id_escavador}%::alvo_tipos::*} contains event-block's type:
+                addProgressoDiaria(player, "escavador", {_id_escavador}, 1)
+
+    if {diaria::fazendeiro::%{_uuid}%::status} is "pendente":
+        set {_id_fazendeiro} to {diaria::fazendeiro::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_fazendeiro}%::acao_requirida} is "minerar":
+            if {diaria_meta::%{_id_fazendeiro}%::alvo_tipos::*} contains event-block's type:
+                addProgressoDiaria(player, "fazendeiro", {_id_fazendeiro}, 1)
+
+# 4.3 OUVINTE DE PESCA (Pescador)
+on pick up:
+    # A sua alternativa segura (igual a que você usou na missão 17 do explorador)
+    if player's tool is fishing rod:
+        set {_uuid} to uuid of player
+        
+        # Verifica Pescador
+        if {diaria::pescador::%{_uuid}%::status} is "pendente":
+            set {_id_pescador} to {diaria::pescador::%{_uuid}%::tarefa}
+            if {diaria_meta::%{_id_pescador}%::acao_requirida} is "pescar":
+                if {diaria_meta::%{_id_pescador}%::alvo_tipos::*} contains event-item's type:
+                    # Adiciona sempre +1 por pickup, evitando bugs se o jogador tentar agrupar itens no chão
+                    addProgressoDiaria(player, "pescador", {_id_pescador}, 1)
+
+# 4.4 OUVINTE DE COLOCAÇÃO DE BLOCOS (Construtor + Anti-Trapaça)
+on place:
+    set {_uuid} to uuid of player
+    
+    # Verifica Construtor
+    if {diaria::construtor::%{_uuid}%::status} is "pendente":
+        set {_id_construtor} to {diaria::construtor::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_construtor}%::acao_requirida} is "construir":
+            if {diaria_meta::%{_id_construtor}%::alvo_tipos::*} contains event-block's type:
+                addProgressoDiaria(player, "construtor", {_id_construtor}, 1)
+                
+    # Anti-Trapaça global
+    set metadata "desertsky_placed" of event-block to true
+
+# 4.5 OUVINTE DE CRIAÇÃO/CRAFTING (Bruxo)
+on craft:
+    set {_uuid} to uuid of player
+    
+    # Verifica Bruxo
+    if {diaria::bruxo::%{_uuid}%::status} is "pendente":
+        set {_id_bruxo} to {diaria::bruxo::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_bruxo}%::acao_requirida} is "craftar":
+            if {diaria_meta::%{_id_bruxo}%::alvo_tipos::*} contains event-item's type:
+                addProgressoDiaria(player, "bruxo", {_id_bruxo}, item amount of event-item)
+
+# 4.6 OUVINTE DE ENCANTAMENTO (Mago)
+on enchant:
+    set {_uuid} to uuid of player
+    
+    # Verifica Mago
+    if {diaria::mago::%{_uuid}%::status} is "pendente":
+        set {_id_mago} to {diaria::mago::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_mago}%::acao_requirida} is "encantar":
+            addProgressoDiaria(player, "mago", {_id_mago}, 1)
+
+# ============================================================================
+# 6. MOTOR DE PROGRESSO E CONCLUSÃO CENTRALIZADO
+# ============================================================================
+function addProgressoDiaria(p: player, job: text, tarefa_id: text, qtd: number):
+    set {_uuid} to uuid of {_p}
+    
+    # Verificação de segurança tripla
+    if {diaria::%{_job}%::%{_uuid}%::tarefa} is {_tarefa_id}:
+        if {diaria::%{_job}%::%{_uuid}%::status} is "pendente":
+
+            add {_qtd} to {diaria::%{_job}%::%{_uuid}%::progresso}
+
+            set {_atual} to {diaria::%{_job}%::%{_uuid}%::progresso}
+
+            # ATENÇÃO: Agora puxamos a Meta do perfil PESSOAL do jogador, e não da pool!
+            set {_meta} to {diaria::%{_job}%::%{_uuid}%::alvo} 
+            set {_nome} to {diaria_meta::%{_tarefa_id}%::nome}
+
+            mostrarProgresso({_p}, "&b&l[DIÁRIA] &f%{_nome}%", {_atual}, {_meta})
+
+            if {_atual} >= {_meta}:
+                set {diaria::%{_job}%::%{_uuid}%::status} to "concluida"
+
+                # ATENÇÃO: A recompensa escalável também vem do perfil PESSOAL do jogador!
+                set {_recompensa} to {diaria::%{_job}%::%{_uuid}%::recompensa}
+
+                execute console command "eco give %{_p}% %{_recompensa}%"
+
+                play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 1.5 to {_p}
+                send "" to {_p}
+                send "&b&l[DIÁRIA CONCLUÍDA] &7A tarefa &f%{_nome}% &7foi finalizada!" to {_p}
+                send "&a&l+ $%{_recompensa}%" to {_p}
+                send "" to {_p}
+
+# ============================================================================
+# 7. COMANDO DE DEBUG E ADMINISTRAÇÃO
+# ============================================================================
+command /forca_diaria <text>:
+    permission: desertsky.admin
+    trigger:
+        set {_job} to arg-1 in lowercase
+        
+        # Verificação para garantir que até os admins só forcem diárias de jobs que possuem
+        set {_jobs_ativos} to placeholder "%%jobsr_user_jobs%%" from player
+        set {_jobs_low} to {_jobs_ativos} in lowercase
+        
+        if {_jobs_low} does not contain {_job}:
+            send "&c[!] Erro: Você não possui a profissão '%{_job}%'." to player
+            stop
+            
+        # Força o reset para permitir novo sorteio
+        set {diaria::%{_job}%::%uuid of player%::data} to "force_reset"
+        sortearDiaria(player, {_job})
+        send "&a[!] Sorteio diário forçado para a profissão: %{_job}%." to player

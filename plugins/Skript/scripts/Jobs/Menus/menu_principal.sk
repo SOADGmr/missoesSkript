@@ -1,0 +1,134 @@
+# =============================================================================
+# DESERTSKY - MENU PRINCIPAL (DIÁRIO DE SOBREVIVÊNCIA)
+# Caminho: /plugins/Skript/scripts/Jobs/Menus/Menu_Principal.sk
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. COMANDO DE ABERTURA DO MENU
+# -----------------------------------------------------------------------------
+command /diario:
+    aliases: /jobs, /missoes
+    trigger:
+        set {_gui} to a new chest inventory with 4 rows named "&8      ᴄᴀʀᴛᴇɪʀᴀ ᴅᴇ ᴛʀᴀʙᴀʟʜᴏ"
+        
+        loop 36 times:
+            set slot (loop-number - 1) of {_gui} to black stained glass pane named " "
+            
+        # =====================================================================
+        # NOVA LÓGICA DE PERFIL (API DE MULTI-JOBS)
+        # =====================================================================
+        set {_ativos::*} to getJobsAtivos(player)
+        set {_t1_raw} to "explorador"
+        set {_t2_raw} to ""
+        set {_t3_raw} to ""
+
+        # Descobre quais são as profissões do jogador em cada tier
+        loop {_ativos::*}:
+            if loop-value is "minerador", "lenhador", "escavador", "fazendeiro", "pescador" or "construtor":
+                set {_t2_raw} to loop-value
+            else if loop-value is "bruxo" or "mago":
+                set {_t3_raw} to loop-value
+
+        # --- Processa e Formata Tier 1 ---
+        set {_t1_nome} to formatarNomeJob({_t1_raw})
+        set {_t1_lvl} to getNivelJob(player, {_t1_raw})
+        
+        # --- Processa e Formata Tier 2 ---
+        if {_t2_raw} is not "":
+            set {_t2_nome} to formatarNomeJob({_t2_raw})
+            set {_t2_lvl} to getNivelJob(player, {_t2_raw})
+        else:
+            set {_t2_nome} to "&8&lɴᴀᴏ ᴇsᴄᴏʟʜɪᴅᴏ"
+            set {_t2_lvl} to 0
+            
+        # --- Processa e Formata Tier 3 ---
+        if {_t3_raw} is not "":
+            set {_t3_nome} to formatarNomeJob({_t3_raw})
+            set {_t3_lvl} to getNivelJob(player, {_t3_raw})
+        else:
+            set {_t3_nome} to "&8&lɴᴀᴏ ᴇsᴄᴏʟʜɪᴅᴏ"
+            set {_t3_lvl} to 0
+
+        # --- Constrói a Lore do Perfil Dinamicamente ---
+        set {_lore_perfil::*} to ""
+        add "&7ᴊᴏʙ 1: %{_t1_nome}% &8(ɴᴠ. %{_t1_lvl}%)" to {_lore_perfil::*}
+        
+        if {_t2_lvl} > 0:
+            add "&7ᴊᴏʙ 2: %{_t2_nome}% &8(ɴᴠ. %{_t2_lvl}%)" to {_lore_perfil::*}
+        else:
+            add "&7ᴊᴏʙ 2: %{_t2_nome}%" to {_lore_perfil::*}
+            
+        if {_t3_lvl} > 0:
+            add "&7ᴊᴏʙ 3: %{_t3_nome}% &8(ɴᴠ. %{_t3_lvl}%)" to {_lore_perfil::*}
+        else:
+            add "&7ᴊᴏʙ 3: %{_t3_nome}%" to {_lore_perfil::*}
+            
+        add "" to {_lore_perfil::*}
+        add "&8(A sua jornada até aqui)" to {_lore_perfil::*}
+        # =====================================================================
+        
+        # Inserção dos botões no Menu usando a nova variável de lore dinâmica
+        set slot 11 of {_gui} to compass named "&6&lᴇsᴛᴀçᴀᴏ ᴅᴇ ᴠɪᴀɢᴇᴍ" with lore "&7ᴄʟɪǫᴜᴇ ᴀǫᴜɪ ᴘᴀʀᴀ ᴠɪsɪᴛᴀʀ" and "&7ᴀs ᴠɪʟᴀs ᴅᴇ ᴄᴀᴅᴀ ᴘʀᴏғɪssᴀᴏ."
+        set slot 13 of {_gui} to player's skull named "&6&lᴘᴇʀғɪʟ: &e%player%" with lore {_lore_perfil::*}
+        set slot 15 of {_gui} to nether star named "&6&lɢᴜɪᴀ ᴅᴇ ᴛʀᴀʙᴀʟʜᴏs" with lore "&7ᴠɪsᴜᴀʟɪᴢᴇ ᴀ ʜɪᴇʀᴀʀǫᴜɪᴀ ᴅᴇ ᴄᴀʀʀᴇɪʀᴀs", "&7ᴇ ᴇsᴄᴏʟʜᴀ ᴏ sᴇᴜ ᴅᴇsᴛɪɴᴏ.", "" and "&eᴄʟɪǫᴜᴇ ᴘᴀʀᴀ ᴀʙʀɪʀ!"
+        set slot 21 of {_gui} to book named "&6&lᴀᴄᴏᴍᴘᴀɴʜᴀᴍᴇɴᴛᴏ ᴅᴇ ᴍɪssᴏᴇs" with lore "&7ᴄʟɪǫᴜᴇ ᴘᴀʀᴀ ᴠᴇʀ ᴏ sᴇᴜ" and "&7ᴘʀᴏɢʀᴇssᴏ ɴᴀs ᴍɪssᴏᴇs."
+        set slot 23 of {_gui} to knowledge book named "&6&lᴄᴏɴᴛʀᴀᴛᴏs ᴅᴇ ᴛʀᴀʙᴀʟʜᴏ" with lore "&7ᴛᴀʀᴇғᴀs sᴇᴄᴜɴᴅᴀʀɪᴀs ʟᴜᴄʀᴀᴛɪᴠᴀs", "&7ᴘᴀʀᴀ ᴀs sᴜᴀs ᴘʀᴏғɪssᴏᴇs ᴀᴛɪᴠᴀs.", "" and "&eᴄʟɪǫᴜᴇ ᴘᴀʀᴀ ᴠɪsᴜᴀʟɪᴢᴀʀ!"
+
+        open {_gui} to player
+
+# -----------------------------------------------------------------------------
+# 2. EVENTOS DE CLIQUE DO MENU PRINCIPAL
+# -----------------------------------------------------------------------------
+on inventory click:
+    if name of event-inventory is "&8      ᴄᴀʀᴛᴇɪʀᴀ ᴅᴇ ᴛʀᴀʙᴀʟʜᴏ":
+        cancel event 
+        
+        if event-slot is not air:
+            if index of event-slot is 21:
+                execute player command "/diario_progresso"
+                
+            else if index of event-slot is 15:
+                close player's inventory
+                execute console command "cp jobs %player%"
+                
+            else if index of event-slot is 23:
+                execute player command "/diario_diarias"
+                
+            if index of event-slot is 11:
+                execute player command "/diario_viagens"
+
+# -----------------------------------------------------------------------------
+# 3. BRIDGE COMMAND (VIA CONSOLA / COMMANDPANEL)
+# Comando blindado: Só a Consola pode executar isto (Injeção Segura)
+# -----------------------------------------------------------------------------
+command /desertsky_admin_setjob <text> <text>:
+    executable by: console
+    trigger:
+        # Puxa os textos e converte de forma segura
+        set {_p} to arg-1 parsed as player
+        set {_escolha} to arg-2
+        
+        # Verifica se o jogador realmente existe/está online
+        if {_p} is not set:
+            send "&c[DesertSky] Falha: Jogador %arg-1% não encontrado." to console
+            stop
+            
+        set {_uuid} to uuid of {_p}
+        set {_nivel_atual} to {nivel::%{_uuid}%} ? 1
+
+        # Tranca a Fase de Sobrevivência e sobe para o Tier 2
+        set {missao::20::%{_uuid}%::status} to "concluida"
+        set {nivel::%{_uuid}%} to 21 
+        
+        # Adiciona a Profissão usando a consola
+        execute console command "jobs employ %{_p}% %{_escolha}%"
+        
+        # Celebração Épica
+        send title "&6&lNOVO DESTINO" with subtitle "&eTornaste-te num %{_escolha}%!" to {_p} for 5 seconds
+        play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 1.0 to {_p}
+        send "" to {_p}
+        send "&e&l[!] &7O Diário de Sobrevivência Inicial foi concluído." to {_p}
+        send "&e&l[!] &7O teu nome será lembrado como um verdadeiro &f%{_escolha}%&7!" to {_p}
+        send "" to {_p}
+        
+        close {_p}'s inventory

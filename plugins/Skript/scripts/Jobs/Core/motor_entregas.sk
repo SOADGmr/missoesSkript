@@ -1,0 +1,117 @@
+# =============================================================================
+# DESERTSKY - MOTOR DE ENTREGAS UNIVERSAL (V1.0)
+# Caminho: /plugins/Skript/scripts/Jobs/core/motor_entregas.sk
+# =============================================================================
+
+# =============================================================================
+# FUNÇÕES DE API (PARA USAR NOS SEUS OUTROS ARQUIVOS)
+# =============================================================================
+
+function registrarNPC(id: integer, nome: text):
+    set {npc_nome::%{_id}%} to {_nome}
+
+function vincularEntrega(missao_id: text, npc_id: integer, recompensa: number, msg_sucesso: text):
+    set {entrega_registry::%{_missao_id}%::npc} to {_npc_id}
+    set {entrega_registry::%{_missao_id}%::recompensa} to {_recompensa}
+    set {entrega_registry::%{_missao_id}%::mensagem} to {_msg_sucesso}
+    if {entrega_registry::lista_missoes::*} does not contain {_missao_id}:
+        add {_missao_id} to {entrega_registry::lista_missoes::*}
+
+function addRequisitoEntrega(missao_id: text, itens: text, qtd: integer, nome_amigavel: text):
+    # Salva o requisito usando um separador seguro (|)
+    add "%{_itens}%|%{_qtd}%|%{_nome_amigavel}%" to {entrega_registry::%{_missao_id}%::requisitos::*}
+
+# =============================================================================
+# O COMANDO DE INTERAÇÃO (GATILHO DO NPC)
+# =============================================================================
+command /npc_entrega <integer>:
+    executable by: players
+    trigger:
+        set {_npc_id} to arg-1
+        set {_npc_name} to {npc_nome::%{_npc_id}%} ? "Habitante"
+        set {_uuid} to uuid of player
+        
+        set {_missao_alvo} to ""
+        
+        # 1. Encontra qual missão o jogador tem ativa que pertence a este NPC
+        loop {entrega_registry::lista_missoes::*}:
+            set {_m_id} to loop-value
+            if {entrega_registry::%{_m_id}%::npc} is {_npc_id}:
+                if {missao::status::%{_m_id}%::%{_uuid}%} is "aguardando_entrega":
+                    set {_missao_alvo} to {_m_id}
+                    stop loop
+                    
+        # Se não achou nenhuma missão para ele aqui
+        if {_missao_alvo} is "":
+            send "&7[%{_npc_name}%] Não tenho nenhuma ordem de entrega em seu nome no momento." to player
+            stop
+
+        # 2. VALIDAÇÃO DO INVENTÁRIO (SISTEMA INTELIGENTE DE ALIASES)
+        set {_falta_algo} to false
+        loop {entrega_registry::%{_missao_alvo}%::requisitos::*}:
+            set {_req_parts::*} to loop-value split at "|"
+            set {_itens_raw} to {_req_parts::1}
+            set {_qtd_req} to {_req_parts::2} parsed as integer
+            set {_nome_amigavel} to {_req_parts::3}
+            
+            # Conta quanto o jogador tem somando todas as variantes (Ex: Soma Stone + Cobblestone)
+            set {_tipos::*} to {_itens_raw} split at ","
+            set {_total_has} to 0
+            loop {_tipos::*}:
+                set {_t} to loop-value-2 parsed as item type
+                set {_c} to amount of {_t} in player's inventory
+                add {_c} to {_total_has}
+                
+            # Se a soma total for menor que a meta, acusa o erro e marca que falta item
+            if {_total_has} < {_qtd_req}:
+                set {_falta_algo} to true
+                send "&c[%{_npc_name}%] Faltam materiais! Preciso de %{_qtd_req}%x %{_nome_amigavel}%." to player
+
+        # Se faltar qualquer coisa listada, encerra o código aqui para não roubar os itens.
+        if {_falta_algo} is true:
+            stop
+
+        # 3. REMOÇÃO SEGURO DOS ITENS (SÓ RODA SE TIVER TUDO)
+        loop {entrega_registry::%{_missao_alvo}%::requisitos::*}:
+            set {_req_parts::*} to loop-value split at "|"
+            set {_itens_raw} to {_req_parts::1}
+            set {_restante} to {_req_parts::2} parsed as integer
+            
+            set {_tipos::*} to {_itens_raw} split at ","
+            loop {_tipos::*}:
+                if {_restante} > 0:
+                    set {_t} to loop-value-2 parsed as item type
+                    set {_c} to amount of {_t} in player's inventory
+                    if {_c} > 0:
+                        if {_c} >= {_restante}:
+                            remove {_restante} of {_t} from player's inventory
+                            set {_restante} to 0
+                        else:
+                            remove {_c} of {_t} from player's inventory
+                            set {_restante} to {_restante} - {_c}
+
+        # 4. CONCLUSÃO E PAGAMENTO DA MISSÃO
+        set {missao::status::%{_missao_alvo}%::%{_uuid}%} to "concluida"
+        set {_recompensa} to {entrega_registry::%{_missao_alvo}%::recompensa}
+        set {_msg} to {entrega_registry::%{_missao_alvo}%::mensagem}
+        
+        send "" to player
+        send "&a&lENTREGA CONCLUÍDA!" to player
+        send "&7%{_msg}%" to player
+        
+        if {_recompensa} > 0:
+            add {_recompensa} to player's balance
+            send "&a+ $%{_recompensa}%" to player
+            
+        play sound "entity.player.levelup" with volume 1 and pitch 1 to player
+        send "" to player
+
+# =========================================================
+# COMANDOS DE DEBUG PARA TESTES
+# =========================================================
+command /debug_entrega:
+    permission: desertsky.admin
+    trigger:
+        set {missao::status::semanal_minerador_expansao::%uuid of player%} to "aguardando_entrega"
+        send "&a[Debug] &fStatus da missão forçado para 'aguardando_entrega'!" to player
+        send "&7Vá até o NPC 11 com 10 Pedras/Pedregulhos e 20 Ferros Brutos." to player

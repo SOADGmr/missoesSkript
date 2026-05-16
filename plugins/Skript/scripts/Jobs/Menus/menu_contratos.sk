@@ -1,0 +1,91 @@
+# =============================================================================
+# DESERTSKY - CENTRAL DE CONTRATOS (DIÁRIAS E SEMANAIS)a
+# Caminho: /plugins/Skript/scripts/Jobs/Menus/menu_contratos.sk
+# =============================================================================
+
+command /diario_diarias:
+    aliases: /contratos
+    executable by: player
+    trigger:
+        set {_gui} to a new chest inventory with 5 rows named "&8&lCentral de Contratos"
+        
+        loop 45 times:
+            set slot (loop-number - 1) of {_gui} to black stained glass pane named " "
+        
+        # --- DIVISÓRIAS VISUAIS INFO ---
+        set slot 4 of {_gui} to clock named "&e&lTempo de Reset" with lore "&7Diárias: &fTodos os dias às 00:00" and "&7Semanais: &fDomingos às 00:00"
+        
+        set slot 9 of {_gui} to light blue stained glass pane named "&b&lDiárias &8➡"
+        set slot 27 of {_gui} to orange stained glass pane named "&6&lSemanais &8➡"
+        
+        set {_uuid} to uuid of player
+        set {_jobs_raw} to placeholder "%%jobsr_user_jobs%%" from player
+        set {_jobs_low} to {_jobs_raw} in lowercase
+        
+        set {_todos_jobs::*} to "minerador", "lenhador", "escavador", "pescador", "fazendeiro", "construtor", "bruxo" and "mago"
+        set {_tem_job} to false
+        
+        set {_slot_diaria} to 10
+        set {_slot_semanal} to 28
+        
+        loop {_todos_jobs::*}:
+            set {_job} to loop-value
+            set {_lvl_interno} to {nivel::%{_job}%::%{_uuid}%} ? 0
+            
+            set {_job_ativo} to false
+            if {_jobs_low} contains {_job}:
+                set {_job_ativo} to true
+            if {_lvl_interno} > 0:
+                set {_job_ativo} to true
+                
+            if {_job_ativo} is true:
+                set {_tem_job} to true
+                
+                # -------------------------------------------------------------
+                # 1. RENDERIZAÇÃO DAS DIÁRIAS (Linha Azul)
+                # -------------------------------------------------------------
+                set {_tarefa} to {diaria::%{_job}%::%{_uuid}%::tarefa}
+                if {_tarefa} is set:
+                    set {_nome} to {diaria_meta::%{_tarefa}%::nome}
+                    set {_desc} to {diaria::%{_job}%::%{_uuid}%::descricao}
+                    set {_alvo} to {diaria::%{_job}%::%{_uuid}%::alvo}
+                    set {_recomp} to {diaria::%{_job}%::%{_uuid}%::recompensa}
+                    set {_prog} to {diaria::%{_job}%::%{_uuid}%::progresso} ? 0
+                    set {_status} to {diaria::%{_job}%::%{_uuid}%::status}
+                    
+                    if {_status} is "concluida":
+                        set slot {_slot_diaria} of {_gui} to chest minecart named "&b&lDiária: %{_job}%" with lore "&7Tarefa: &f%{_nome}%", "&7Detalhes: &f%{_desc}%", "", "&7Status: &a&lCONCLUÍDO", "" and "&7Recompensa: &a$%{_recomp}% &8(Recebida)"
+                    else:
+                        set slot {_slot_diaria} of {_gui} to paper named "&b&lDiária: %{_job}%" with lore "&7Tarefa: &f%{_nome}%", "&7Detalhes: &f%{_desc}%", "", "&7Progresso: &e%{_prog}%&6/&e%{_alvo}%", "" and "&7Recompensa: &a$%{_recomp}%"
+                else:
+                    set slot {_slot_diaria} of {_gui} to map named "&7Diária: %{_job}%" with lore "&cSem contrato ativo." and "&7Aguarde o próximo amanhecer."
+                
+                # -------------------------------------------------------------
+                # 2. RENDERIZAÇÃO DAS SEMANAIS (Linha Laranja)
+                # -------------------------------------------------------------
+                set {_status_sem} to {missao::semanal::%player%::%{_job}%::status}
+                if {_status_sem} is set:
+                    if {_status_sem} is "concluida":
+                        # CORREÇÃO DO AVISO "and" AQUI:
+                        set slot {_slot_semanal} of {_gui} to chest minecart named "&6&lSemanal: %{_job}%" with lore "&7Status: &a&lCONCLUÍDO", "", "&7Volte na próxima semana" and "&7para um novo desafio!"
+                    else:
+                        set {_lore_sem::*} to formatarLoreSemanal(player, {_job})
+                        set slot {_slot_semanal} of {_gui} to writable book named "&6&lSemanal: %{_job}%" with lore {_lore_sem::*}
+                else:
+                    set slot {_slot_semanal} of {_gui} to map named "&7Semanal: %{_job}%" with lore "&cSem contrato ativo." and "&7Aguarde o sorteio."
+                
+                add 1 to {_slot_diaria}
+                add 1 to {_slot_semanal}
+        
+        if {_tem_job} is false:
+            set slot 22 of {_gui} to barrier named "&c&lAcesso Restrito" with lore "&7Precisas de uma especialização", "&7(Tier 2 ou 3) para receberes" and "&7contratos."
+        
+        set slot 40 of {_gui} to arrow named "&cVoltar" with lore "&7Clica para voltar ao Diário."
+        
+        open {_gui} to player
+
+on inventory click:
+    if name of event-inventory is "&8&lCentral de Contratos":
+        cancel event
+        if index of event-slot is 40:
+            execute player command "/diario"

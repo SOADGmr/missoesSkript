@@ -1,0 +1,137 @@
+# =============================================================================
+# DESERTSKY - MENU DE VIAGEM RÁPIDA (FAST TRAVEL)
+# Caminho: /plugins/Skript/scripts/Jobs/Menus/menu_viagens.sk
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# FUNÇÕES DE UI E LÓGICA DE VIAGEM
+# -----------------------------------------------------------------------------
+
+function formatarBotaoViagem(p: player, job: text, nome_vila: text, icone: item type, custo: number) :: item:
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from {_p} in lowercase
+    set {_btn} to {_icone} named "&6&l%{_nome_vila}%"
+    
+    add "&7Um local de encontro e comércio exclusivo" to lore of {_btn}
+    add "&7para a profissão de &f%{_job}%&7." to lore of {_btn}
+    add "" to lore of {_btn}
+    
+    if {_jobs_low} contains {_job}:
+        add "&a&lACESSO LIVRE" to lore of {_btn}
+        add "&7Você é um membro ativo da profissão." to lore of {_btn}
+        add "&7A sua viagem será &a100%% Gratuita&7." to lore of {_btn}
+    else:
+        add "&c&lTAXA DE CARAVANA: $%{_custo}%" to lore of {_btn}
+        add "&7Forasteiros devem pagar para visitar" to lore of {_btn}
+        add "&7as vilas especializadas." to lore of {_btn}
+        
+    add "" to lore of {_btn}
+    add "&eClique para viajar!" to lore of {_btn}
+    
+    return {_btn}
+
+function viajarParaVila(p: player, job: text, nome_vila: text, custo: number, destino: location):
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from {_p} in lowercase
+    set {_is_member} to false
+    if {_jobs_low} contains {_job}:
+        set {_is_member} to true
+        
+    if {_is_member} is true:
+        teleport {_p} to {_destino}
+        play sound "entity.enderman.teleport" with volume 1.0 and pitch 1.0 to {_p}
+        send "&a&lVIAGEM &7Chegaste à &f%{_nome_vila}%&7!" to {_p}
+        close {_p}'s inventory
+    else:
+        if {_p}'s balance >= {_custo}:
+            remove {_custo} from {_p}'s balance
+            teleport {_p} to {_destino}
+            play sound "entity.enderman.teleport" with volume 1.0 and pitch 1.0 to {_p}
+            send "&a&lVIAGEM &7Pagaste &c$%{_custo}% &7e chegaste à &f%{_nome_vila}%&7." to {_p}
+            close {_p}'s inventory
+        else:
+            play sound "entity.villager.no" with volume 1.0 and pitch 1.0 to {_p}
+            send "&c&lERRO &7O ouro não chega! Precisas de &c$%{_custo}% &7para pagar a caravana." to {_p}
+            close {_p}'s inventory
+
+# -----------------------------------------------------------------------------
+# COMANDO DO MENU
+# -----------------------------------------------------------------------------
+command /diario_viagens:
+    aliases: /viagens
+    executable by: players
+    trigger:
+        set {_gui} to a new chest inventory with 5 rows named "&8&lEstação de Viagem"
+        
+        loop 45 times:
+            set slot (loop-number - 1) of {_gui} to black stained glass pane named " "
+            
+        # Botões de Viagem (Custo Padrão de $500 para não-membros)
+        set slot 10 of {_gui} to formatarBotaoViagem(player, "minerador", "Vila dos Mineradores", iron pickaxe, 500)
+        set slot 12 of {_gui} to formatarBotaoViagem(player, "lenhador", "Acampamento Lenhador", iron axe, 500)
+        set slot 14 of {_gui} to formatarBotaoViagem(player, "escavador", "Posto de Escavação", iron shovel, 500)
+        set slot 16 of {_gui} to formatarBotaoViagem(player, "fazendeiro", "Fazenda Central", iron hoe, 500)
+        
+        set slot 28 of {_gui} to formatarBotaoViagem(player, "pescador", "Cais dos Pescadores", fishing rod, 500)
+        set slot 30 of {_gui} to formatarBotaoViagem(player, "construtor", "Oficina do Construtor", bricks, 500)
+        set slot 32 of {_gui} to formatarBotaoViagem(player, "bruxo", "Pântano do Bruxo", brewing stand, 500)
+        set slot 34 of {_gui} to formatarBotaoViagem(player, "mago", "Torre do Mago", enchanting table, 500)
+        
+        set slot 40 of {_gui} to arrow named "&cVoltar" with lore "&7Clique para voltar ao Diário."
+        
+        open {_gui} to player
+
+# -----------------------------------------------------------------------------
+# EVENTO DE CLIQUE DO MENU E DEFINIÇÃO DE COORDENADAS
+# -----------------------------------------------------------------------------
+on inventory click:
+    if name of event-inventory is "&8&lEstação de Viagem":
+        cancel event
+        
+        # Voltar ao Diário Principal
+        if index of event-slot is 40:
+            execute player command "/diario"
+            stop
+            
+        # =========================================================
+        # ZONA DE CONFIGURAÇÃO DE COORDENADAS (EDITAR DEPOIS AQUI)
+        # Formato: location(X, Y, Z, world "nome_do_mundo")
+        # =========================================================
+        
+        # MINERADOR (Slot 10)
+        if index of event-slot is 10:
+            set {_coord} to location(100, 70, 100, world "world")
+            viajarParaVila(player, "minerador", "Vila dos Mineradores", 500, {_coord})
+            
+        # LENHADOR (Slot 12)
+        else if index of event-slot is 12:
+            set {_coord} to location(200, 70, 200, world "world")
+            viajarParaVila(player, "lenhador", "Acampamento Lenhador", 500, {_coord})
+            
+        # ESCAVADOR (Slot 14)
+        else if index of event-slot is 14:
+            set {_coord} to location(300, 70, 300, world "world")
+            viajarParaVila(player, "escavador", "Posto de Escavação", 500, {_coord})
+            
+        # FAZENDEIRO (Slot 16)
+        else if index of event-slot is 16:
+            set {_coord} to location(400, 70, 400, world "world")
+            viajarParaVila(player, "fazendeiro", "Fazenda Central", 500, {_coord})
+            
+        # PESCADOR (Slot 28)
+        else if index of event-slot is 28:
+            set {_coord} to location(500, 70, 500, world "world")
+            viajarParaVila(player, "pescador", "Cais dos Pescadores", 500, {_coord})
+            
+        # CONSTRUTOR (Slot 30)
+        else if index of event-slot is 30:
+            set {_coord} to location(600, 70, 600, world "world")
+            viajarParaVila(player, "construtor", "Oficina do Construtor", 500, {_coord})
+            
+        # BRUXO (Slot 32)
+        else if index of event-slot is 32:
+            set {_coord} to location(700, 70, 700, world "world")
+            viajarParaVila(player, "bruxo", "Pântano do Bruxo", 500, {_coord})
+            
+        # MAGO (Slot 34)
+        else if index of event-slot is 34:
+            set {_coord} to location(800, 70, 800, world "world")
+            viajarParaVila(player, "mago", "Torre do Mago", 500, {_coord})

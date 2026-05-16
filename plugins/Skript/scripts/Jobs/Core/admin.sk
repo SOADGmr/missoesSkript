@@ -1,0 +1,159 @@
+# =============================================================================
+# DESERTSKY - CLI ADMINISTRATIVA (V4.1 - MULTI-JOBS & INSPECT)
+# Caminho: /plugins/Skript/scripts/Jobs/core/Admin.sk
+# =============================================================================
+
+# Comando agora suporta 4 argumentos para incluir a profissão e abriga novos recursos
+command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
+    permission: desertsky.admin
+    permission message: &c[!] Acesso negado. Requer node 'desertsky.admin'.
+    trigger:
+        if arg-1 is not set:
+            send "&8&l--- &6DesertSky Admin CLI v4.1 &8&l---"
+            send "&e/adminmissao status <player> &7- Visão geral dos Jobs."
+            send "&e/adminmissao inspect <player> &7- Abre GUI com histórico de missões."
+            send "&e/adminmissao setnivel <player> <job> <nivel> &7- Altera o nível do Job."
+            send "&e/adminmissao reset <player> <job> <id> &7- Reseta missão."
+            send "&e/adminmissao forcecomplete <player> <job> <id> &7- Força conclusão."
+            send "&e/adminmissao skipday <player> &7- Simula passagem de dia."
+            stop
+
+        if arg-2 is not set:
+            send "&c[!] Especifique um jogador."
+            stop
+
+        set {_p} to arg-2
+        set {_uuid} to uuid of {_p}
+
+        # 1. STATUS GLOBAL
+        if arg-1 is "status":
+            set {_job_atual} to placeholder "%%jobsr_user_jobs%%" from {_p}
+            
+            # Puxa os níveis com fallback (caso o explorador ainda use a variável antiga)
+            set {_lvl_exp} to {nivel::explorador::%{_uuid}%} ? {nivel::%{_uuid}%} ? 1
+            set {_lvl_min} to {nivel::minerador::%{_uuid}%} ? 0
+            set {_lvl_len} to {nivel::lenhador::%{_uuid}%} ? 0
+            
+            send "&8&l--- &6STATUS: %{_p}% &8&l---"
+            send "&eProfissões (Jobs): &f%{_job_atual}%"
+            send "&eNível Explorador: &f%{_lvl_exp}%"
+            send "&eNível Minerador: &f%{_lvl_min}%"
+            send "&eNível Lenhador: &f%{_lvl_len}%"
+            send "&eÚltimo Reset (Data): &f%{last_reset::%{_uuid}%}%"
+            send "&8&l------------------------"
+
+        # 2. SETNIVEL (Exige saber qual profissão)
+        else if arg-1 is "setnivel":
+            if arg-3 is not set:
+                send "&c[!] Especifique o job (ex: explorador, minerador)."
+                stop
+            if arg-4 is not set:
+                send "&c[!] Especifique o nível numérico."
+                stop
+                
+            set {_job} to arg-3 in lowercase
+            set {nivel::%{_job}%::%{_uuid}%} to arg-4
+            
+            # Retrocompatibilidade com a fase 1 do Explorador
+            if {_job} is "explorador":
+                set {nivel::%{_uuid}%} to arg-4
+                
+            send "&a[!] O Nível de %{_job}% de %{_p}% foi alterado para %arg-4%."
+
+        # 3. RESET DE MISSÃO ESPECÍFICA (Por Job e ID)
+        else if arg-1 is "reset":
+            if arg-3 is not set:
+                send "&c[!] Especifique o job."
+                stop
+            if arg-4 is not set:
+                send "&c[!] Especifique o ID da Missão."
+                stop
+                
+            set {_job} to arg-3 in lowercase
+            
+            # Limpeza do novo Namespace (V4.0)
+            delete {missao::%{_job}%::%arg-4%::%{_uuid}%::status}
+            
+            # Limpeza de Fallback para as missões antigas (Legacy)
+            if {_job} is "explorador":
+                delete {missao::status::%arg-4%::%{_uuid}%}
+                delete {missao::%arg-4%::%{_uuid}%::status}
+            
+            send "&a[!] A missão %arg-4% (%{_job}%) do jogador %{_p}% foi resetada."
+
+        # 4. FORCE COMPLETE (Corrigido)
+        else if arg-1 is "forcecomplete":
+            if arg-3 is not set:
+                send "&c[!] Especifique o job."
+                stop
+            if arg-4 is not set:
+                send "&c[!] Especifique o ID da Missão."
+                stop
+            
+            set {_job} to arg-3 in lowercase
+            
+            # CORREÇÃO AQUI: Usa 'arg 4' com espaço. Ele já é um integer!
+            set {_id} to arg 4
+            set {_prox_nivel} to {_id} + 1
+            
+            # Chama a função oficial que dá a música, o level up e a mensagem correta!
+            concluirMissaoPrincipal({_p}, {_id}, {_job}, {_prox_nivel})
+            
+            send "&a[!] Missão %{_id}% (%{_job}%) do jogador %{_p}% forçada para CONCLUÍDA com sucesso."
+
+        # 5. SKIPDAY
+        else if arg-1 is "skipday":
+            set {last_reset::%{_uuid}%} to "01/01/1990"
+            send "&a[!] Data de %{_p}% revertida. Lazy Reset engatilhado."
+
+        # 6. INSPECT GUI (Novo - Monitoramento visual)
+        else if arg-1 is "inspect":
+            set {_gui} to a new chest inventory with 6 rows named "&8&lInspect: %{_p}%"
+            
+            # Fundo
+            loop 54 times:
+                set slot (loop-number - 1) of {_gui} to black stained glass pane named " "
+            
+            # Dados do jogador
+            set {_lvl_exp} to {nivel::%{_uuid}%} ? 1
+            
+            # Info Base (Slot 4) - CORRIGIDO O 'and' NO FINAL DA LORE
+            set slot 4 of {_gui} to player head named "&6&l%{_p}%" with lore "&7Nível Explorador: &f%{_lvl_exp}%", "" and "&8Monitoramento em tempo real."
+            
+            # Grade de Missões do Explorador (Slots 10-16, 19-25, 28-34)
+            set {_slot} to 10
+            loop 20 times:
+                if loop-number is less than {_lvl_exp}:
+                    set slot {_slot} of {_gui} to lime dye named "&aMissão %loop-number%" with lore "&7Status: &aConcluída"
+                else if loop-number is {_lvl_exp}:
+                    set slot {_slot} of {_gui} to yellow dye named "&eMissão %loop-number%" with lore "&7Status: &eEm Andamento"
+                else:
+                    set slot {_slot} of {_gui} to gray dye named "&cMissão %loop-number%" with lore "&7Status: &cBloqueada"
+                
+                add 1 to {_slot}
+                # Pula as bordas para manter centralizado
+                if {_slot} is 17:
+                    set {_slot} to 19
+                else if {_slot} is 26:
+                    set {_slot} to 28
+                    
+            open {_gui} to player
+
+# Trava o clique no inventário de Inspect
+on inventory click:
+    if name of event-inventory contains "&8&lInspect:":
+        cancel event
+        
+# ========================================================================
+# COMANDO DE CORREÇÃO (USAR UMA VEZ PARA LIMPAR O PERFIL CORROMPIDO)
+# ========================================================================
+command /fix_minhas_semanais:
+    permission: desertsky.admin
+    trigger:
+        delete {missao::semanal::%player%::minerador::meta::*}
+        loop 50 times:
+            delete {missao::semanal::%player%::minerador::meta::%loop-number%::id}
+            delete {missao::semanal::%player%::minerador::meta::%loop-number%::alvo}
+            delete {missao::semanal::%player%::minerador::meta::%loop-number%::progresso}
+        send "&a[!] Metas fantasmas apagadas do teu perfil com sucesso!" to player
+        send "&a[!] Usa &f/forca_semanal minerador &aagora para gerar uma missão limpa." to player

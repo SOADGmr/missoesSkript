@@ -1,0 +1,320 @@
+# =============================================================================
+# DESERTSKY - MOTOR UNIVERSAL DE VILAS E NPCS (V2.0 - LOJA DINÂMICA)
+# Arquivo: motor_vilas.sk
+# =============================================================================
+
+on load:
+    delete {vila_registry::*}
+
+    # =========================================================
+    # REGISTROS DE NPCS DAS VILAS (ADICIONE TODAS AQUI)
+    # =========================================================
+
+    # ---------------------------------------------------------
+    # 1. VILA DO MINERADOR
+    # ---------------------------------------------------------
+    registrarLiderVila(10, "minerador", "Mestre Bóris", "haste", 2, 60, "Desce para as minas e traz-me resultados!", "Que a tua picareta nunca quebre e os veios de ouro sejam abundantes.")
+    registrarEspecialista(12, "minerador", "Ferreiro Thorek", "Forja de Thorek", 3)
+    
+    registrarItemLoja(12, 11, "compra", raw iron, 16, 250)
+    
+    set {_pic_minerador} to iron pickaxe named "&6Picareta do Sindicato" with lore "&7Ferramenta forjada a quente" and "&7exclusiva para membros."
+    enchant {_pic_minerador} with efficiency 3
+    enchant {_pic_minerador} with unbreaking 2
+    registrarItemLoja(12, 15, "venda", {_pic_minerador}, 1, 1500)
+
+
+    # ---------------------------------------------------------
+    # 2. VILA DO LENHADOR
+    # ---------------------------------------------------------
+    registrarLiderVila(20, "lenhador", "Chefe Groot", "haste", 2, 60, "A floresta nos aguarda!", "Que teu machado seja implacável e a madeira farta.")
+    registrarEspecialista(22, "lenhador", "Serrador", "Serraria Central", 3)
+    
+    registrarItemLoja(22, 11, "compra", oak log, 32, 200)
+    
+    set {_machado_lenhador} to iron axe named "&2Machado do Bosque" with lore "&7Corte preciso e limpo."
+    enchant {_machado_lenhador} with efficiency 3
+    registrarItemLoja(22, 15, "venda", {_machado_lenhador}, 1, 1200)
+
+
+    # ---------------------------------------------------------
+    # 3. VILA DO ESCAVADOR
+    # ---------------------------------------------------------
+    registrarLiderVila(30, "escavador", "Engenheiro-Chefe", "haste", 2, 60, "As terras não se vão mover sozinhas!", "Que a tua pá abra caminhos para o futuro.")
+    registrarEspecialista(32, "escavador", "Mestre Escavador", "Armazém de Areia", 3)
+    
+    registrarItemLoja(32, 11, "compra", sand, 64, 300)
+    
+    set {_pa_escavador} to iron shovel named "&ePá do Deserto" with lore "&7Move dunas inteiras num piscar de olhos."
+    enchant {_pa_escavador} with efficiency 3
+    enchant {_pa_escavador} with unbreaking 2
+    registrarItemLoja(32, 15, "venda", {_pa_escavador}, 1, 1000)
+
+
+    # ---------------------------------------------------------
+    # 4. VILA DO FAZENDEIRO
+    # ---------------------------------------------------------
+    registrarLiderVila(40, "fazendeiro", "Ancião da Colheita", "speed", 2, 60, "As plantas precisam de cuidados diários.", "Que as tuas colheitas sejam sempre douradas.")
+    registrarEspecialista(42, "fazendeiro", "Mercador Agrícola", "Mercado da Colheita", 3)
+    
+    registrarItemLoja(42, 11, "compra", wheat, 64, 250)
+    
+    set {_enxada_fazendeiro} to iron hoe named "&aEnxada Fértil" with lore "&7Garante solo preparado por muito mais tempo."
+    enchant {_enxada_fazendeiro} with unbreaking 3
+    registrarItemLoja(42, 15, "venda", {_enxada_fazendeiro}, 1, 800)
+
+
+    # ---------------------------------------------------------
+    # 5. VILA DO PESCADOR
+    # ---------------------------------------------------------
+    registrarLiderVila(50, "pescador", "Capitão Barba-Água", "luck", 2, 60, "A maré está boa para os negócios.", "Que os peixes saltem diretamente para o teu barco.")
+    registrarEspecialista(52, "pescador", "Peixeiro Calebe", "Mercado de Peixes", 3)
+    
+    registrarItemLoja(52, 11, "compra", cod, 32, 400)
+    
+    set {_vara_pescador} to fishing rod named "&bVara das Profundezas" with lore "&7Atrai até os peixes mais exóticos."
+    enchant {_vara_pescador} with lure 3
+    enchant {_vara_pescador} with luck of the sea 2
+    registrarItemLoja(52, 15, "venda", {_vara_pescador}, 1, 1500)
+
+
+    # ---------------------------------------------------------
+    # 6. VILA DO CONSTRUTOR
+    # ---------------------------------------------------------
+    registrarLiderVila(60, "construtor", "Mestre Arquiteto", "jump_boost", 2, 60, "As fundações devem ser fortes!", "Que as tuas construções toquem os céus.")
+    registrarEspecialista(62, "construtor", "Fornecedor de Obras", "Loja de Construção", 3)
+    
+    registrarItemLoja(62, 11, "compra", stone bricks, 64, 350)
+    
+    set {_capacete_construtor} to iron helmet named "&eCapacete de Obra" with lore "&7Proteção essencial contra quedas de blocos."
+    enchant {_capacete_construtor} with protection 3
+    registrarItemLoja(62, 15, "venda", {_capacete_construtor}, 1, 1200)
+
+
+    # ---------------------------------------------------------
+    # 7. VILA DO BRUXO
+    # ---------------------------------------------------------
+    registrarLiderVila(70, "bruxo", "Grão-Alquimista", "night_vision", 1, 60, "Os caldeirões nunca dormem.", "Que as tuas poções curem e destruam na medida certa.")
+    registrarEspecialista(72, "bruxo", "Boticário Obscuro", "Tenda de Poções", 3)
+    
+    registrarItemLoja(72, 11, "compra", spider eye, 16, 500)
+    
+    set {_suporte_bruxo} to brewing stand named "&5Suporte Arcano" with lore "&7O equipamento inicial de um mestre de poções."
+    registrarItemLoja(72, 15, "venda", {_suporte_bruxo}, 1, 2000)
+
+
+    # ---------------------------------------------------------
+    # 8. VILA DO MAGO
+    # ---------------------------------------------------------
+    registrarLiderVila(80, "mago", "Arquimago", "regeneration", 1, 60, "O conhecimento é o verdadeiro poder.", "Que a tua magia ilumine a escuridão do deserto.")
+    registrarEspecialista(82, "mago", "Bibliotecário Arcano", "Biblioteca Proibida", 3)
+    
+    registrarItemLoja(82, 11, "compra", lapis lazuli, 64, 400)
+    
+    set {_mesa_mago} to enchanting table named "&dMesa Arcanista" with lore "&7A canalização perfeita para os teus feitiços."
+    registrarItemLoja(82, 15, "venda", {_mesa_mago}, 1, 3000)
+
+
+# =============================================================================
+# FUNÇÕES DE API (NÃO MODIFICAR ESTE BLOCO)
+# =============================================================================
+
+function registrarLiderVila(npc_id: integer, job: text, nome: text, efeito: text, amp: integer, dur_min: integer, fala_espera: text, fala_buff: text):
+    set {vila_registry::lider::%{_npc_id}%::job} to {_job}
+    set {vila_registry::lider::%{_npc_id}%::nome} to {_nome}
+    set {vila_registry::lider::%{_npc_id}%::efeito} to {_efeito}
+    set {vila_registry::lider::%{_npc_id}%::amp} to {_amp}
+    set {vila_registry::lider::%{_npc_id}%::duracao} to {_dur_min}
+    set {vila_registry::lider::%{_npc_id}%::fala_espera} to {_fala_espera}
+    set {vila_registry::lider::%{_npc_id}%::fala_buff} to {_fala_buff}
+
+function registrarEspecialista(npc_id: integer, job: text, nome: text, gui_nome: text, linhas: integer):
+    set {vila_registry::especialista::%{_npc_id}%::job} to {_job}
+    set {vila_registry::especialista::%{_npc_id}%::nome} to {_nome}
+    set {vila_registry::especialista::%{_npc_id}%::gui_nome} to {_gui_nome}
+    set {vila_registry::especialista::%{_npc_id}%::linhas} to {_linhas}
+
+function registrarItemLoja(npc_id: integer, slot: integer, tipo: text, item_base: item, qtd: integer, preco: number):
+    # Salva os slots registrados para sabermos quais processar na GUI
+    if {vila_registry::loja::%{_npc_id}%::slots::*} does not contain {_slot}:
+        add {_slot} to {vila_registry::loja::%{_npc_id}%::slots::*}
+        
+    set {vila_registry::loja::%{_npc_id}%::slot::%{_slot}%::tipo} to {_tipo}
+    set {vila_registry::loja::%{_npc_id}%::slot::%{_slot}%::item} to {_item_base}
+    set {vila_registry::loja::%{_npc_id}%::slot::%{_slot}%::qtd} to {_qtd}
+    set {vila_registry::loja::%{_npc_id}%::slot::%{_slot}%::preco} to {_preco}
+
+# =============================================================================
+# COMANDO GATILHO UNIVERSAL (/npc_vila <id>)
+# =============================================================================
+command /npc_vila <integer>:
+    executable by: players
+    trigger:
+        set {_npc} to arg-1
+        set {_uuid} to uuid of player
+
+        # ---------------------------------------------------------
+        # 1. TRATAMENTO DO LÍDER (Bênção & Boost)
+        # ---------------------------------------------------------
+        if {vila_registry::lider::%{_npc}%::job} is set:
+            set {_job} to {vila_registry::lider::%{_npc}%::job}
+            set {_nome} to {vila_registry::lider::%{_npc}%::nome}
+
+            set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+            if {_jobs_low} does not contain {_job}:
+                send "&c[%{_nome}%] O que fazes aqui, forasteiro? Esta vila é exclusiva para membros do Sindicato dos %{_job}%s." to player
+                stop
+
+            set {_hoje} to now formatted as "dd/MM/yyyy"
+
+            # Trava Diária
+            if {vila::%{_job}%::buff_diario::%{_uuid}%} is {_hoje}:
+                set {_fala} to {vila_registry::lider::%{_npc}%::fala_espera}
+                send "&7[%{_nome}%] %{_fala}%" to player
+            else:
+                set {vila::%{_job}%::buff_diario::%{_uuid}%} to {_hoje}
+
+                set {_efeito} to {vila_registry::lider::%{_npc}%::efeito}
+                set {_amp} to {vila_registry::lider::%{_npc}%::amp}
+                set {_dur} to {vila_registry::lider::%{_npc}%::duracao}
+                set {_fala_buff} to {vila_registry::lider::%{_npc}%::fala_buff}
+
+                # Executa o Efeito via comando Vanilla (Garante estabilidade no Skript)
+                set {_segundos} to {_dur} * 60
+                set {_lvl} to {_amp} - 1
+                execute console command "effect give %player% minecraft:%{_efeito}% %{_segundos}% %{_lvl}% true"
+
+                # Dá a Permissão do LuckPerms (Boost de Dinheiro 2x por 1 Hora)
+                execute console command "lp user %player% permission settemp jobs.boost.%{_job}%.money.2 true 1h"
+
+                play sound "block.beacon.activate" to player
+
+                send "" to player
+                send "&6&l[SINDICATO] &eBênção da Vila recebida!" to player
+                send "&7[%{_nome}%] %{_fala_buff}%" to player
+                send "&a+ Efeito Aplicado (%{_dur}% Minutos)" to player
+                send "&a+ Boost de Dinheiro 2x (%{_job}%) por 1 Hora!" to player
+                send "" to player
+            stop
+
+        # ---------------------------------------------------------
+        # 2. TRATAMENTO DO ESPECIALISTA (Loja VIP Dinâmica)
+        # ---------------------------------------------------------
+        if {vila_registry::especialista::%{_npc}%::job} is set:
+            set {_job} to {vila_registry::especialista::%{_npc}%::job}
+            set {_nome} to {vila_registry::especialista::%{_npc}%::nome}
+
+            set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+            if {_jobs_low} does not contain {_job}:
+                send "&c[%{_nome}%] Só negoceio com quem entende do ofício. Volta quando fores um %{_job}%." to player
+                stop
+
+            set {_gui_nome} to {vila_registry::especialista::%{_npc}%::gui_nome}
+            set {_linhas} to {vila_registry::especialista::%{_npc}%::linhas}
+            
+            # Constrói o inventário dinamicamente com base nas linhas escolhidas
+            set {_gui} to a new chest inventory with {_linhas} rows named "&8%{_gui_nome}%"
+            set {_total_slots} to {_linhas} * 9
+            
+            loop {_total_slots} times:
+                set slot (loop-number - 1) of {_gui} to black stained glass pane named " "
+
+            # Renderiza os itens registrados para ESTE NPC específico
+            loop {vila_registry::loja::%{_npc}%::slots::*}:
+                set {_slot} to loop-value
+                set {_tipo} to {vila_registry::loja::%{_npc}%::slot::%{_slot}%::tipo}
+                set {_item} to {vila_registry::loja::%{_npc}%::slot::%{_slot}%::item}
+                set {_qtd} to {vila_registry::loja::%{_npc}%::slot::%{_slot}%::qtd}
+                set {_preco} to {vila_registry::loja::%{_npc}%::slot::%{_slot}%::preco}
+
+                if {_tipo} is "compra":
+                    set {_icone} to {_item}
+                    set name of {_icone} to "&a&lVender Lote Especial"
+                    set line 1 of lore of {_icone} to "&7O Sindicato paga mais caro"
+                    set line 2 of lore of {_icone} to "&7pelos teus recursos."
+                    set line 3 of lore of {_icone} to ""
+                    set line 4 of lore of {_icone} to "&fPreço: &a$%{_preco}% &fpor &e%{_qtd}%x"
+                    set line 5 of lore of {_icone} to ""
+                    set line 6 of lore of {_icone} to "&eClica para vender!"
+                    set slot {_slot} of {_gui} to {_icone}
+
+                else if {_tipo} is "venda":
+                    set {_icone} to {_item}
+                    add "" to lore of {_icone}
+                    add "&fCusto: &c$%{_preco}%" to lore of {_icone}
+                    add "" to lore of {_icone}
+                    add "&eClica para comprar!" to lore of {_icone}
+                    set slot {_slot} of {_gui} to {_icone}
+
+            # Salva a referência temporal do NPC na UI
+            set {temp_gui_npc::%{_uuid}%} to {_npc}
+            open {_gui} to player
+            stop
+
+# =============================================================================
+# EVENTOS DA GUI UNIVERSAL DO ESPECIALISTA
+# =============================================================================
+on inventory click:
+    set {_uuid} to uuid of player
+    if {temp_gui_npc::%{_uuid}%} is set:
+        set {_npc} to {temp_gui_npc::%{_uuid}%}
+        set {_gui_nome} to {vila_registry::especialista::%{_npc}%::gui_nome}
+        
+        if name of event-inventory is "&8%{_gui_nome}%":
+            cancel event
+            set {_nome} to {vila_registry::especialista::%{_npc}%::nome}
+            set {_slot_clicado} to index of event-slot
+
+            # Verifica se o slot clicado pertence à loja deste NPC
+            if {vila_registry::loja::%{_npc}%::slots::*} contains {_slot_clicado}:
+                
+                set {_tipo} to {vila_registry::loja::%{_npc}%::slot::%{_slot_clicado}%::tipo}
+                set {_item} to {vila_registry::loja::%{_npc}%::slot::%{_slot_clicado}%::item}
+                set {_qtd} to {vila_registry::loja::%{_npc}%::slot::%{_slot_clicado}%::qtd}
+                set {_preco} to {vila_registry::loja::%{_npc}%::slot::%{_slot_clicado}%::preco}
+
+                # VENDA DO RECURSO (Jogador vende pro NPC)
+                if {_tipo} is "compra":
+                    # Extrai apenas o tipo de bloco puro para comparar no inventario (sem ligar para nomes falsos)
+                    set {_tipo_puro} to type of {_item}
+                    set {_amount_has} to amount of {_tipo_puro} in player's inventory
+                    
+                    if {_amount_has} >= {_qtd}:
+                        remove {_qtd} of {_tipo_puro} from player's inventory
+                        add {_preco} to player's balance
+                        play sound "entity.experience_orb.pickup" to player
+                        send "&a[%{_nome}%] Bom material! Aqui estão os teus $%{_preco}%." to player
+                    else:
+                        play sound "entity.villager.no" to player
+                        send "&c[%{_nome}%] Não tens %{_qtd}%x do material exigido para me vender!" to player
+                        close player's inventory
+
+                # COMPRA DA FERRAMENTA (Jogador compra do NPC)
+                else if {_tipo} is "venda":
+                    if player's balance >= {_preco}:
+                        remove {_preco} from player's balance
+                        give {_qtd} of {_item} to player
+                        play sound "block.anvil.use" to player
+                        send "&a[%{_nome}%] Negócio fechado! Usa-a com sabedoria." to player
+                    else:
+                        play sound "entity.villager.no" to player
+                        send "&c[%{_nome}%] O ouro está curto. Precisas de $%{_preco}%." to player
+                        close player's inventory
+
+on inventory close:
+    delete {temp_gui_npc::%uuid of player%}
+
+# =============================================================================
+# COMANDOS DE DEBUG & MANUTENÇÃO
+# =============================================================================
+command /debug_vilas:
+    permission: desertsky.admin
+    trigger:
+        # Reseta os cooldowns diários de TODOS os jobs do jogador
+        set {_uuid} to uuid of player
+        set {_todos_jobs::*} to "minerador", "lenhador", "escavador", "fazendeiro", "pescador", "construtor", "bruxo" and "mago"
+        
+        loop {_todos_jobs::*}:
+            delete {vila::%loop-value%::buff_diario::%{_uuid}%}
+            
+        send "&a[Debug] &fCooldown de bênçãos de vilas apagados! Você pode falar com os Líderes novamente." to player
