@@ -8,7 +8,7 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
     permission: desertsky.admin
     permission message: &c[!] Acesso negado. Requer node 'desertsky.admin'.
     trigger:
-        if arg-1 is not set:
+        if arg 1 is not set:
             send "&8&l--- &6DesertSky Admin CLI v4.1 &8&l---"
             send "&e/adminmissao status <player> &7- Visão geral dos Jobs."
             send "&e/adminmissao inspect <player> &7- Abre GUI com histórico de missões."
@@ -18,15 +18,15 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
             send "&e/adminmissao skipday <player> &7- Simula passagem de dia."
             stop
 
-        if arg-2 is not set:
+        if arg 2 is not set:
             send "&c[!] Especifique um jogador."
             stop
 
-        set {_p} to arg-2
+        set {_p} to arg 2
         set {_uuid} to uuid of {_p}
 
         # 1. STATUS GLOBAL
-        if arg-1 is "status":
+        if arg 1 is "status":
             set {_job_atual} to placeholder "%%jobsr_user_jobs%%" from {_p}
             
             # Puxa os níveis com fallback (caso o explorador ainda use a variável antiga)
@@ -43,54 +43,54 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
             send "&8&l------------------------"
 
         # 2. SETNIVEL (Exige saber qual profissão)
-        else if arg-1 is "setnivel":
-            if arg-3 is not set:
+        else if arg 1 is "setnivel":
+            if arg 3 is not set:
                 send "&c[!] Especifique o job (ex: explorador, minerador)."
                 stop
-            if arg-4 is not set:
+            if arg 4 is not set:
                 send "&c[!] Especifique o nível numérico."
                 stop
                 
-            set {_job} to arg-3 in lowercase
-            set {nivel::%{_job}%::%{_uuid}%} to arg-4
+            set {_job} to arg 3 in lowercase
+            set {nivel::%{_job}%::%{_uuid}%} to arg 4
             
             # Retrocompatibilidade com a fase 1 do Explorador
             if {_job} is "explorador":
-                set {nivel::%{_uuid}%} to arg-4
+                set {nivel::%{_uuid}%} to arg 4
                 
-            send "&a[!] O Nível de %{_job}% de %{_p}% foi alterado para %arg-4%."
+            send "&a[!] O Nível de %{_job}% de %{_p}% foi alterado para %arg 4%."
 
         # 3. RESET DE MISSÃO ESPECÍFICA (Por Job e ID)
-        else if arg-1 is "reset":
-            if arg-3 is not set:
+        else if arg 1 is "reset":
+            if arg 3 is not set:
                 send "&c[!] Especifique o job."
                 stop
-            if arg-4 is not set:
+            if arg 4 is not set:
                 send "&c[!] Especifique o ID da Missão."
                 stop
                 
-            set {_job} to arg-3 in lowercase
+            set {_job} to arg 3 in lowercase
             
             # Limpeza do novo Namespace (V4.0)
-            delete {missao::%{_job}%::%arg-4%::%{_uuid}%::status}
+            delete {missao::%{_job}%::%arg 4%::%{_uuid}%::status}
             
             # Limpeza de Fallback para as missões antigas (Legacy)
             if {_job} is "explorador":
-                delete {missao::status::%arg-4%::%{_uuid}%}
-                delete {missao::%arg-4%::%{_uuid}%::status}
+                delete {missao::status::%arg 4%::%{_uuid}%}
+                delete {missao::%arg 4%::%{_uuid}%::status}
             
-            send "&a[!] A missão %arg-4% (%{_job}%) do jogador %{_p}% foi resetada."
+            send "&a[!] A missão %arg 4% (%{_job}%) do jogador %{_p}% foi resetada."
 
         # 4. FORCE COMPLETE (Corrigido)
-        else if arg-1 is "forcecomplete":
-            if arg-3 is not set:
+        else if arg 1 is "forcecomplete":
+            if arg 3 is not set:
                 send "&c[!] Especifique o job."
                 stop
-            if arg-4 is not set:
+            if arg 4 is not set:
                 send "&c[!] Especifique o ID da Missão."
                 stop
             
-            set {_job} to arg-3 in lowercase
+            set {_job} to arg 3 in lowercase
             
             # CORREÇÃO AQUI: Usa 'arg 4' com espaço. Ele já é um integer!
             set {_id} to arg 4
@@ -102,12 +102,12 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
             send "&a[!] Missão %{_id}% (%{_job}%) do jogador %{_p}% forçada para CONCLUÍDA com sucesso."
 
         # 5. SKIPDAY
-        else if arg-1 is "skipday":
+        else if arg 1 is "skipday":
             set {last_reset::%{_uuid}%} to "01/01/1990"
             send "&a[!] Data de %{_p}% revertida. Lazy Reset engatilhado."
 
         # 6. INSPECT GUI (Novo - Monitoramento visual)
-        else if arg-1 is "inspect":
+        else if arg 1 is "inspect":
             set {_gui} to a new chest inventory with 6 rows named "&8&lInspect: %{_p}%"
             
             # Fundo
@@ -158,24 +158,77 @@ command /fix_minhas_semanais:
         send "&a[!] Metas fantasmas apagadas do teu perfil com sucesso!" to player
         send "&a[!] Use &f/forca_semanal minerador &aagora para gerar uma missão limpa." to player
 
-command /forca_diaria <text>:
+command /forca_diaria <text> <offline player>:
     permission: desertsky.admin
     trigger:
-        set {_job} to arg-1 in lowercase
+        set {_job} to arg 1 in lowercase
+        if arg 2 is not set:
+            send "&c[!] Especifique um jogador."
+            stop
+        set {_player} to arg 2
         
         # Verificação para garantir que até os admins só forcem diárias de jobs que possuem
         set {_jobs_ativos} to placeholder "%%jobsr_user_jobs%%" from player
         set {_jobs_low} to {_jobs_ativos} in lowercase
         
         if {_jobs_low} does not contain {_job}:
-            send "&c[!] Erro: Você não possui a profissão '%{_job}%'." to player
+            send "&c[!] Erro: O jogador '%{_player}%' não possui a profissão '%{_job}%'." to player
             stop
             
-        if arg-1 is "Explorador":
-            send "&c[!] Erro: A profissão 'Explorador' nao contém missões diárias." to player
+        if arg 1 is "Explorador":
+            send "&c[!] Erro: A profissão 'Explorador' nao contém missões semanais." to player
             stop
 
         # Força o reset para permitir novo sorteio
         set {diaria::%{_job}%::%uuid of player%::data} to "force_reset"
-        sortearDiaria(player, {_job})
-        send "&a[!] Sorteio diário forçado para a profissão: %{_job}%." to player
+        sortearDiaria(arg 2, arg 1)
+        send "&a[!] Sorteio diário forçado para a profissão: %{_job}% de %{_player}%" to player
+
+command /forca_semanal <text> <offline player>:
+    permission: desertsky.admin
+    trigger:
+        if arg 2 is not set:
+            send "&c[!] Especifique um jogador."
+            stop
+        set {_job} to arg 1 in lowercase
+        set {_player} to arg 2
+        
+        # Verificação para garantir que até os admins só forcem diárias de jobs que possuem
+        set {_jobs_ativos} to placeholder "%%jobsr_user_jobs%%" from {_player}
+        set {_jobs_low} to {_jobs_ativos} in lowercase
+        
+        if {_jobs_low} does not contain {_job}:
+            send "&c[!] Erro: O jogador '%{_player}%' não possui a profissão '%{_job}%'." to player
+            stop
+            
+        if arg 1 is "Explorador":
+            send "&c[!] Erro: A profissão 'Explorador' nao contém missões semanais." to player
+            stop
+
+        send "&a[!] Sorteio semanal forçado para a profissão: %{_job}% de %{_player}%" to player
+        sortearSemanal(arg 2, arg 1)
+
+command /reset_semanal_global:
+    permission: desertsky.admin
+    trigger:
+        loop all players:
+            delete {last_semanal_reset::%uuid of loop-player%}
+        send "&a[!] Reset de semana forçado para todos os jogadores." to player
+        send "&7Para verem o efeito, eles precisam relogar no servidor." to player
+        
+command /completar_coleta_semanal <text>:
+    permission: desertsky.admin
+    trigger:
+        set {_job} to arg 1 in lowercase
+        
+        if {missao::semanal::%player%::%{_job}%::status} is "em_andamento":
+            set {_index} to 1
+            while {missao::semanal::%player%::%{_job}%::meta::%{_index}%::id} is set:
+                set {_alvo} to {missao::semanal::%player%::%{_job}%::meta::%{_index}%::alvo}
+                set {missao::semanal::%player%::%{_job}%::meta::%{_index}%::progresso} to {_alvo}
+                add 1 to {_index}
+            
+            verificarConclusaoSemanal(player, {_job})
+            send "&a[Debug] &fA fase de coleta de %{_job}% foi preenchida artificialmente." to player
+        else:
+            send "&c[!] Você não tem uma missão semanal de %{_job}% na fase de coleta." to player

@@ -229,7 +229,6 @@ on tool break:
     if {_jobs_low} contains "lenhador":
         addProgressoSemanal(player, "lenhador", "quebrar_ferramenta", {_tipo}, 1)
 
-# 8. FUNDIÇÃO E FORJA (Rastreia quando o jogador tira o item pronto da fornalha ou mesa)
 on inventory click:
     set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
     
@@ -342,35 +341,6 @@ on join:
         if {_jobs_low} contains "mago":
             sortearSemanal(player, "mago")
 
-command /forca_semanal <text>:
-    permission: desertsky.admin
-    trigger:
-        sortearSemanal(player, arg-1)
-
-command /reset_semanal_global:
-    permission: desertsky.admin
-    trigger:
-        loop all players:
-            delete {last_semanal_reset::%uuid of loop-player%}
-        send "&a[!] Reset de semana forçado para todos os jogadores." to player
-        send "&7Para verem o efeito, eles precisam relogar no servidor." to player
-        
-command /completar_coleta_semanal <text>:
-    permission: desertsky.admin
-    trigger:
-        set {_job} to arg-1 in lowercase
-        
-        if {missao::semanal::%player%::%{_job}%::status} is "em_andamento":
-            set {_index} to 1
-            while {missao::semanal::%player%::%{_job}%::meta::%{_index}%::id} is set:
-                set {_alvo} to {missao::semanal::%player%::%{_job}%::meta::%{_index}%::alvo}
-                set {missao::semanal::%player%::%{_job}%::meta::%{_index}%::progresso} to {_alvo}
-                add 1 to {_index}
-            
-            verificarConclusaoSemanal(player, {_job})
-            send "&a[Debug] &fA fase de coleta de %{_job}% foi preenchida artificialmente." to player
-        else:
-            send "&c[!] Você não tem uma missão semanal de %{_job}% na fase de coleta." to player
 
 # ========================================================================
 # 8. SINCRONIZADOR DE ENTREGAS (INTEGRAÇÃO COM MOTOR UNIVERSAL)
