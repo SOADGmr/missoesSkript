@@ -156,4 +156,26 @@ command /fix_minhas_semanais:
             delete {missao::semanal::%player%::minerador::meta::%loop-number%::alvo}
             delete {missao::semanal::%player%::minerador::meta::%loop-number%::progresso}
         send "&a[!] Metas fantasmas apagadas do teu perfil com sucesso!" to player
-        send "&a[!] Usa &f/forca_semanal minerador &aagora para gerar uma missão limpa." to player
+        send "&a[!] Use &f/forca_semanal minerador &aagora para gerar uma missão limpa." to player
+
+command /forca_diaria <text>:
+    permission: desertsky.admin
+    trigger:
+        set {_job} to arg-1 in lowercase
+        
+        # Verificação para garantir que até os admins só forcem diárias de jobs que possuem
+        set {_jobs_ativos} to placeholder "%%jobsr_user_jobs%%" from player
+        set {_jobs_low} to {_jobs_ativos} in lowercase
+        
+        if {_jobs_low} does not contain {_job}:
+            send "&c[!] Erro: Você não possui a profissão '%{_job}%'." to player
+            stop
+            
+        if arg-1 is "Explorador":
+            send "&c[!] Erro: A profissão 'Explorador' nao contém missões diárias." to player
+            stop
+
+        # Força o reset para permitir novo sorteio
+        set {diaria::%{_job}%::%uuid of player%::data} to "force_reset"
+        sortearDiaria(player, {_job})
+        send "&a[!] Sorteio diário forçado para a profissão: %{_job}%." to player

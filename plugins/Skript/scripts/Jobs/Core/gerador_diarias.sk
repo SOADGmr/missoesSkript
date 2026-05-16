@@ -408,23 +408,3 @@ function addProgressoDiaria(p: player, job: text, tarefa_id: text, qtd: number):
                 send "&a&l+ $%{_recompensa}%" to {_p}
                 send "" to {_p}
 
-# ============================================================================
-# 7. COMANDO DE DEBUG E ADMINISTRAÇÃO
-# ============================================================================
-command /forca_diaria <text>:
-    permission: desertsky.admin
-    trigger:
-        set {_job} to arg-1 in lowercase
-        
-        # Verificação para garantir que até os admins só forcem diárias de jobs que possuem
-        set {_jobs_ativos} to placeholder "%%jobsr_user_jobs%%" from player
-        set {_jobs_low} to {_jobs_ativos} in lowercase
-        
-        if {_jobs_low} does not contain {_job}:
-            send "&c[!] Erro: Você não possui a profissão '%{_job}%'." to player
-            stop
-            
-        # Força o reset para permitir novo sorteio
-        set {diaria::%{_job}%::%uuid of player%::data} to "force_reset"
-        sortearDiaria(player, {_job})
-        send "&a[!] Sorteio diário forçado para a profissão: %{_job}%." to player
