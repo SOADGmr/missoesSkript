@@ -232,3 +232,97 @@ command /completar_coleta_semanal <text>:
             send "&a[Debug] &fA fase de coleta de %{_job}% foi preenchida artificialmente." to player
         else:
             send "&c[!] Você não tem uma missão semanal de %{_job}% na fase de coleta." to player
+
+command /desertsky_admin_setjob <text> <text>:
+    executable by: console
+    trigger:
+        # Puxa os textos e converte de forma segura
+        set {_p} to arg-1 parsed as player
+        set {_escolha} to arg-2
+        
+        # Verifica se o jogador realmente existe/está online
+        if {_p} is not set:
+            send "&c[DesertSky] Falha: Jogador %arg-1% não encontrado." to console
+            stop
+            
+        set {_uuid} to uuid of {_p}
+        # Puxa o nível de Explorador da variável raiz
+        set {_nivel_atual} to {nivel::%{_uuid}%} ? 1
+
+        # --- SISTEMA DE VERIFICAÇÃO E TRAVAS ---
+        set {_tier2::*} to "minerador", "lenhador", "escavador", "pescador" and "fazendeiro"
+        set {_tier3::*} to "bruxo", "construtor" and "mago"
+
+        # ==========================================
+        # [VERIFICAÇÃO TIER 2]
+        # ==========================================
+        if {_tier2::*} contains {_escolha}:
+            if {_nivel_atual} < 20:
+                send "&c[!] Anomalia detetada! O teu nível de Explorador (%{_nivel_atual}%) é insuficiente." to {_p}
+                send "&c[!] Precisas de concluir a Missão 20 para escolheres uma especialização." to {_p}
+                play sound "entity.villager.no" to {_p}
+                close {_p}'s inventory
+                stop
+                
+            # Tranca a Fase de Sobrevivência e sobe para o Tier 2 (apenas se estiver no 20)
+            if {_nivel_atual} is 20:
+                set {missao::20::%{_uuid}%::status} to "concluida"
+                set {nivel::%{_uuid}%} to 21 
+                
+            # Adiciona a Profissão usando a consola
+            execute console command "jobs employ %{_p}% %{_escolha}%"
+            
+            # Celebração Épica
+            send title "&6&lNOVO DESTINO" with subtitle "&eTornaste-te num %{_escolha}%!" to {_p} for 5 seconds
+            play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 1.0 to {_p}
+            send "" to {_p}
+            send "&e&l[!] &7O Diário de Sobrevivência Inicial foi concluído." to {_p}
+            send "&e&l[!] &7O teu nome será lembrado como um verdadeiro &f%{_escolha}%&7!" to {_p}
+            send "" to {_p}
+            
+            close {_p}'s inventory
+            stop
+
+        # ==========================================
+        # [VERIFICAÇÃO TIER 3]
+        # ==========================================
+        if {_tier3::*} contains {_escolha}:
+            # Requisito 1: Nível do Explorador (Mude o 40 para o nível que desejar)
+            if {_nivel_atual} < 40: 
+                send "&c[!] Acesso Negado! Precisas de ser Nível 40 na linha base para alcançar uma Mestria." to {_p}
+                play sound "entity.villager.no" to {_p}
+                close {_p}'s inventory
+                stop
+                
+            # Requisito 2: Verifica a profissão Tier 2 do jogador e o seu nível
+            set {_jobs_reborn} to placeholder "%%jobsr_user_jobs%%" from {_p} in lowercase
+            set {_meu_tier2} to ""
+            
+            # Descobre qual é o Job Tier 2 que o jogador tem
+            loop {_tier2::*}:
+                if {_jobs_reborn} contains loop-value:
+                    set {_meu_tier2} to loop-value
+                    stop loop
+                    
+            if {_meu_tier2} is "":
+                send "&c[!] Precisas de escolher uma especialidade (Tier 2) primeiro!" to {_p}
+                play sound "entity.villager.no" to {_p}
+                close {_p}'s inventory
+                stop
+                
+            # Verifica o nível específico desse Job
+            set {_nivel_t2} to {nivel::%{_meu_tier2}%::%{_uuid}%} ? 0
+            if {_nivel_t2} < 50:
+                send "&c[!] Precisas de evoluir na profissão de %{_meu_tier2}% até o nível 50 primeiro!" to {_p}
+                play sound "entity.villager.no" to {_p}
+                close {_p}'s inventory
+                stop
+            
+            # Adiciona a Profissão usando a consola
+            execute console command "jobs employ %{_p}% %{_escolha}%"
+            
+            # Celebração Épica TIER 3
+            send title "&5&lMESTRIA ALCANÇADA" with subtitle "&dAgora dominas os caminhos do %{_escolha}%!" to {_p} for 5 seconds
+            play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 1.0 to {_p}
+            close {_p}'s inventory
+            stop
