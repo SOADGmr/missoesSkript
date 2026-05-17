@@ -1,5 +1,5 @@
 # ========================================================================
-# MOTOR DE MISSÕES SEMANAIS - DESERTSKY (V5.1 - LORE MELHORADA E EVENTOS)
+# MOTOR DE MISSÕES SEMANAIS - DESERTSKY (V5.5 - FISHING TAGS INFALÍVEL)
 # Arquivo: gerador_semanais.sk
 # Função: Lógica central, eventos, action bar e sincronização.
 # ========================================================================
@@ -16,7 +16,7 @@ on load:
     registrarNPC(71, "Almoxarife")
     registrarNPC(81, "Almoxarife")
     
-    send "&e[DesertSky-Jobs] &aMotor Semanal V5.1 carregado (Modo Modular + Nova Lore)!" to console
+    send "&e[DesertSky-Jobs] &aMotor Semanal V5.5 carregado (Tag de Pesca Infalível)!" to console
 
 # ========================================================================
 # FUNÇÕES DE REGISTRO E COMPILAÇÃO (API PARA OS MÓDULOS)
@@ -122,29 +122,31 @@ function formatarLoreSemanal(p: player, job: text) :: texts:
             
         add 1 to {_index}
 
-    # --- NOVA LÓGICA: ENTREGAS SEMPRE VISÍVEIS ---
+    # --- NOVO SISTEMA VISUAL DE ENTREGAS ---
     if {entrega_registry::%{_contrato_id}%::npc} is set:
-        set {_npc_id} to {entrega_registry::%{_contrato_id}%::npc}
-        set {_npc_nome} to {npc_nome::%{_npc_id}%} ? "NPC"
-        
         add "" to {_lore::*}
-        add "&f&lEntregas Finais (&eNPC %{_npc_nome}%&f):" to {_lore::*}
+        add "&f&lEntregas Exigidas:" to {_lore::*}
         
         loop {entrega_registry::%{_contrato_id}%::requisitos::*}:
             set {_req_parts::*} to loop-value split at "|"
             set {_qtd_req} to {_req_parts::2}
             set {_nome_amigavel} to {_req_parts::3}
             
-            if {missao::semanal::%{_p}%::%{_job}%::status} is "concluida":
-                add "&8[&a&l✔&8] &aEntregar %{_qtd_req}%x %{_nome_amigavel}%" to {_lore::*}
+            if {missao::semanal::%{_p}%::%{_job}%::status} is "aguardando_entrega":
+                add "&8[&e&l!&8] &e%{_qtd_req}%x %{_nome_amigavel}%" to {_lore::*}
+            else if {missao::semanal::%{_p}%::%{_job}%::status} is "concluida":
+                add "&8[&a&l✔&8] &a%{_qtd_req}%x %{_nome_amigavel}%" to {_lore::*}
             else:
-                add "&8[&6&l📦&8] &7Entregar %{_qtd_req}%x %{_nome_amigavel}%" to {_lore::*}
+                add "&8[&7&l!&8] &7%{_qtd_req}%x %{_nome_amigavel}%" to {_lore::*}
                 
-        # Status do progresso da entrega
         if {missao::semanal::%{_p}%::%{_job}%::status} is "aguardando_entrega":
-            add "&8[&e&l!&8] &ePode entregar os itens agora!" to {_lore::*}
+            set {_npc_id} to {entrega_registry::%{_contrato_id}%::npc}
+            set {_npc_nome} to {npc_nome::%{_npc_id}%} ? "NPC"
+            add "" to {_lore::*}
+            add "&e➡ Leve os materiais para &f%{_npc_nome}% &e(NPC %{_npc_id}%)" to {_lore::*}
         else if {missao::semanal::%{_p}%::%{_job}%::status} is "em_andamento":
-            add "&8[&c&l!&8] &cConclua as metas acima primeiro." to {_lore::*}
+            add "" to {_lore::*}
+            add "&7➡ &oConclua a coleta para liberar a entrega." to {_lore::*}
             
     add "" to {_lore::*}
     
@@ -169,8 +171,16 @@ function addProgressoSemanal(p: player, job: text, acao: text, tipo_alvo: text, 
                 set {_match} to false
                 if {meta_base::%{_meta_id}%::tipos::*} contains "any":
                     set {_match} to true
-                else if {meta_base::%{_meta_id}%::tipos::*} contains {_tipo_alvo}:
-                    set {_match} to true
+                else:
+                    # SMART MATCHER: Lida perfeitamente com plurais (ex: "cod" vs "cods") 
+                    loop {meta_base::%{_meta_id}%::tipos::*}:
+                        set {_req} to loop-value
+                        if {_tipo_alvo} is {_req}:
+                            set {_match} to true
+                        else if {_tipo_alvo} contains {_req}:
+                            set {_match} to true
+                        else if {_req} contains {_tipo_alvo}:
+                            set {_match} to true
                     
                 if {_match} is true:
                     set {_prog_atual} to {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::progresso}
@@ -288,12 +298,46 @@ on bucket fill:
         if {_jobs_low} contains "minerador":
             addProgressoSemanal(player, "minerador", "coletar", {_tipo}, 1)
 
-on pick up:
-    if player's tool is fishing rod:
-        set {_tipo} to "%type of event-item%"
+# --------------------------------------------------------------------
+# EVENTO DE PESCARIA (100% NATIVO BASEADO NA DOC OFICIAL)
+# --------------------------------------------------------------------
+on fishing state change:
+    if "%fishing state%" is "fish caught":
+        # Guarda a entidade numa variável para não bugar o leitor de texto do Skript
+        set {_ent} to fishing  caught entity
+        
+        if {_ent} is set:
+            # Lê o item exato que foi puxado da água
+            set {_item} to item of {_ent}
+            set {_tipo} to "%type of {_item}%"
+            
+            # Fallback de Segurança: usa a própria entidade guardada se o tipo não carregar
+            if {_tipo} is "<none>":
+                set {_tipo} to "%{_ent}%"
+                
+            set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+            if {_jobs_low} contains "pescador":
+                addProgressoSemanal(player, "pescador", "pescar", {_tipo}, 1)
+
+# --------------------------------------------------------------------
+# EVENTO PARA A TAREFA DE COMER O PEIXE
+# --------------------------------------------------------------------
+on consume:
+    set {_tipo} to "%type of event-item%"
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+    if {_jobs_low} contains "pescador":
+        addProgressoSemanal(player, "pescador", "comer", {_tipo}, 1)
+
+# --------------------------------------------------------------------
+# AÇÃO DE "ACHATAR" CAMINHOS (Escavador: Pá na relva)
+# --------------------------------------------------------------------
+on right click on grass block, dirt, podzol, coarse dirt or rooted dirt:
+    set {_ferramenta} to "%type of player's tool%"
+    if {_ferramenta} contains "shovel":
         set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-        if {_jobs_low} contains "pescador":
-            addProgressoSemanal(player, "pescador", "pescar", {_tipo}, 1)
+        if {_jobs_low} contains "escavador":
+            # O alvo rastreado será "dirt path" para combinar com a meta base
+            addProgressoSemanal(player, "escavador", "achatar", "dirt path", 1)
 
 on place:
     set metadata "desertsky_placed" of event-block to true
