@@ -298,6 +298,52 @@ on bucket fill:
         if {_jobs_low} contains "minerador":
             addProgressoSemanal(player, "minerador", "coletar", {_tipo}, 1)
 
+
+
+# [CORREÇÃO ANTI-EXPLOIT] O progresso de escovação só conta quando finalizado (100%)
+on right click on suspicious sand or suspicious gravel:
+    if player's tool is brush:
+        set {_loc} to location of event-block
+        
+        # Se já estamos a vigiar este bloco, ignoramos cliques adicionais para não duplicar eventos
+        if {brush_loop::%{_loc}%} is set:
+            stop
+        set {brush_loop::%{_loc}%} to true
+        
+        set {_p} to player
+        set {_tipo_original} to type of event-block
+        
+        # O Segredo da UX Perfeita: Um loop "fantasma" que vigia o bloco de forma assíncrona
+        # Ele fica em stand-by até o bloco deixar de ser "suspeito" (Escovação concluída ou abortada)
+        while block at {_loc} is suspicious sand or suspicious gravel:
+            wait 5 ticks
+            
+            # Se o jogador desconectar ou for para longe, cancelamos a vigia para poupar memória
+            if {_p} is offline:
+                delete {brush_loop::%{_loc}%}
+                stop
+            if world of {_p} is not world of {_loc}:
+                delete {brush_loop::%{_loc}%}
+                stop
+            if distance between location of {_p} and {_loc} > 10:
+                delete {brush_loop::%{_loc}%}
+                stop
+                
+        # O loop quebrou. O que aconteceu com o bloco no fim?
+        if block at {_loc} is sand or gravel:
+            # O bloco foi finalizado com sucesso! (Sem precisar de um segundo clique)
+            set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from {_p} in lowercase
+            
+            if {_jobs_low} contains "escavador":
+                set {_nome_tipo} to "suspicious sand"
+                if {_tipo_original} is suspicious gravel:
+                    set {_nome_tipo} to "suspicious gravel"
+                    
+                addProgressoSemanal({_p}, "escavador", "escovar", {_nome_tipo}, 1)
+        
+        # Liberta a memória do bloco sempre, não importa o que aconteceu
+        delete {brush_loop::%{_loc}%}
+
 # --------------------------------------------------------------------
 # EVENTO DE PESCARIA (100% NATIVO BASEADO NA DOC OFICIAL)
 # --------------------------------------------------------------------
