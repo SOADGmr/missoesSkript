@@ -248,6 +248,55 @@ function verificarConclusaoSemanal(p: player, job: text):
 # EVENTOS DISPARADORES PARA A MISSÃO SEMANAL (TODOS OS JOBS)
 # ========================================================================
 
+# 1. ARAR O SOLO
+on right click on dirt or grass block:
+    set {_ferramenta} to "%type of player's tool%"
+    if {_ferramenta} contains "hoe":
+        set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+        if {_jobs_low} contains "fazendeiro":
+            # Passa o nome exato do bloco alvo (dirt ou grass block)
+            set {_tipo} to "%type of event-block%"
+            addProgressoSemanal(player, "fazendeiro", "arar", {_tipo}, 1)
+
+# 2. PROCRIAR ANIMAIS
+on breeding:
+    # Em Skript, o jogador que alimentou é retornado como 'player' ou 'breeder'
+    if breeder is set:
+        set {_tipo} to "%type of event-entity%"
+        set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from breeder in lowercase
+        if {_jobs_low} contains "fazendeiro":
+            addProgressoSemanal(breeder, "fazendeiro", "procriar", {_tipo}, 1)
+
+# 3. TOSQUIAR OVELHAS
+on right click on sheep:
+    if player's tool is shears:
+        if target entity is not sheared:
+            set {_tipo} to "sheep"
+            set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+            if {_jobs_low} contains "fazendeiro":
+                addProgressoSemanal(player, "fazendeiro", "tosar", {_tipo}, 1)
+
+# 4. COLETAS ESPECIAIS (Sweet Berries, Glow Berries e Mel)
+on right click:
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+    if {_jobs_low} contains "fazendeiro":
+        
+        # 4.1 Coleta de Frutas Vermelhas (Sweet Berries)
+        if event-block is sweet berry bush:
+            if "%block data of event-block%" contains "age=3":
+                addProgressoSemanal(player, "fazendeiro", "coletar", "sweet berries", 1)
+        
+        # 4.2 Coleta de Bagas Luminosas (Glow Berries)
+        else if event-block is cave vines or cave vines plant:
+            if "%block data of event-block%" contains "berries=true":
+                addProgressoSemanal(player, "fazendeiro", "coletar", "glow berries", 1)
+                
+        # 4.3 Coleta de Mel (Honey Bottle)
+        else if event-block is bee nest or beehive:
+            if "%block data of event-block%" contains "honey_level=5":
+                if player's tool is glass bottle:
+                    addProgressoSemanal(player, "fazendeiro", "coletar", "honey bottle", 1)
+
 on tool break:
     set {_tipo} to "%type of event-item%"
     set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
@@ -278,18 +327,46 @@ on inventory click:
                     addProgressoSemanal(player, "minerador", "forjar", {_tipo}, {_qtd})
 
 on mine:
-    if metadata "desertsky_placed" of event-block is true:
-        stop
     set {_tipo} to "%type of event-block%"
     set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+    # 1. FAZENDEIRO (Permite blocos plantados, mas exige estágio máximo)
+    if {_jobs_low} contains "fazendeiro":
+        set {_valido} to true
+        set {_data} to "%block data of event-block%"
+        
+        # Validação de Crescimento
+        if {_tipo} contains "wheat":
+            if {_data} does not contain "age=7":
+                set {_valido} to false
+        else if {_tipo} contains "carrots" or "carrot":
+            if {_data} does not contain "age=7":
+                set {_valido} to false
+        else if {_tipo} contains "beetroots" or "beetroot":
+            if {_data} does not contain "age=3":
+                set {_valido} to false
+        else if {_tipo} contains "potatoes" or "potato":
+            if {_data} does not contain "age=7":
+                set {_valido} to false
+        else if {_tipo} contains "nether wart":
+            if {_data} does not contain "age=3":
+                set {_valido} to false
+        else if {_tipo} contains "cocoa":
+            if {_data} does not contain "age=2":
+                set {_valido} to false
+                
+        if {_valido} is true:
+            addProgressoSemanal(player, "fazendeiro", "minerar", {_tipo}, 1)
+    if metadata "desertsky_placed" of event-block is true:
+        stop
     if {_jobs_low} contains "minerador":
         addProgressoSemanal(player, "minerador", "minerar", {_tipo}, 1)
+    if {_jobs_low} contains "minerador":
+        if {_tipo} is "sugar cane", "pumpkin" or "melon":
+            addProgressoSemanal(player, "minerador", "minerar", {_tipo}, 1)
     if {_jobs_low} contains "lenhador":
         addProgressoSemanal(player, "lenhador", "minerar", {_tipo}, 1)
     if {_jobs_low} contains "escavador":
         addProgressoSemanal(player, "escavador", "minerar", {_tipo}, 1)
-    if {_jobs_low} contains "fazendeiro":
-        addProgressoSemanal(player, "fazendeiro", "minerar", {_tipo}, 1)
 
 on bucket fill:
     if event-block is lava:
@@ -399,16 +476,10 @@ on place:
         addProgressoSemanal(player, "lenhador", "construir", {_tipo}, 1)
         addProgressoSemanal(player, "lenhador", "plantar", {_tipo}, 1)
 
-on craft:
-    set {_tipo} to "%type of event-item%"
-    set {_qtd} to item amount of event-item
-    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-    
-    if {_jobs_low} contains "bruxo":
-        addProgressoSemanal(player, "bruxo", "craftar", {_tipo}, {_qtd})
-        
-    if {_jobs_low} contains "lenhador":
-        addProgressoSemanal(player, "lenhador", "craftar", {_tipo}, {_qtd})
+    # Eventos do Fazendeiro (Plantar sementes e fungos)
+    if {_jobs_low} contains "fazendeiro":
+        addProgressoSemanal(player, "fazendeiro", "plantar", {_tipo}, 1)
+
 
 on enchant:
     set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
