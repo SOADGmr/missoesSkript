@@ -334,6 +334,10 @@ on mine:
     set {_tipo} to "%type of event-block%"
     set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
     # 1. FAZENDEIRO (Permite blocos plantados, mas exige estágio máximo)
+        # Eventos do Construtor
+    if {_jobs_low} contains "construtor":
+        addProgressoSemanal(player, "construtor", "construir", {_tipo}, -1)
+
     if {_jobs_low} contains "fazendeiro" or "bruxo":
         set {_valido} to true
         set {_data} to "%block data of event-block%"
