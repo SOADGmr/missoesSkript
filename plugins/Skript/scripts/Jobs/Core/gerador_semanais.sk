@@ -175,11 +175,15 @@ function addProgressoSemanal(p: player, job: text, acao: text, tipo_alvo: text, 
                     # SMART MATCHER: Lida perfeitamente com plurais (ex: "cod" vs "cods") 
                     loop {meta_base::%{_meta_id}%::tipos::*}:
                         set {_req} to loop-value
+                        
+                        # 1. Correspondência Exata
                         if {_tipo_alvo} is {_req}:
                             set {_match} to true
-                        else if {_tipo_alvo} contains {_req}:
+                            
+                        # 2. Correspondência de Plural Simples (Adiciona/Remove o "s" no final)
+                        else if "%{_tipo_alvo}%" is "%{_req}%s":
                             set {_match} to true
-                        else if {_req} contains {_tipo_alvo}:
+                        else if "%{_req}%" is "%{_tipo_alvo}%s":
                             set {_match} to true
                     
                 if {_match} is true:
@@ -330,7 +334,7 @@ on mine:
     set {_tipo} to "%type of event-block%"
     set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
     # 1. FAZENDEIRO (Permite blocos plantados, mas exige estágio máximo)
-    if {_jobs_low} contains "fazendeiro":
+    if {_jobs_low} contains "fazendeiro" or "bruxo":
         set {_valido} to true
         set {_data} to "%block data of event-block%"
         
@@ -367,6 +371,8 @@ on mine:
         addProgressoSemanal(player, "lenhador", "minerar", {_tipo}, 1)
     if {_jobs_low} contains "escavador":
         addProgressoSemanal(player, "escavador", "minerar", {_tipo}, 1)
+    if {_jobs_low} contains "bruxo":
+        addProgressoSemanal(player, "bruxo", "minerar", {_tipo}, 1)
 
 on bucket fill:
     if event-block is lava:
@@ -454,6 +460,10 @@ on consume:
 # --------------------------------------------------------------------
 # AÇÃO DE "ACHATAR" CAMINHOS (Escavador: Pá na relva)
 # --------------------------------------------------------------------
+    
+on craft:
+    broadcast the item amount of event-item stack
+
 on right click on grass block, dirt, podzol, coarse dirt or rooted dirt:
     set {_ferramenta} to "%type of player's tool%"
     if {_ferramenta} contains "shovel":
@@ -485,6 +495,15 @@ on enchant:
     set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
     if {_jobs_low} contains "mago":
         addProgressoSemanal(player, "mago", "encantar", "any", 1)
+
+on death:
+    attacker is a player
+    set {_tipo} to "%type of victim%"
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from attacker in lowercase
+    
+    # Eventos do Bruxo (Para as caças semanais místicas)
+    if {_jobs_low} contains "bruxo":
+        addProgressoSemanal(attacker, "bruxo", "matar", {_tipo}, 1)
 
 # ========================================================================
 # 7. MOTOR DE RESET SEMANAL (LAZY RESET)
