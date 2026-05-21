@@ -3,22 +3,33 @@
 # Caminho: /plugins/Skript/scripts/Jobs/core/Admin.sk
 # =============================================================================
 
+command /testejob:
+    trigger:
+        # 1. Definir Nível diretamente
+        set level of job "minerador" of player to 50
+
+        # 2. Adicionar XP diretamente
+        add 500 to xp of job "minerador" of player
+
 # Comando agora suporta 4 argumentos para incluir a profissão e abriga novos recursos
-command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
+command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
     permission: desertsky.admin
     permission message: &c[!] Acesso negado. Requer node 'desertsky.admin'.
     trigger:
+
+        #   Se o Staff executar apenas /jobadmin:
         if arg 1 is not set:
             send "&8&l--- &6DesertSky Admin CLI v4.2 &8&l---"
-            send "&e/adminmissao status <player> &7- Visão geral dos Jobs."
-            send "&e/adminmissao inspect <player> &7- Abre GUI com histórico de missões."
-            send "&e/adminmissao setnivel <player> <job> <nivel> &7- Altera o nível do Job."
-            send "&e/adminmissao fire <player> <job> &7- Demite o jogador do Job."
-            send "&e/adminmissao reset <player> <job> <id> &7- Reseta missão."
-            send "&e/adminmissao forcecomplete <player> <job> <id> &7- Força conclusão."
-            send "&e/adminmissao skipday <player> &7- Simula passagem de dia."
+            send "&e/jobadmin status <player> &7- Visão geral dos Jobs."
+            send "&e/jobadmin inspect <player> &7- Abre GUI com histórico de missões."
+            send "&e/jobadmin setnivel <player> <job> <nivel> &7- Altera o nível do Job."
+            send "&e/jobadmin fire <player> <job> &7- Demite o jogador do Job."
+            send "&e/jobadmin reset <player> <job> <id> &7- Reseta missão."
+            send "&e/jobadmin forcecomplete <player> <job> <id> &7- Força conclusão."
+            send "&e/jobadmin skipday <player> &7- Simula passagem de dia."
             stop
 
+        #   Se o Staff nao especificar um jogador:
         if arg 2 is not set:
             send "&c[!] Especifique um jogador."
             stop
@@ -28,20 +39,32 @@ command /adminmissao [<text>] [<offline player>] [<text>] [<integer>]:
 
         # 1. STATUS GLOBAL
         if arg 1 is "status":
-            set {_job_atual} to placeholder "%%jobsr_user_jobs%%" from {_p}
+            # [JobsSK] Pega a lista de trabalhos nativa em vez de usar Placeholder
+            set {_jobs_lista::*} to jobs of {_p}
             
-            # Puxa os níveis com fallback (caso o explorador ainda use a variável antiga)
-            set {_lvl_exp} to {nivel::explorador::%{_uuid}%} ? {nivel::%{_uuid}%} ? 1
-            set {_lvl_min} to {nivel::minerador::%{_uuid}%} ? 0
-            set {_lvl_len} to {nivel::lenhador::%{_uuid}%} ? 0
+            # Transforma a lista num texto bonito, ou diz "Nenhuma" se a lista for vazia
+            if size of {_jobs_lista::*} > 0:
+                # Converte os Objetos de Job para Texto puro antes de juntar
+                loop {_jobs_lista::*}:
+                    add "%loop-value%" to {_nomes_jobs::*}
+                set {_job_atual} to join {_nomes_jobs::*} with ", "
+            else:
+                set {_job_atual} to "Nenhuma"
             
-            send "&8&l--- &6STATUS: %{_p}% &8&l---"
-            send "&eProfissões (Jobs): &f%{_job_atual}%"
-            send "&eNível Explorador: &f%{_lvl_exp}%"
-            send "&eNível Minerador: &f%{_lvl_min}%"
-            send "&eNível Lenhador: &f%{_lvl_len}%"
+            send "&8&l-------- &6STATUS: %{_p}% &8&l--------"
+            send "&eProfissões: &f%{_job_atual}%"
+            
+            # Mostra os níveis das outras profissões de forma dinâmica
+            if size of {_nomes_jobs::*} > 0:
+                loop {_nomes_jobs::*}:
+                    set {_nome_job} to loop-value
+                    set {_job_id} to {_nome_job} in lowercase
+                    
+                    set {_lvl_job} to {nivel::%{_job_id}%::%{_uuid}%} ? 0
+                    send "&eNível %{_nome_job}%: &f%{_lvl_job}%"
+
             send "&eÚltimo Reset (Data): &f%{last_reset::%{_uuid}%}%"
-            send "&8&l------------------------"
+            send "&8&l-------------------------------"
 
         # 2. SETNIVEL (Exige saber qual profissão - AGORA SINCRONIZADO)
         else if arg 1 is "setnivel":
@@ -182,11 +205,15 @@ command /forca_diaria <text> <offline player>:
             stop
         set {_player} to arg 2
         
-        # Verificação para garantir que até os admins só forcem diárias de jobs que possuem
-        set {_jobs_ativos} to placeholder "%%jobsr_user_jobs%%" from player
-        set {_jobs_low} to {_jobs_ativos} in lowercase
+        # [JobsSK] Verificação SEGURA E EXATA usando Loop de Lista
+        set {_jobs_ativos::*} to jobs of {_player}
+        set {_tem_job} to false
+        loop {_jobs_ativos::*}:
+            if "%loop-value%" in lowercase is {_job}:
+                set {_tem_job} to true
+                stop loop
         
-        if {_jobs_low} does not contain {_job}:
+        if {_tem_job} is false:
             send "&c[!] Erro: O jogador '%{_player}%' não possui a profissão '%{_job}%'." to player
             stop
             
@@ -208,11 +235,15 @@ command /forca_semanal <text> <offline player>:
         set {_job} to arg 1 in lowercase
         set {_player} to arg 2
         
-        # Verificação para garantir que até os admins só forcem diárias de jobs que possuem
-        set {_jobs_ativos} to placeholder "%%jobsr_user_jobs%%" from {_player}
-        set {_jobs_low} to {_jobs_ativos} in lowercase
+        # [JobsSK] Verificação SEGURA E EXATA usando Loop de Lista
+        set {_jobs_ativos::*} to jobs of {_player}
+        set {_tem_job} to false
+        loop {_jobs_ativos::*}:
+            if "%loop-value%" in lowercase is {_job}:
+                set {_tem_job} to true
+                stop loop
         
-        if {_jobs_low} does not contain {_job}:
+        if {_tem_job} is false:
             send "&c[!] Erro: O jogador '%{_player}%' não possui a profissão '%{_job}%'." to player
             stop
             
@@ -312,14 +343,17 @@ command /desertsky_admin_setjob <text> <text>:
                 stop
                 
             # Requisito 2: Verifica a profissão Tier 2 do jogador e o seu nível
-            set {_jobs_reborn} to placeholder "%%jobsr_user_jobs%%" from {_p} in lowercase
+            # [JobsSK] Verificação precisa
+            set {_jobs_ativos::*} to jobs of {_p}
             set {_meu_tier2} to ""
             
             # Descobre qual é o Job Tier 2 que o jogador tem
             loop {_tier2::*}:
-                if {_jobs_reborn} contains loop-value:
-                    set {_meu_tier2} to loop-value
-                    stop loop
+                set {_check_job} to loop-value
+                loop {_jobs_ativos::*}:
+                    if "%loop-value-2%" in lowercase is {_check_job}:
+                        set {_meu_tier2} to {_check_job}
+                        stop loop
                     
             if {_meu_tier2} is "":
                 send "&c[!] Precisas de escolher uma especialidade (Tier 2) primeiro!" to {_p}
