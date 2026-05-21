@@ -1,37 +1,28 @@
 # =============================================================================
-# DESERTSKY - CLI ADMINISTRATIVA (V4.2 - MULTI-JOBS, INSPECT & DEMISSÃO)
+# DESERTSKY - CLI ADMINISTRATIVA (V5.0 - GESTÃO CENTRALIZADA)
 # Caminho: /plugins/Skript/scripts/Jobs/core/Admin.sk
 # =============================================================================
 
-command /testejob:
-    trigger:
-        # 1. Definir Nível diretamente
-        set level of job "minerador" of player to 50
-
-        # 2. Adicionar XP diretamente
-        add 500 to xp of job "minerador" of player
-
-# Comando agora suporta 4 argumentos para incluir a profissão e abriga novos recursos
 command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
-    permission: desertsky.admin
-    permission message: &c[!] Acesso negado. Requer node 'desertsky.admin'.
+    usage: Um comando usado por administradores para gerenciar dados do jogador
+    permission: desertsky.jobs.admin
+    permission message: &c[!] Acesso negado. Requer permissao 'desertsky.jobs.admin'.
     trigger:
-
-        #   Se o Staff executar apenas /jobadmin:
         if arg 1 is not set:
-            send "&8&l--- &6DesertSky Admin CLI v4.2 &8&l---"
-            send "&e/jobadmin status <player> &7- Visão geral dos Jobs."
-            send "&e/jobadmin inspect <player> &7- Abre GUI com histórico de missões."
-            send "&e/jobadmin setnivel <player> <job> <nivel> &7- Altera o nível do Job."
-            send "&e/jobadmin fire <player> <job> &7- Demite o jogador do Job."
-            send "&e/jobadmin reset <player> <job> <id> &7- Reseta missão."
-            send "&e/jobadmin forcecomplete <player> <job> <id> &7- Força conclusão."
-            send "&e/jobadmin skipday <player> &7- Simula passagem de dia."
+            send "&8&l--- &6DesertSky Jobs Admin CLI v5.0 &8&l---"
+            send "&e/jobadmin &cstatus &f<jogador> &7- Visão geral dos Jobs."
+            send "&e/jobadmin &cinspect &f<jogador> &7- Abre GUI com histórico de missões."
+            send "&e/jobadmin &csetnivel &f<jogador> <profissão> <nivel> &7- Altera o nível do Job."
+            send "&e/jobadmin &cemploy &f<jogador> <profissão> &7- Contrata (Ignora Requisitos)."
+            send "&e/jobadmin &cfire &f<jogador> <profissão> &7- Demite o jogador do Job."
+            send "&e/jobadmin &creset &f<jogador> <profissão> <id> &7- Reseta missão."
+            send "&e/jobadmin &cforcecomplete &f<jogador> <profissão> <id> &7- Força conclusão."
+            send "&e/jobadmin &cskipday &f<jogador> &7- Simula passagem de dia."
             stop
 
-        #   Se o Staff nao especificar um jogador:
         if arg 2 is not set:
-            send "&c[!] Especifique um jogador."
+            send "&c[!] Especifique um jogador:"
+            send " &7/jobadmin %arg-1% &e<jogador> &7<profissao>"
             stop
 
         set {_p} to arg 2
@@ -39,12 +30,9 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
 
         # 1. STATUS GLOBAL
         if arg 1 is "status":
-            # [JobsSK] Pega a lista de trabalhos nativa em vez de usar Placeholder
             set {_jobs_lista::*} to jobs of {_p}
             
-            # Transforma a lista num texto bonito, ou diz "Nenhuma" se a lista for vazia
             if size of {_jobs_lista::*} > 0:
-                # Converte os Objetos de Job para Texto puro antes de juntar
                 loop {_jobs_lista::*}:
                     add "%loop-value%" to {_nomes_jobs::*}
                 set {_job_atual} to join {_nomes_jobs::*} with ", "
@@ -52,9 +40,11 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
                 set {_job_atual} to "Nenhuma"
             
             send "&8&l-------- &6STATUS: %{_p}% &8&l--------"
-            send "&eProfissões: &f%{_job_atual}%"
+            send "&eProfissões (Jobs): &f%{_job_atual}%"
             
-            # Mostra os níveis das outras profissões de forma dinâmica
+            set {_lvl_exp} to {nivel::explorador::%{_uuid}%} ? {nivel::%{_uuid}%} ? 1
+            send "&eNível Explorador: &f%{_lvl_exp}%"
+            
             if size of {_nomes_jobs::*} > 0:
                 loop {_nomes_jobs::*}:
                     set {_nome_job} to loop-value
@@ -66,7 +56,7 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
             send "&eÚltimo Reset (Data): &f%{last_reset::%{_uuid}%}%"
             send "&8&l-------------------------------"
 
-        # 2. SETNIVEL (Exige saber qual profissão - AGORA SINCRONIZADO)
+        # 2. SETNIVEL
         else if arg 1 is "setnivel":
             if arg 3 is not set:
                 send "&c[!] Especifique o job (ex: explorador, minerador)."
@@ -76,30 +66,35 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
                 stop
                 
             set {_job} to arg 3 in lowercase
-            
-            # Usa a nova função adaptadora para sincronizar Jobs e Skript!
             setNivelJob({_p}, {_job}, arg 4)
+            delete {missao::%{_job}%::%arg 4%::%{_uuid}%::status}
             
-            # Retrocompatibilidade com a fase 1 do Explorador
             if {_job} is "explorador":
                 set {nivel::%{_uuid}%} to arg 4
                 
             send "&a[!] O Nível de %{_job}% de %{_p}% foi alterado e sincronizado para %arg 4%."
 
-        # 3. DEMISSÃO (FIRE)
+        # 3. FORÇAR CONTRATAÇÃO (NOVO)
+        else if arg 1 is "employ":
+            if arg 3 is not set:
+                send "&c[!] Especifique o job que deseja forçar a contratação."
+                stop
+                
+            set {_job} to arg 3 in lowercase
+            execute console command "jobs employ %{_p}% %{_job}%"
+            send "&a[!] O jogador %{_p}% foi contratado como %{_job}% ignorando requisitos."
+
+        # 4. DEMISSÃO (FIRE)
         else if arg 1 is "fire":
             if arg 3 is not set:
                 send "&c[!] Especifique o job que deseja demitir o jogador."
                 stop
                 
             set {_job} to arg 3 in lowercase
-            
-            # Usa a função do core para apagar as variáveis e remover no JobsReborn
             demitirJob({_p}, {_job})
-            
-            send "&a[!] O jogador %{_p}% foi demitido da profissão %{_job}% e o progresso foi limpo."
+            send "&a[!] Pedido de demissão enviado. O Skript fará a limpeza automática dos dados."
 
-        # 4. RESET DE MISSÃO ESPECÍFICA (Por Job e ID)
+        # 5. RESET DE MISSÃO ESPECÍFICA
         else if arg 1 is "reset":
             if arg 3 is not set:
                 send "&c[!] Especifique o job."
@@ -109,18 +104,11 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
                 stop
                 
             set {_job} to arg 3 in lowercase
-            
-            # Limpeza do novo Namespace (V4.0)
             delete {missao::%{_job}%::%arg 4%::%{_uuid}%::status}
-            
-            # Limpeza de Fallback para as missões antigas (Legacy)
-            if {_job} is "explorador":
-                delete {missao::status::%arg 4%::%{_uuid}%}
-                delete {missao::%arg 4%::%{_uuid}%::status}
             
             send "&a[!] A missão %arg 4% (%{_job}%) do jogador %{_p}% foi resetada."
 
-        # 5. FORCE COMPLETE
+        # 6. FORCE COMPLETE
         else if arg 1 is "forcecomplete":
             if arg 3 is not set:
                 send "&c[!] Especifique o job."
@@ -130,33 +118,26 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
                 stop
             
             set {_job} to arg 3 in lowercase
-            
             set {_id} to arg 4
             set {_prox_nivel} to {_id} + 1
             
             concluirMissaoPrincipal({_p}, {_id}, {_job}, {_prox_nivel})
-            
             send "&a[!] Missão %{_id}% (%{_job}%) do jogador %{_p}% forçada para CONCLUÍDA com sucesso."
 
-        # 6. SKIPDAY
+        # 7. SKIPDAY
         else if arg 1 is "skipday":
             set {last_reset::%{_uuid}%} to "01/01/1990"
             send "&a[!] Data de %{_p}% revertida. Lazy Reset engatilhado."
 
-        # 7. INSPECT GUI
+        # 8. INSPECT GUI
         else if arg 1 is "inspect":
             set {_gui} to a new chest inventory with 6 rows named "&8&lInspect: %{_p}%"
-            
-            # Fundo
             loop 54 times:
                 set slot (loop-number - 1) of {_gui} to black stained glass pane named " "
             
-            # Dados do jogador
             set {_lvl_exp} to {nivel::%{_uuid}%} ? 1
-            
             set slot 4 of {_gui} to player head named "&6&l%{_p}%" with lore "&7Nível Explorador: &f%{_lvl_exp}%", "" and "&8Monitoramento em tempo real."
             
-            # Grade de Missões do Explorador (Slots 10-16, 19-25, 28-34)
             set {_slot} to 10
             loop 20 times:
                 if loop-number is less than {_lvl_exp}:
@@ -167,7 +148,6 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
                     set slot {_slot} of {_gui} to gray dye named "&cMissão %loop-number%" with lore "&7Status: &cBloqueada"
                 
                 add 1 to {_slot}
-                # Pula as bordas para manter centralizado
                 if {_slot} is 17:
                     set {_slot} to 19
                 else if {_slot} is 26:
@@ -175,220 +155,6 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
                     
             open {_gui} to player
 
-# Trava o clique no inventário de Inspect
 on inventory click:
     if name of event-inventory contains "&8&lInspect:":
         cancel event
-        
-# ========================================================================
-# COMANDOS CONSOLE-BRIDGE E ADMIN FERRAMENTAS AVANÇADAS
-# ========================================================================
-
-# Comando de correção de bugs
-command /fix_minhas_semanais:
-    permission: desertsky.admin
-    trigger:
-        delete {missao::semanal::%player%::minerador::meta::*}
-        loop 50 times:
-            delete {missao::semanal::%player%::minerador::meta::%loop-number%::id}
-            delete {missao::semanal::%player%::minerador::meta::%loop-number%::alvo}
-            delete {missao::semanal::%player%::minerador::meta::%loop-number%::progresso}
-        send "&a[!] Metas fantasmas apagadas do teu perfil com sucesso!" to player
-        send "&a[!] Use &f/forca_semanal minerador &aagora para gerar uma missão limpa." to player
-
-command /forca_diaria <text> <offline player>:
-    permission: desertsky.admin
-    trigger:
-        set {_job} to arg 1 in lowercase
-        if arg 2 is not set:
-            send "&c[!] Especifique um jogador."
-            stop
-        set {_player} to arg 2
-        
-        # [JobsSK] Verificação SEGURA E EXATA usando Loop de Lista
-        set {_jobs_ativos::*} to jobs of {_player}
-        set {_tem_job} to false
-        loop {_jobs_ativos::*}:
-            if "%loop-value%" in lowercase is {_job}:
-                set {_tem_job} to true
-                stop loop
-        
-        if {_tem_job} is false:
-            send "&c[!] Erro: O jogador '%{_player}%' não possui a profissão '%{_job}%'." to player
-            stop
-            
-        if arg 1 is "Explorador":
-            send "&c[!] Erro: A profissão 'Explorador' nao contém missões semanais." to player
-            stop
-
-        # Força o reset para permitir novo sorteio
-        set {diaria::%{_job}%::%uuid of player%::data} to "force_reset"
-        sortearDiaria(arg 2, arg 1)
-        send "&a[!] Sorteio diário forçado para a profissão: %{_job}% de %{_player}%" to player
-
-command /forca_semanal <text> <offline player>:
-    permission: desertsky.admin
-    trigger:
-        if arg 2 is not set:
-            send "&c[!] Especifique um jogador."
-            stop
-        set {_job} to arg 1 in lowercase
-        set {_player} to arg 2
-        
-        # [JobsSK] Verificação SEGURA E EXATA usando Loop de Lista
-        set {_jobs_ativos::*} to jobs of {_player}
-        set {_tem_job} to false
-        loop {_jobs_ativos::*}:
-            if "%loop-value%" in lowercase is {_job}:
-                set {_tem_job} to true
-                stop loop
-        
-        if {_tem_job} is false:
-            send "&c[!] Erro: O jogador '%{_player}%' não possui a profissão '%{_job}%'." to player
-            stop
-            
-        if arg 1 is "Explorador":
-            send "&c[!] Erro: A profissão 'Explorador' nao contém missões semanais." to player
-            stop
-
-        send "&a[!] Sorteio semanal forçado para a profissão: %{_job}% de %{_player}%" to player
-        sortearSemanal(arg 2, arg 1)
-
-command /reset_semanal_global:
-    permission: desertsky.admin
-    trigger:
-        loop all players:
-            delete {last_semanal_reset::%uuid of loop-player%}
-        send "&a[!] Reset de semana forçado para todos os jogadores." to player
-        send "&7Para verem o efeito, eles precisam relogar no servidor." to player
-        
-command /completar_coleta_semanal <text>:
-    permission: desertsky.admin
-    trigger:
-        set {_job} to arg 1 in lowercase
-        
-        if {missao::semanal::%player%::%{_job}%::status} is "em_andamento":
-            set {_index} to 1
-            while {missao::semanal::%player%::%{_job}%::meta::%{_index}%::id} is set:
-                set {_alvo} to {missao::semanal::%player%::%{_job}%::meta::%{_index}%::alvo}
-                set {missao::semanal::%player%::%{_job}%::meta::%{_index}%::progresso} to {_alvo}
-                add 1 to {_index}
-            
-            verificarConclusaoSemanal(player, {_job})
-            send "&a[Debug] &fA fase de coleta de %{_job}% foi preenchida artificialmente." to player
-        else:
-            send "&c[!] Você não tem uma missão semanal de %{_job}% na fase de coleta." to player
-
-
-# Comando Ponte (Bridge) para Contratações por Interface Gráfica ou NPC
-command /desertsky_admin_setjob <text> <text>:
-    executable by: console
-    trigger:
-        # Puxa os textos e converte de forma segura
-        set {_p} to arg-1 parsed as player
-        set {_escolha} to arg-2
-        
-        # Verifica se o jogador realmente existe/está online
-        if {_p} is not set:
-            send "&c[DesertSky] Falha: Jogador %arg-1% não encontrado." to console
-            stop
-            
-        set {_uuid} to uuid of {_p}
-        # Puxa o nível de Explorador da variável raiz
-        set {_nivel_atual} to {nivel::%{_uuid}%} ? 1
-
-        # --- SISTEMA DE VERIFICAÇÃO E TRAVAS ---
-        set {_tier2::*} to "minerador", "lenhador", "escavador", "pescador" and "fazendeiro"
-        set {_tier3::*} to "bruxo", "construtor" and "mago"
-
-        # ==========================================
-        # [VERIFICAÇÃO TIER 2]
-        # ==========================================
-        if {_tier2::*} contains {_escolha}:
-            if {_nivel_atual} < 20:
-                send "&c[!] Anomalia detetada! O teu nível de Explorador (%{_nivel_atual}%) é insuficiente." to {_p}
-                send "&c[!] Precisas de concluir a Missão 20 para escolheres uma especialização." to {_p}
-                play sound "entity.villager.no" to {_p}
-                close {_p}'s inventory
-                stop
-                
-            # Tranca a Fase de Sobrevivência e sobe para o Tier 2 (apenas se estiver no 20)
-            if {_nivel_atual} is 20:
-                set {missao::20::%{_uuid}%::status} to "concluida"
-                set {nivel::%{_uuid}%} to 21 
-                
-            # Adiciona a Profissão usando a consola
-            execute console command "jobs employ %{_p}% %{_escolha}%"
-            
-            # Celebração Épica
-            send title "&6&lNOVO DESTINO" with subtitle "&eTornaste-te num %{_escolha}%!" to {_p} for 5 seconds
-            play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 1.0 to {_p}
-            send "" to {_p}
-            send "&e&l[!] &7O Diário de Sobrevivência Inicial foi concluído." to {_p}
-            send "&e&l[!] &7O teu nome será lembrado como um verdadeiro &f%{_escolha}%&7!" to {_p}
-            send "" to {_p}
-            
-            close {_p}'s inventory
-            stop
-
-        # ==========================================
-        # [VERIFICAÇÃO TIER 3]
-        # ==========================================
-        if {_tier3::*} contains {_escolha}:
-            # Requisito 1: Nível do Explorador (Mude o 40 para o nível que desejar)
-            if {_nivel_atual} < 40: 
-                send "&c[!] Acesso Negado! Precisas de ser Nível 40 na linha base para alcançar uma Mestria." to {_p}
-                play sound "entity.villager.no" to {_p}
-                close {_p}'s inventory
-                stop
-                
-            # Requisito 2: Verifica a profissão Tier 2 do jogador e o seu nível
-            # [JobsSK] Verificação precisa
-            set {_jobs_ativos::*} to jobs of {_p}
-            set {_meu_tier2} to ""
-            
-            # Descobre qual é o Job Tier 2 que o jogador tem
-            loop {_tier2::*}:
-                set {_check_job} to loop-value
-                loop {_jobs_ativos::*}:
-                    if "%loop-value-2%" in lowercase is {_check_job}:
-                        set {_meu_tier2} to {_check_job}
-                        stop loop
-                    
-            if {_meu_tier2} is "":
-                send "&c[!] Precisas de escolher uma especialidade (Tier 2) primeiro!" to {_p}
-                play sound "entity.villager.no" to {_p}
-                close {_p}'s inventory
-                stop
-                
-            # Verifica o nível específico desse Job
-            set {_nivel_t2} to {nivel::%{_meu_tier2}%::%{_uuid}%} ? 0
-            if {_nivel_t2} < 50:
-                send "&c[!] Precisas de evoluir na profissão de %{_meu_tier2}% até o nível 50 primeiro!" to {_p}
-                play sound "entity.villager.no" to {_p}
-                close {_p}'s inventory
-                stop
-            
-            # Adiciona a Profissão usando a consola
-            execute console command "jobs employ %{_p}% %{_escolha}%"
-            
-            # Celebração Épica TIER 3
-            send title "&5&lMESTRIA ALCANÇADA" with subtitle "&dAgora dominas os caminhos do %{_escolha}%!" to {_p} for 5 seconds
-            play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 1.0 to {_p}
-            close {_p}'s inventory
-            stop
-
-# Comando Ponte para Demissões Via Interfaces/Botões (Similar ao setjob)
-command /desertsky_admin_firejob <text> <text>:
-    executable by: console
-    trigger:
-        set {_p} to arg-1 parsed as player
-        set {_job} to arg-2
-        
-        if {_p} is not set:
-            send "&c[DesertSky] Falha: Jogador %arg-1% não encontrado." to console
-            stop
-            
-        demitirJob({_p}, {_job})
-        send "&c&l[SINDICATO] &7Foste demitido da profissão de &f%{_job}%&7." to {_p}
-        play sound "entity.villager.no" to {_p}
