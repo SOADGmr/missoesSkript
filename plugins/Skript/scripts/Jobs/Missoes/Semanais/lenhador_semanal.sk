@@ -41,7 +41,7 @@ on load:
     registrarMetaBase("lenhador_plantar_mangrove", "plantar", "mangrove propagule", "Propágulo de Mangue", "Plantar @alvo@ propágulos de mangue")
 
     # --- ESFORÇO E PROCESSAMENTO ---
-    registrarMetaBase("lenhador_quebrar_machado", "quebrar_ferramenta", "iron axe,diamond axe", "Machado Exausto", "Quebrar @alvo@ machados por exaustão")
+    registrarMetaBase("lenhador_quebrar_machado", "quebrar_ferramenta", "iron axe,diamond axe,netherite axe", "Machado Exausto", "Quebrar @alvo@ machados por exaustão")
 
     # ========================================================================
     # 3. CONTRATOS (MISSÕES COMPOSTAS)

@@ -307,6 +307,7 @@ on tool break:
     if {_jobs_low} contains "minerador":
         addProgressoSemanal(player, "minerador", "quebrar_ferramenta", {_tipo}, 1)
     if {_jobs_low} contains "lenhador":
+        broadcast "Quebrou o %{_tipo}%"
         addProgressoSemanal(player, "lenhador", "quebrar_ferramenta", {_tipo}, 1)
 
 on inventory click:
@@ -329,6 +330,52 @@ on inventory click:
                 set {_qtd} to item amount of event-item
                 if {_jobs_low} contains "minerador":
                     addProgressoSemanal(player, "minerador", "forjar", {_tipo}, {_qtd})
+                    
+    if {_jobs_low} contains "mago":
+        # Fusão na Bigorna (Slot de Saída = 2)
+        if event-inventory's type is anvil inventory:
+            if index of event-slot is 2:
+                if event-item is not air:
+                    addProgressoSemanal(player, "mago", "fundir_bigorna", "any", 1)
+                    
+        # Desencantar no Rebolo (Slot de Saída = 2)
+        else if event-inventory's type is grindstone inventory:
+            if index of event-slot is 2:
+                if event-item is not air:
+                    addProgressoSemanal(player, "mago", "desencantar", "any", 1)
+                    
+        # Comércio com Bibliotecários (Slot de Saída = 2)
+        else if event-inventory's type is merchant inventory:
+            if index of event-slot is 2:
+                if event-item is enchanted book:
+                    addProgressoSemanal(player, "mago", "comprar_aldeao", "enchanted book", 1)
+
+# Encantamento (Mesa de Nível 30 e outros itens)
+on enchant:
+    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+    if {_jobs_low} contains "mago":
+        broadcast type of event-item
+        set {_tipo} to "%type of event-item%"
+        addProgressoSemanal(player, "mago", "encantar", {_tipo}, 1)
+        
+        # ======================================================================
+        # O PULO DO GATO: Detecção Infalível de Nível 30 (Tier 3)
+        # ======================================================================
+        # Guardamos o nível do jogador no exato milissegundo do evento.
+        set {_xp_antes} to player's level
+        
+        # Esperamos 1 tick (fração de segundo) para o Minecraft cobrar o custo.
+        wait 1 tick
+        
+        # Verificamos como ficou a barra de XP dele após o encantamento.
+        set {_xp_depois} to player's level
+        
+        # A diferença será sempre 1, 2 ou 3 níveis gastos.
+        set {_niveis_gastos} to {_xp_antes} - {_xp_depois}
+        
+        # Se ele gastou exatamente 3 níveis, foi 100% de certeza um encanto Tier 3!
+        if {_niveis_gastos} is 3:
+            addProgressoSemanal(player, "mago", "encantar_nv30", "any", 1)
 
 on mine:
     set {_tipo} to "%type of event-block%"
@@ -337,6 +384,8 @@ on mine:
         # Eventos do Construtor
     if {_jobs_low} contains "construtor":
         addProgressoSemanal(player, "construtor", "construir", {_tipo}, -1)
+    if {_jobs_low} contains "lenhador":
+        addProgressoSemanal(player, "lenhador", "plantar", {_tipo}, -1)
 
     if {_jobs_low} contains "fazendeiro" or "bruxo":
         set {_valido} to true
