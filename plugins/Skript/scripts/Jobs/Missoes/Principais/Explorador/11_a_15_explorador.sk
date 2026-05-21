@@ -1,6 +1,6 @@
 # =============================================================================
 # DESERTSKY - MISSÕES 11 A 15: METALURGIA E AGRICULTURA
-# Caminho: /plugins/Skript/scripts/Jobs/missoes/Explorador/11_ao_15_explorador.sk
+# Caminho: /plugins/Skript/scripts/Jobs/Missoes/Principais/Explorador/11_a_15_explorador.sk
 # =============================================================================
 
 on script load:
@@ -10,16 +10,14 @@ on script load:
     registrarMissao(14, "explorador", 14, "Mãos na Terra", "O deserto pode florescer se você for paciente.", "Are 10 blocos de terra e plante 10 sementes de trigo.")
     registrarMissao(15, "explorador", 15, "O Pão Nosso", "Colher o que plantou é a maior das recompensas.", "Colha 10 trigos e crafte 3 pães.")
 
-# -----------------------------------------------------------------------------
-# MISSÃO 11: MINERAR E DERRETER 15 FERROS
-# -----------------------------------------------------------------------------
 on mine:
-    # [DEFESA ANTI-CHEAT] Impede que conte minérios colocados pelo próprio jogador
     if metadata "desertsky_placed" of event-block is true:
         stop
 
     set {_uuid} to uuid of player
-    if {nivel::%{_uuid}%} is 11:
+    set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+    
+    if {_lvl} is 11:
         if event-block is iron ore or deepslate iron ore or raw iron block:
             if {missao::explorador::11::%{_uuid}%::minerado} is not set:
                 set {missao::explorador::11::%{_uuid}%::minerado} to 0
@@ -36,7 +34,9 @@ on inventory click:
     if event-inventory's type is furnace inventory:
         if index of event-slot is 2:
             set {_uuid} to uuid of player
-            if {nivel::%{_uuid}%} is 11:
+            set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+            
+            if {_lvl} is 11:
                 if event-item is iron ingot:
                     if {missao::explorador::11::%{_uuid}%::minerado} >= 15:
                         if {missao::explorador::11::%{_uuid}%::derretido} is not set:
@@ -52,12 +52,11 @@ on inventory click:
                             delete {missao::explorador::11::%{_uuid}%::*}
                             concluirMissaoPrincipal(player, 11, "explorador", 12)
 
-# -----------------------------------------------------------------------------
-# MISSÃO 12: ARSENAL COMPLETO DE FERRO (11 ITENS)
-# -----------------------------------------------------------------------------
 on craft:
     set {_uuid} to uuid of player
-    if {nivel::%{_uuid}%} is 12:
+    set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+    
+    if {_lvl} is 12:
         set {_req::*} to iron helmet, iron chestplate, iron leggings, iron boots, iron pickaxe, iron axe, iron shovel, iron hoe, iron sword, shears and bucket
         
         if {_req::*} contains event-item:
@@ -72,13 +71,12 @@ on craft:
                     delete {missao::explorador::12::%{_uuid}%::*}
                     concluirMissaoPrincipal(player, 12, "explorador", 13)
 
-# -----------------------------------------------------------------------------
-# MISSÃO 13: OVELHAS, CAMA E DESCANSO
-# -----------------------------------------------------------------------------
 on right click on sheep:
     if player's tool is shears:
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 13:
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 13:
             if target entity is not sheared:
                 if {missao::explorador::13::%{_uuid}%::tosquia} is not set:
                     set {missao::explorador::13::%{_uuid}%::tosquia} to 0
@@ -93,20 +91,21 @@ on right click on sheep:
 
 on place:
     set {_uuid} to uuid of player
-    if {nivel::%{_uuid}%} is 13:
+    set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+    
+    if {_lvl} is 13:
         if event-block is white bed, orange bed, magenta bed, light blue bed, yellow bed, lime bed, pink bed, gray bed, light gray bed, cyan bed, purple bed, blue bed, brown bed, green bed, red bed or black bed:
             if {missao::explorador::13::%{_uuid}%::tosquia} >= 3:
                 delete {missao::explorador::13::%{_uuid}%::*}
                 concluirMissaoPrincipal(player, 13, "explorador", 14)
 
-# -----------------------------------------------------------------------------
-# MISSÃO 14: ARAR E PLANTAR
-# -----------------------------------------------------------------------------
 on right click on grass block or dirt:
     set {_tool} to player's tool
     if {_tool} is wooden hoe, stone hoe, iron hoe, golden hoe, diamond hoe or netherite hoe:
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 14:
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 14:
             if {missao::explorador::14::%{_uuid}%::arado} is not set:
                 set {missao::explorador::14::%{_uuid}%::arado} to 0
             
@@ -122,7 +121,9 @@ on right click on grass block or dirt:
 on place:
     if event-block is wheat:
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 14:
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 14:
             if {missao::explorador::14::%{_uuid}%::arado} >= 10:
                 if {missao::explorador::14::%{_uuid}%::plantado} is not set:
                     set {missao::explorador::14::%{_uuid}%::plantado} to 0
@@ -135,22 +136,21 @@ on place:
                     delete {missao::explorador::14::%{_uuid}%::*}
                     concluirMissaoPrincipal(player, 14, "explorador", 15)
 
-# [DEFESA ANTI-CHEAT] Se o jogador quebrar a semente recém plantada, ele perde progresso.
 on break of wheat:
     set {_uuid} to uuid of player
-    if {nivel::%{_uuid}%} is 14:
+    set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+    
+    if {_lvl} is 14:
         if {missao::explorador::14::%{_uuid}%::plantado} > 0:
             remove 1 from {missao::explorador::14::%{_uuid}%::plantado}
             mostrarProgresso(player, "Semente Perdida", {missao::explorador::14::%{_uuid}%::plantado}, 10)
 
-# -----------------------------------------------------------------------------
-# MISSÃO 15: COLHER E FAZER PÃO (SISTEMA SEGURO ANTI-ATALHOS)
-# -----------------------------------------------------------------------------
 on block break:
     if "%event-block%" contains "wheat":
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 15:
-            # Verifica se o trigo está maduro (Age 7) com conversão explícita para string
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 15:
             if "%block data of event-block%" contains "age=7":
                 if {missao::explorador::15::%{_uuid}%::colhido} is not set:
                     set {missao::explorador::15::%{_uuid}%::colhido} to 0
@@ -165,21 +165,19 @@ on block break:
                         send "&e&l[DIÁRIO] &7Trigo colhido! Agora vá até a bancada e &fcrafte 3 Pães&7." to player
                         play sound "entity.experience_orb.pickup" to player
 
-# [DEFESA ANTI-CHEAT] Bloqueia Shift, Teclas Numéricas(1-9) e Q(Drop) na Missão 15
 on inventory click:
     set {_tipo_inv} to "%type of event-inventory%"
     if {_tipo_inv} contains "workbench" or "crafting":
-        # 0 é o slot de resultado da mesa de trabalho
         if index of event-slot is 0:
             if event-item is bread:
                 set {_uuid} to uuid of player
-                if {nivel::%{_uuid}%} is 15:
+                set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+                
+                if {_lvl} is 15:
                     if {missao::explorador::15::%{_uuid}%::colhido} >= 10:
-                        # Se o clique for Shift, Numérico(hotbar) ou Drop, ele bloqueia.
                         set {_click} to "%click type%"
                         if {_click} contains "SHIFT" or "NUMBER" or "DROP":
                             cancel event
-                            # Cria a trava e DEIXA o 'on craft' deletar ela, impedindo que fique presa
                             set {temp_block_craft::%{_uuid}%} to true
                             send "&c&l[!] &cPor favor, recolha os pães com cliques normais do rato (Sem atalhos numéricos ou shift) para contar corretamente!" to player
                             play sound "entity.villager.no" to player
@@ -187,20 +185,17 @@ on inventory click:
 on craft:
     if event-item is bread:
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 15:
-            
-            # Auto-limpeza Imediata (Self-Cleaning Lock): 
-            # Se a trava existe, significa que o atalho abusivo foi interceptado. Ele apaga a trava e sai!
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 15:
             if {temp_block_craft::%{_uuid}%} is true:
                 delete {temp_block_craft::%{_uuid}%}
                 stop
                 
-            # Verifica se a colheita foi concluída
             if {missao::explorador::15::%{_uuid}%::colhido} >= 10:
                 if {missao::explorador::15::%{_uuid}%::paes} is not set:
                     set {missao::explorador::15::%{_uuid}%::paes} to 0
                 
-                # Só soma se for um clique normal sem atalhos
                 add 1 to {missao::explorador::15::%{_uuid}%::paes}
                 set {_p} to {missao::explorador::15::%{_uuid}%::paes}
                 

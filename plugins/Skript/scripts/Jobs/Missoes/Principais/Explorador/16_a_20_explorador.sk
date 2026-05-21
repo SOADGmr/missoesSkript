@@ -1,6 +1,6 @@
 # =============================================================================
 # DESERTSKY - MISSÕES 16 A 20: A FRONTEIRA FINAL
-# Caminho: /plugins/Skript/scripts/Jobs/missoes/Explorador/16_ao_20_explorador.sk
+# Caminho: /plugins/Skript/scripts/Jobs/Missoes/Principais/Explorador/16_a_20_explorador.sk
 # =============================================================================
 
 on script load:
@@ -10,13 +10,12 @@ on script load:
     registrarMissao(19, "explorador", 19, "Brilho nas Profundezas", "O ápice da tua jornada como explorador.", "Encontre e minere 1 Minério de Diamante.")
     registrarMissao(20, "explorador", 20, "A Grande Decisão", "O deserto agora é pequeno para ti.", "Abre o /diario e escolhe a tua profissão no Guia de Trabalhos!")
 
-# -----------------------------------------------------------------------------
-# MISSÃO 16: MATAR ARANHAS E FAZER VARA DE PESCA
-# -----------------------------------------------------------------------------
 on death of spider or cave spider:
     attacker is a player
     set {_uuid} to uuid of attacker
-    if {nivel::%{_uuid}%} is 16:
+    set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+    
+    if {_lvl} is 16:
         if {missao::explorador::16::%{_uuid}%::kills} is not set:
             set {missao::explorador::16::%{_uuid}%::kills} to 0
         
@@ -33,20 +32,21 @@ on death of spider or cave spider:
 on craft:
     if event-item is fishing rod:
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 16:
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 16:
             if {missao::explorador::16::%{_uuid}%::kills} >= 5:
                 delete {missao::explorador::16::%{_uuid}%::*}
                 concluirMissaoPrincipal(player, 16, "explorador", 17)
             else:
                 send "&c[!] Precisas de caçar as aranhas primeiro!" to player
 
-# -----------------------------------------------------------------------------
-# MISSÃO 17: PESCAR 3 PEIXES (SISTEMA SEGURO NATIVO)
-# -----------------------------------------------------------------------------
 on fishing state change:
     if event-fishing state is fish caught:
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 17:
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 17:
             if {missao::explorador::17::%{_uuid}%::peixes} is not set:
                 set {missao::explorador::17::%{_uuid}%::peixes} to 0
             
@@ -59,24 +59,18 @@ on fishing state change:
                     delete {missao::explorador::17::%{_uuid}%::*}
                     concluirMissaoPrincipal(player, 17, "explorador", 18)
 
-# -----------------------------------------------------------------------------
-# MISSÃO 18: CRAFTAR E INSTALAR 20 CERCAS
-# -----------------------------------------------------------------------------
-# [DEFESA ANTI-CHEAT] Bloqueia Shift-Click ao craftar cercas para a missão 18
 on inventory click:
     set {_tipo_inv} to "%type of event-inventory%"
     if {_tipo_inv} contains "workbench" or "crafting":
-        # 0 é o slot de resultado da mesa de trabalho
         if index of event-slot is 0:
-            # Usa 'type of' para ignorar se tem 3, 6 ou 9 cercas no slot
             if type of event-item is oak fence or spruce fence or birch fence or jungle fence or acacia fence or dark oak fence or mangrove fence or cherry fence:
                 set {_uuid} to uuid of player
-                if {nivel::%{_uuid}%} is 18:
-                    # Se o clique for Shift, Numérico(hotbar) ou Drop, ele bloqueia.
+                set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+                
+                if {_lvl} is 18:
                     set {_click} to "%click type%"
                     if {_click} contains "SHIFT" or "NUMBER" or "DROP":
                         cancel event
-                        # Cria a trava e DEIXA o 'on craft' deletar ela, impedindo que fique presa
                         set {temp_block_craft::%{_uuid}%} to true
                         send "&c&l[!] &cPor favor, recolha as cercas com cliques normais do rato (Sem atalhos numéricos ou shift) para contar corretamente!" to player
                         play sound "entity.villager.no" to player
@@ -84,10 +78,9 @@ on inventory click:
 on craft:
     if type of event-item is oak fence or spruce fence or birch fence or jungle fence or acacia fence or dark oak fence or mangrove fence or cherry fence:
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 18:
-            
-            # Auto-limpeza Imediata (Self-Cleaning Lock): 
-            # Se a trava existe, significa que o atalho abusivo foi interceptado. Ele apaga a trava e sai!
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 18:
             if {temp_block_craft::%{_uuid}%} is true:
                 delete {temp_block_craft::%{_uuid}%}
                 stop
@@ -109,7 +102,9 @@ on craft:
 on place:
     if event-block is oak fence, spruce fence, birch fence, jungle fence, acacia fence, dark oak fence, mangrove fence or cherry fence:
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 18:
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 18:
             if {missao::explorador::18::%{_uuid}%::craftadas} >= 20:
                 if {missao::explorador::18::%{_uuid}%::colocadas} is not set:
                     set {missao::explorador::18::%{_uuid}%::colocadas} to 0
@@ -122,29 +117,27 @@ on place:
                     delete {missao::explorador::18::%{_uuid}%::*}
                     concluirMissaoPrincipal(player, 18, "explorador", 19)
 
-# [DEFESA ANTI-CHEAT] Punição se o jogador quebrar a cerca recém colocada
 on block break:
     if event-block is oak fence, spruce fence, birch fence, jungle fence, acacia fence, dark oak fence, mangrove fence or cherry fence:
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 18:
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 18:
             if {missao::explorador::18::%{_uuid}%::colocadas} > 0:
                 remove 1 from {missao::explorador::18::%{_uuid}%::colocadas}
                 mostrarProgresso(player, "Cerca Danificada", {missao::explorador::18::%{_uuid}%::colocadas}, 20)
 
-# -----------------------------------------------------------------------------
-# MISSÃO 19: O GRANDE DIAMANTE
-# -----------------------------------------------------------------------------
 on mine:
     if event-block is diamond ore or deepslate diamond ore:
-        # [DEFESA ANTI-CHEAT] Ignora blocos plantados por jogadores
         if metadata "desertsky_placed" of event-block is true:
             stop
             
         set {_uuid} to uuid of player
-        if {nivel::%{_uuid}%} is 19:
+        set {_lvl} to {nivel::explorador::%{_uuid}%} ? 1
+        
+        if {_lvl} is 19:
             concluirMissaoPrincipal(player, 19, "explorador", 20)
             
-            # Anúncio especial por atingir o fim da linha de base
             wait 2 seconds
             send title "&b&lMOMENTO ÉPICO!" with subtitle "&7Encontraste o teu primeiro diamante." to player for 5 seconds
             play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 0.8 to player
@@ -154,10 +147,3 @@ on mine:
             send "&6&l[!] &eChegou a hora de decidir o teu futuro." to player
             send "&6&l[!] &eAbre o teu &f/diario &ee clica na &fEstrela do Nether &epara escolheres uma profissão." to player
             send "" to player
-
-# -----------------------------------------------------------------------------
-# MISSÃO 20: A ESCOLHA DO DESTINO
-# Não necessita de lógica aqui. 
-# Quando o jogador usar o /desertsky_escolher_job do Menu_Principal.sk, 
-# o sistema avançará automaticamente o Tier.
-# -----------------------------------------------------------------------------

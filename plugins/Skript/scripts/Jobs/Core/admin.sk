@@ -1,5 +1,5 @@
 # =============================================================================
-# DESERTSKY - CLI ADMINISTRATIVA (V5.0 - GESTÃO CENTRALIZADA)
+# DESERTSKY - CLI ADMINISTRATIVA (V5.3 - SINCRONIA TOTAL DE PROGRESSO)
 # Caminho: /plugins/Skript/scripts/Jobs/core/Admin.sk
 # =============================================================================
 
@@ -9,7 +9,7 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
     permission message: &c[!] Acesso negado. Requer permissao 'desertsky.jobs.admin'.
     trigger:
         if arg 1 is not set:
-            send "&8&l--- &6DesertSky Jobs Admin CLI v5.0 &8&l---"
+            send "&8&l--- &6DesertSky Jobs Admin CLI v5.3 &8&l---"
             send "&e/jobadmin &cstatus &f<jogador> &7- Visão geral dos Jobs."
             send "&e/jobadmin &cinspect &f<jogador> &7- Abre GUI com histórico de missões."
             send "&e/jobadmin &csetnivel &f<jogador> <profissão> <nivel> &7- Altera o nível do Job."
@@ -49,14 +49,11 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
                 loop {_nomes_jobs::*}:
                     set {_nome_job} to loop-value
                     set {_job_id} to {_nome_job} in lowercase
-                    
-                    set {_lvl_job} to {nivel::%{_job_id}%::%{_uuid}%} ? 0
-                    send "&eNível %{_nome_job}%: &f%{_lvl_job}%"
 
             send "&eÚltimo Reset (Data): &f%{last_reset::%{_uuid}%}%"
             send "&8&l-------------------------------"
 
-        # 2. SETNIVEL
+        # 2. SETNIVEL (Com Sincronização Total de Histórico)
         else if arg 1 is "setnivel":
             if arg 3 is not set:
                 send "&c[!] Especifique o job (ex: explorador, minerador)."
@@ -66,15 +63,24 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
                 stop
                 
             set {_job} to arg 3 in lowercase
-            setNivelJob({_p}, {_job}, arg 4)
-            delete {missao::%{_job}%::%arg 4%::%{_uuid}%::status}
+            set {_novo_nivel} to arg 4
             
-            if {_job} is "explorador":
-                set {nivel::%{_uuid}%} to arg 4
+            # Altera o nível base e sincroniza com o JobsReborn
+            setNivelJob({_p}, {_job}, {_novo_nivel})
+            
+            # Sincroniza o banco de dados de Missões!
+            # Marca todas as missões anteriores como "concluídas" e reseta as futuras
+            loop 100 times:
+                if loop-number < {_novo_nivel}:
+                    set {missao::%{_job}%::%loop-number%::%{_uuid}%::status} to "concluida"
+                else:
+                    delete {missao::%{_job}%::%loop-number%::%{_uuid}%::status}
+                    delete {missao::%{_job}%::%loop-number%::%{_uuid}%::progresso}
                 
-            send "&a[!] O Nível de %{_job}% de %{_p}% foi alterado e sincronizado para %arg 4%."
+            send "&a[!] O Nível de %{_job}% de %{_p}% foi alterado para %{_novo_nivel}%."
+            send "&a[!] O histórico de missões foi sincronizado automaticamente com o novo nível."
 
-        # 3. FORÇAR CONTRATAÇÃO (NOVO)
+        # 3. FORÇAR CONTRATAÇÃO
         else if arg 1 is "employ":
             if arg 3 is not set:
                 send "&c[!] Especifique o job que deseja forçar a contratação."
@@ -105,6 +111,7 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
                 
             set {_job} to arg 3 in lowercase
             delete {missao::%{_job}%::%arg 4%::%{_uuid}%::status}
+            delete {missao::%{_job}%::%arg 4%::%{_uuid}%::progresso}
             
             send "&a[!] A missão %arg 4% (%{_job}%) do jogador %{_p}% foi resetada."
 
@@ -135,7 +142,7 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
             loop 54 times:
                 set slot (loop-number - 1) of {_gui} to black stained glass pane named " "
             
-            set {_lvl_exp} to {nivel::%{_uuid}%} ? 1
+            set {_lvl_exp} to {nivel::explorador::%{_uuid}%} ? 1
             set slot 4 of {_gui} to player head named "&6&l%{_p}%" with lore "&7Nível Explorador: &f%{_lvl_exp}%", "" and "&8Monitoramento em tempo real."
             
             set {_slot} to 10

@@ -1,21 +1,20 @@
 # =============================================================================
-# DESERTSKY - SUBMENU DE ACOMPANHAMENTO (V5.1 - FIX NAVEGAÇÃO E PLACEHOLDERS)
-# Caminho: /plugins/Skript/scripts/Jobs/Menus/Menu_Progresso.sk
+# DESERTSKY - SUBMENU DE ACOMPANHAMENTO (V5.2 - 100% NATIVO E API CORE)
+# Caminho: /plugins/Skript/scripts/Jobs/Menus/menu_progresso.sk
 # =============================================================================
 
 # --- FUNÇÃO AUXILIAR PARA IDENTIFICAR JOBS DO JOGADOR ---
 function getPlayerJobByTier(p: player, tier: integer) :: text:
-    set {_jobs_raw} to placeholder "%%jobsr_user_jobs%%" from {_p}
-    set {_jobs_low} to {_jobs_raw} in lowercase
+    # Usa a API nativa do nosso Core em vez de Placeholders pesados
+    set {_ativos::*} to getJobsAtivos({_p})
     
     if {_tier} is 2:
         set {_list::*} to "minerador", "lenhador", "escavador", "pescador" and "fazendeiro"
     else if {_tier} is 3:
         set {_list::*} to "bruxo", "construtor" and "mago"
         
-    # Usa 'contains' para ignorar formatações, cores ou leveis do PlaceholderAPI
     loop {_list::*}:
-        if {_jobs_low} contains loop-value:
+        if {_ativos::*} contains loop-value:
             return loop-value
             
     return ""
@@ -44,7 +43,7 @@ command /diario_progresso [<text>] [<integer>]:
         # [B] Profissão Tier 2
         set {_job_t2} to getPlayerJobByTier(player, 2)
         if {_job_t2} is not "":
-            set {_icon} to iron pickaxe # Padrão (caso algo falhe)
+            set {_icon} to iron pickaxe
             if {_job_t2} is "minerador":
                 set {_icon} to golden pickaxe
             else if {_job_t2} is "lenhador":
@@ -64,9 +63,9 @@ command /diario_progresso [<text>] [<integer>]:
         # [C] Profissão Tier 3
         set {_job_t3} to getPlayerJobByTier(player, 3)
         if {_job_t3} is not "":
-            set {_icon3} to potion item # Correção: Usando "potion item" para o Skript não confundir com dano de poção
+            set {_icon3} to potion item
             if {_job_t3} is "construtor":
-                set {_icon3} to bricks block # FIX: Especificando "brick block" em vez de apenas "bricks"
+                set {_icon3} to bricks block
             else if {_job_t3} is "mago":
                 set {_icon3} to enchanted book
                 
@@ -76,10 +75,8 @@ command /diario_progresso [<text>] [<integer>]:
             set slot 6 of {_gui} to {_item_c}
 
         # 3. MOTOR DE MISSÕES E PAGINAÇÃO
-        set {_lvl_core} to {nivel::%{_job}%::%uuid of player%} ? 1
-        # Retrocompatibilidade com explorador base
-        if {_job} is "explorador":
-            set {_lvl_core} to {nivel::%uuid of player%} ? 1
+        # [SOLUÇÃO DO MISTÉRIO]: Lê o nível APENAS usando a função mestra do Core!
+        set {_lvl_core} to getNivelJob(player, {_job})
 
         set {_missoes::*} to {registry::missoes::%{_job}%::lista::*}
         set {_total_missoes} to size of {_missoes::*}
@@ -110,13 +107,10 @@ command /diario_progresso [<text>] [<integer>]:
                 set {_slot} to 28
 
         # 4. CONTROLES DE PÁGINA E VOLTAR
-        
-        # [D] Página Anterior (Usando Item Normal)
         if {_page} > 1:
             set {_prev} to {_page} - 1
             set slot 36 of {_gui} to arrow named "&aPágina Anterior" with lore "&7Voltar para a página %{_prev}%"
         
-        # [E] Próxima Página (Usando Item Normal)
         if {_total_missoes} > ({_page} * 21):
             set {_next} to {_page} + 1
             set slot 44 of {_gui} to arrow named "&aPróxima Página" with lore "&7Ir para a página %{_next}%"
@@ -129,7 +123,6 @@ on inventory click:
     if name of event-inventory contains "&8&lProgresso:":
         cancel event
         
-        # Limpeza segura do nome do inventário
         set {_cur_job} to uncolored name of event-inventory
         replace all "Progresso: " with "" in {_cur_job}
         
@@ -152,14 +145,14 @@ on inventory click:
             if event-slot is not gray stained glass pane named " ":
                 set {_p} to uncolored {_page_raw}
                 replace all "Voltar para a página " with "" in {_p}
-                replace all "." with "" in {_p} # Trava extra de segurança anti-ponto
+                replace all "." with "" in {_p}
                 set {_p_num} to {_p} parsed as integer
                 execute player command "/diario_progresso %{_cur_job}% %{_p_num}%"
         else if index of event-slot is 44:
             if event-slot is not gray stained glass pane named " ":
                 set {_p} to uncolored {_page_raw}
                 replace all "Ir para a página " with "" in {_p}
-                replace all "." with "" in {_p} # Trava extra de segurança anti-ponto
+                replace all "." with "" in {_p}
                 set {_p_num} to {_p} parsed as integer
                 execute player command "/diario_progresso %{_cur_job}% %{_p_num}%"
                 

@@ -1,5 +1,5 @@
 # =============================================================================
-# DESERTSKY - CENTRAL DE CONTRATOS (DIÁRIAS E SEMANAIS)a
+# DESERTSKY - CENTRAL DE CONTRATOS (V5.2 - NATIVO E OTIMIZADO)
 # Caminho: /plugins/Skript/scripts/Jobs/Menus/menu_contratos.sk
 # =============================================================================
 
@@ -19,8 +19,9 @@ command /diario_diarias:
         set slot 27 of {_gui} to orange stained glass pane named "&6&lSemanais &8➡"
         
         set {_uuid} to uuid of player
-        set {_jobs_raw} to placeholder "%%jobsr_user_jobs%%" from player
-        set {_jobs_low} to {_jobs_raw} in lowercase
+        
+        # [JobsSK] Lê da RAM do Skript em vez de usar Placeholders
+        set {_jobs_ativos::*} to getJobsAtivos(player)
         
         set {_todos_jobs::*} to "minerador", "lenhador", "escavador", "pescador", "fazendeiro", "construtor", "bruxo" and "mago"
         set {_tem_job} to false
@@ -30,15 +31,9 @@ command /diario_diarias:
         
         loop {_todos_jobs::*}:
             set {_job} to loop-value
-            set {_lvl_interno} to {nivel::%{_job}%::%{_uuid}%} ? 0
             
-            set {_job_ativo} to false
-            if {_jobs_low} contains {_job}:
-                set {_job_ativo} to true
-            if {_lvl_interno} > 0:
-                set {_job_ativo} to true
-                
-            if {_job_ativo} is true:
+            # Se o jogador tiver o Job ativo na lista nativa
+            if {_jobs_ativos::*} contains {_job}:
                 set {_tem_job} to true
                 
                 # -------------------------------------------------------------
@@ -66,7 +61,6 @@ command /diario_diarias:
                 set {_status_sem} to {missao::semanal::%player%::%{_job}%::status}
                 if {_status_sem} is set:
                     if {_status_sem} is "concluida":
-                        # CORREÇÃO DO AVISO "and" AQUI:
                         set slot {_slot_semanal} of {_gui} to chest minecart named "&6&lSemanal: %{_job}%" with lore "&7Status: &a&lCONCLUÍDO", "", "&7Volte na próxima semana" and "&7para um novo desafio!"
                     else:
                         set {_lore_sem::*} to formatarLoreSemanal(player, {_job})
