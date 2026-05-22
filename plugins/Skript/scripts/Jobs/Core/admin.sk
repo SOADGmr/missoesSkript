@@ -83,20 +83,40 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
         # 3. FORÇAR CONTRATAÇÃO
         else if arg 1 is "employ":
             if arg 3 is not set:
-                send "&c[!] Especifique o job que deseja forçar a contratação."
+                send "&c[!] Especifique o job."
                 stop
-                
             set {_job} to arg 3 in lowercase
-            execute console command "jobs employ %{_p}% %{_job}%"
-            send "&a[!] O jogador %{_p}% foi contratado como %{_job}% ignorando requisitos."
+            
+            # Validação: Job existe?
+            if isJob({_job}) is false:
+                send "&c[!] A profissão '&f%{_job}%&c' não é reconhecida."
+                stop
+            
+            # Validação: Jogador já tem?
+            if checkJob({_p}, {_job}) is true:
+                send "&c[!] O jogador %{_p}% já trabalha como %{_job}%."
+                stop
+            
+            admitirJob({_p},{_job})
+            send "&a[!] O jogador %{_p}% foi contratado como %{_job}% via API."
 
         # 4. DEMISSÃO (FIRE)
         else if arg 1 is "fire":
             if arg 3 is not set:
                 send "&c[!] Especifique o job que deseja demitir o jogador."
                 stop
-                
+            
             set {_job} to arg 3 in lowercase
+            # Validação: Job existe?
+            if isJob({_job}) is false:
+                send "&c[!] A profissão '&f%{_job}%&c' não é reconhecida."
+                stop
+            
+            # Validação: Jogador está mesmo na profissão?
+            if checkJob({_p}, {_job}) is false:
+                send "&c[!] O jogador %{_p}% já não trabalhava como %{_job}%."
+                stop
+                
             demitirJob({_p}, {_job})
             send "&a[!] Pedido de demissão enviado. O Skript fará a limpeza automática dos dados."
 
@@ -108,8 +128,18 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
             if arg 4 is not set:
                 send "&c[!] Especifique o ID da Missão."
                 stop
-                
+
             set {_job} to arg 3 in lowercase
+            
+            # Validação: Job existe?
+            if isJob({_job}) is false:
+                send "&c[!] A profissão '&f%{_job}%&c' não é reconhecida."
+                stop
+            
+            # Validação: Jogador tem mesmo essa profissão?
+            if checkJob({_p}, {_job}) is false:
+                send "&c[!] O jogador %{_p}% não trabalha como %{_job}%."
+                
             delete {missao::%{_job}%::%arg 4%::%{_uuid}%::status}
             delete {missao::%{_job}%::%arg 4%::%{_uuid}%::progresso}
             
@@ -125,6 +155,16 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
                 stop
             
             set {_job} to arg 3 in lowercase
+            
+            # Validação: Job existe?
+            if isJob({_job}) is false:
+                send "&c[!] A profissão '&f%{_job}%&c' não é reconhecida."
+                stop
+            
+            # Validação: Jogador tem mesmo essa profissão?
+            if checkJob({_p}, {_job}) is false:
+                send "&c[!] O jogador %{_p}% não trabalha como %{_job}%."
+
             set {_id} to arg 4
             set {_prox_nivel} to {_id} + 1
             

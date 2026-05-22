@@ -16,19 +16,6 @@ on script load:
 on place:
     set metadata "desertsky_placed" of event-block to true
 
-# [GATILHO DE DEMISSÃO NATIVO] O Cão de Guarda do Sistema!
-# Dispara sempre que o jogador sai de um job (via GUI, Admin ou Consola)
-on player leave job:
-    set {_job} to "%event-job%" in lowercase
-    set {_uuid} to uuid of player
-    
-    # Limpeza absoluta do histórico da profissão perdida
-    delete {nivel::%{_job}%::%{_uuid}%}
-    delete {diaria::%{_job}%::%{_uuid}%::*}
-    delete {missao::semanal::%player%::%{_job}%::*}
-    
-    send "&c&l[SINDICATO] &7O teu contrato como &f%{_job}% &7foi rescindido e os registos apagados." to player
-
 # --- 1. GLOBAL REGISTRY (MECÂNICA DE HERANÇA OTIMIZADA) ---
 function registrarMissao(id: integer, job: text, min_level: integer, nome: text, lore: text, desc: text):
     if {registry::missao::%{_job}%::%{_id}%::job} is not {_job}:
@@ -47,11 +34,14 @@ function registrarMissao(id: integer, job: text, min_level: integer, nome: text,
 
 # --- 2. FUNÇÕES TÉCNICAS (ESTRATÉGIA DO ADAPTADOR) ---
 function checkJob(p: player, job: text) :: boolean:
+    if isJob({_job}) is false:
+        return false
     set {_jobs_lista::*} to jobs of {_p}
     loop {_jobs_lista::*}:
         if "%loop-value%" in lowercase is {_job}:
             return true
     return false
+
 
 function getStatusMissao(p: player, id: integer) :: text:
     set {_status} to {missao::status::%{_id}%::%uuid of {_p}%}
@@ -65,7 +55,7 @@ on join:
     set {_uuid} to uuid of player
     if {last_reset::%{_uuid}%} is not {_hoje}:
         set {last_reset::%{_uuid}%} to {_hoje}
-        send "&6&l[DIÁRIO] &7Um novo dia amanheceu no deserto. Suas tarefas diárias foram atualizadas." to player
+        send "&6&l[DIÁRIO] &7Verifique seus contratos, parece ter chegado novidade." to player
 
 # --- 4. HIGIENE E PREVENÇÃO DE MEMORY LEAKS ---
 on quit:
@@ -102,16 +92,12 @@ function concluirMissaoPrincipal(p: player, id: integer, job: text, proximo_nive
     
     set {missao::%{_job}%::%{_id}%::%{_uuid}%::status} to "concluida"
     setNivelJob({_p}, {_job}, {_proximo_nivel})
-    
-    if {_job} is "explorador":
-        set {nivel::%{_uuid}%} to {_proximo_nivel}
-        set {missao::status::%{_id}%::%{_uuid}%} to "concluida"
         
     play sound "ui.toast.challenge_complete" with volume 1.0 and pitch 1.0 to {_p}
-    send title "&a&lMISSÃO CONCLUÍDA!" with subtitle "&7Avançaste para o Nível %{_proximo_nivel}%." to {_p} for 4 seconds
+    send title "&a&lMISSÃO CONCLUÍDA!" with subtitle "&7AVocê foi para o Nível %{_proximo_nivel}%." to {_p} for 4 seconds
     send "" to {_p}
     send "&e&l[DIÁRIO] &7A Missão %{_id}% da linhagem %{_job}% foi concluída!" to {_p}
-    send "&e&l[DIÁRIO] &7Usa &f/diario &7para visualizar o teu próximo objetivo." to {_p}
+    send "&e&l[DIÁRIO] &7Use &f/diario &7para visualizar o teu próximo objetivo." to {_p}
     send "" to {_p}
 
 # =============================================================================
@@ -120,7 +106,6 @@ function concluirMissaoPrincipal(p: player, id: integer, job: text, proximo_nive
 
 function getJobsAtivos(p: player) :: strings:
     set {_jobs_lista::*} to jobs of {_p}
-    set {_ativos::*} to "explorador"
     loop {_jobs_lista::*}:
         add "%loop-value%" in lowercase to {_ativos::*}
     return {_ativos::*}
@@ -136,9 +121,19 @@ function setNivelJob(p: player, job: text, nivel: integer):
     set {nivel::%{_job}%::%{_uuid}%} to {_nivel}
     set level of job {_job} of {_p} to {_nivel}
 
+function admitirJob(p: player, job: text):
+    # Apenas envia o comando para o backend. O Skript cuida da limpeza via 'on player leave job'
+    add {_job} to jobs from {_p}
+    setNivelJob({_p},{_job},0)
+
 function demitirJob(p: player, job: text):
     # Apenas envia o comando para o backend. O Skript cuida da limpeza via 'on player leave job'
-    execute console command "jobs fire %{_p}% %{_job}%"
+    remove {_job} from jobs from {_p}
+    set {_uuid} to uuid of {_p}
+
+    delete {nivel::%{_job}%::%{_uuid}%}
+    delete {diaria::%{_job}%::%{_uuid}%::*}
+    delete {missao::semanal::%{_p}%::%{_job}%::*}
 
 # [NOVO] Lógica centralizada de Contratação e Verificação de Requisitos
 function tentarContratarJogador(p: player, escolha: text):
@@ -161,7 +156,7 @@ function tentarContratarJogador(p: player, escolha: text):
             set {missao::20::%{_uuid}%::status} to "concluida"
             set {nivel::%{_uuid}%} to 21 
             
-        execute console command "jobs employ %{_p}% %{_escolha}%"
+        admitirJob({_p},{_escolha})
         
         send title "&6&lNOVO DESTINO" with subtitle "&eTornaste-te num %{_escolha}%!" to {_p} for 5 seconds
         play sound "ui.toast.challenge_complete" to {_p}
@@ -201,7 +196,7 @@ function tentarContratarJogador(p: player, escolha: text):
             close {_p}'s inventory
             stop
         
-        execute console command "jobs employ %{_p}% %{_escolha}%"
+        admitirJob({_p},{_escolha})
         
         send title "&5&lMESTRIA ALCANÇADA" with subtitle "&dAgora dominas os caminhos do %{_escolha}%!" to {_p} for 5 seconds
         play sound "ui.toast.challenge_complete" to {_p}
@@ -264,3 +259,30 @@ function getJobPorTier(p: player, tier: integer) :: text:
             return formatarNomeJob(loop-value)
             
     return "&8&lɴᴀᴏ ᴇsᴄᴏʟʜɪᴅᴏ"
+
+# [NOVO] Valida se a profissão existe no servidor
+function isJob(job: text) :: boolean:
+    set {_validos::*} to "explorador", "minerador", "lenhador", "escavador", "fazendeiro", "pescador", "construtor", "bruxo" and "mago"
+    if {_validos::*} contains {_job}:
+        return true
+    return false
+
+# =============================================================================
+# SCRIPT DE TESTE: INVENTORY SNAPSHOT (CRAFTING)
+# Função: Contar a quantidade exata fabricada, suportando Shift-Click.
+# =============================================================================
+
+# 1. BLOQUEIO DE SEGURANÇA (TECLA DROP)
+# on inventory click:
+#     if event-inventory's type is workbench inventory:
+#         # Slot 0 é o slot de resultado da bancada
+#         if index of event-slot is 0:
+#             set {_click} to "%click type%"
+            
+#             # Bloqueia qualquer tentativa de atirar o item para o chão
+#             if {_click} contains "DROP":
+#                 cancel event
+#                 send "&c&l[!] &cPor segurança, não é possível dropar itens diretamente da bancada." to player
+#                 play sound "entity.villager.no" to player
+
+# 2. O MOTOR DE SNAPSHOT

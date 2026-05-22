@@ -514,8 +514,34 @@ on consume:
 # AÇÃO DE "ACHATAR" CAMINHOS (Escavador: Pá na relva)
 # --------------------------------------------------------------------
     
-on craft:
-    broadcast the item amount of event-item stack
+on craft oak planks:
+    set {_click} to "%click type%"
+    
+    # ---------------------------------------------------------
+    # CATEGORIA A: Clique Normal ou Drop (Vai para a mão ou chão)
+    # ---------------------------------------------------------
+    if {_click} is "left mouse button", "right mouse button", "drop key" or "drop key with control":
+        set {_fabricado} to item amount of event-item
+        set {_tipo_clique} to "Direto (Cursor/Chão)"
+        
+    # ---------------------------------------------------------
+    # CATEGORIA B: Shift ou Atalho Numérico (Vai direto para o inventário)
+    # ---------------------------------------------------------
+    else if {_click} is "left mouse button with shift", "wight mouse button with shift" or "number key":
+        set {_antes} to amount of oak planks in player's inventory
+        
+        # Aguarda a transferência física ocorrer
+        wait 1 tick 
+        
+        set {_depois} to amount of oak planks in player's inventory
+        set {_fabricado} to {_depois} - {_antes}
+        
+        # Se a diferença for 0 (inventário cheio ou slot numérico ocupado,
+        # o item não foi fabricado. Paramos o código.
+        if {_fabricado} <= 0:
+            stop
+
+    addProgressoSemanal(player, job, "achatar", "dirt path", 1)
 
 on right click on grass block, dirt, podzol, coarse dirt or rooted dirt:
     set {_ferramenta} to "%type of player's tool%"
