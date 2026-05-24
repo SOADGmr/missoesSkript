@@ -74,7 +74,7 @@ on load:
     delete {entrega_registry::semanal_minerador_febre_ouro::requisitos::*}
     
     add "semanal_minerador_febre_ouro" to {pool_semanal::minerador::*}
-    set {semanal_meta::semanal_minerador_febre_ouro::nivel_min} to 10
+    set {semanal_meta::semanal_minerador_febre_ouro::nivel_min} to 0
     set {semanal_meta::semanal_minerador_febre_ouro::nivel_max} to 30
     set {semanal_meta::semanal_minerador_febre_ouro::nome} to "&eғᴇʙʀᴇ ᴅᴏ ᴏᴜʀᴏ"
     set {semanal_meta::semanal_minerador_febre_ouro::desc} to "&7ᴀ ᴇᴄᴏɴᴏᴍɪᴀ ᴘʀᴇᴄɪsᴀ ᴅᴇ ɪɴᴊᴇçᴀᴏ ᴅᴇ ᴏᴜʀᴏ.|&7ᴛʀᴀɢᴀ ᴏ ᴍᴀxɪᴍᴏ ǫᴜᴇ ᴘᴜᴅᴇʀ ᴅᴀs ᴘʀᴏғᴜɴᴅᴇᴢᴀs."
