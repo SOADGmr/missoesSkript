@@ -1,7 +1,7 @@
 # ============================================================================
-# ARQUIVO: gerador_diarias.sk (Versão Aleatória & Escalável)
+# ARQUIVO: gerador_diarias.sk (Versão Aleatória, Escalável & Por Nível)
 # DIRETÓRIO: /scripts/Jobs/Core/
-# DESCRIÇÃO: Motor de geração com Alvos Randômicos e Recompensas Dinâmicas.
+# DESCRIÇÃO: Motor de geração com Alvos Randômicos, Recompensas e Níveis.
 # ============================================================================
 
 # ============================================================================
@@ -26,7 +26,11 @@ on load:
     # ---------------------------------------------------------
     # POOL: MINERADOR
     # ---------------------------------------------------------
+    
+    # Exemplo 1: Missão para Iniciantes (Nível 1 ao 15)
     add "minerador_ferro" to {pool::minerador::*}
+    set {diaria_meta::minerador_ferro::nivel_min} to 1
+    set {diaria_meta::minerador_ferro::nivel_max} to 15
     set {diaria_meta::minerador_ferro::nome} to "Febre do Ferro"
     set {diaria_meta::minerador_ferro::descricao} to "Minere @alvo@ Minérios de Ferro."
     set {diaria_meta::minerador_ferro::alvo_min} to 15
@@ -36,7 +40,10 @@ on load:
     add deepslate iron ore to {diaria_meta::minerador_ferro::alvo_tipos::*}
     set {diaria_meta::minerador_ferro::acao_requirida} to "minerar"
 
+    # Exemplo 2: Missão Média (Nível 10 ao 30)
     add "minerador_carvao" to {pool::minerador::*}
+    set {diaria_meta::minerador_carvao::nivel_min} to 10
+    set {diaria_meta::minerador_carvao::nivel_max} to 30
     set {diaria_meta::minerador_carvao::nome} to "Operário do Carvão"
     set {diaria_meta::minerador_carvao::descricao} to "Minere @alvo@ Minérios de Carvão."
     set {diaria_meta::minerador_carvao::alvo_min} to 32
@@ -46,7 +53,10 @@ on load:
     add deepslate coal ore to {diaria_meta::minerador_carvao::alvo_tipos::*}
     set {diaria_meta::minerador_carvao::acao_requirida} to "minerar"
 
+    # Missão Avançada (Nível 25 ao 100)
     add "minerador_diamante" to {pool::minerador::*}
+    set {diaria_meta::minerador_diamante::nivel_min} to 25
+    set {diaria_meta::minerador_diamante::nivel_max} to 100
     set {diaria_meta::minerador_diamante::nome} to "Busca Preciosa"
     set {diaria_meta::minerador_diamante::descricao} to "Minere @alvo@ Minérios de Diamante."
     set {diaria_meta::minerador_diamante::alvo_min} to 3
@@ -57,7 +67,7 @@ on load:
     set {diaria_meta::minerador_diamante::acao_requirida} to "minerar"
 
     # ---------------------------------------------------------
-    # POOL: LENHADOR
+    # POOL: LENHADOR (Exemplo Base - Sem nível setado assume 1 a 100)
     # ---------------------------------------------------------
     add "lenhador_carvalho" to {pool::lenhador::*}
     set {diaria_meta::lenhador_carvalho::nome} to "Madeira Clássica"
@@ -195,11 +205,11 @@ on load:
     clear {diaria_meta::mago_encantador::alvo_tipos::*}
     set {diaria_meta::mago_encantador::acao_requirida} to "encantar"
 
-    send "&e[DesertSky-Jobs] &aPool de Diárias recarregada com recompensas por nível!" to console
+    send "&e[DesertSky-Jobs] &aPool de Diárias recarregada com recompensas e FILTROS DE NÍVEL!" to console
 
 
 # ============================================================================
-# 2. FUNÇÃO DE SORTEIO E ATRIBUIÇÃO
+# 2. FUNÇÃO DE SORTEIO E ATRIBUIÇÃO (A MÁGICA ACONTECE AQUI)
 # ============================================================================
 function sortearDiaria(p: player, job: text):
     set {_uuid} to uuid of {_p}
@@ -207,18 +217,36 @@ function sortearDiaria(p: player, job: text):
     
     # Só sorteia se a data salva na diária for diferente de hoje
     if {diaria::%{_job}%::%{_uuid}%::data} is not {_hoje}:
+        
+        # --- NOVO SISTEMA DE FILTRO DE NÍVEL (LAZY FILTERING) ---
+        set {_lvl} to getNivelJob({_p}, {_job})
+        delete {_pool_valido::*}
+        
+        loop {pool::%{_job}%::*}:
+            set {_id_missao} to loop-value
+            
+            # Se a missão não tiver nível configurado, assume que é para todos (1 a 100)
+            set {_n_min} to {diaria_meta::%{_id_missao}%::nivel_min} ? 1
+            set {_n_max} to {diaria_meta::%{_id_missao}%::nivel_max} ? 100
+            
+            if {_lvl} is between {_n_min} and {_n_max}:
+                add {_id_missao} to {_pool_valido::*}
+                
+        # Fallback de segurança caso o jogador não se encaixe em NENHUMA missão
+        if size of {_pool_valido::*} is 0:
+            send "&c[Sindicato] Não há contratos diários de %{_job}% adequados para o teu nível atual (%{_lvl}%)." to {_p}
+            stop
 
-        # Sorteia uma ID do pool
-        set {_tarefa} to a random element out of {pool::%{_job}%::*}
+        # Sorteia uma ID apenas do pool filtrado para o nível do jogador
+        set {_tarefa} to a random element out of {_pool_valido::*}
+        # -----------------------------------------------------------------
 
         # Gera o alvo numérico randômico entre o Mínimo e Máximo
         set {_min} to {diaria_meta::%{_tarefa}%::alvo_min}
         set {_max} to {diaria_meta::%{_tarefa}%::alvo_max}
         set {_alvo_sorteado} to a random integer between {_min} and {_max}
 
-        # --- NOVA FÓRMULA DE PAGAMENTO (BASEADA NO NÍVEL DA PROFISSÃO E TIER) ---
-        set {_lvl} to getNivelJob({_p}, {_job})
-    
+        # --- FÓRMULA DE PAGAMENTO (BASEADA NO NÍVEL DA PROFISSÃO E TIER) ---
         if {_lvl} < 100:
             set {_percent_semanal2} to 0.25*0.30 # 7,5%
             set {_ajuste2} to 0.3375
@@ -252,7 +280,7 @@ function sortearDiaria(p: player, job: text):
         set {_nome_tarefa} to {diaria_meta::%{_tarefa}%::nome}
 
         send "" to {_p}
-        send "&b&l[NOVA DIÁRIA] &7Novo contrato de &f%{_job}%&7!" to {_p}
+        send "&b&l[NOVA DIÁRIA] &7Novo contrato de &f%{_job}%&7 adequado ao teu nível!" to {_p}
         send "&7Objetivo: &f%{_nome_tarefa}% &8(&e0/%{_alvo_sorteado}%&8)" to {_p}
         send "&7Detalhes: &f%{_desc_dinamica}%" to {_p}
         send "&7Recompensa: &a$%{_money}%" to {_p}
@@ -290,12 +318,10 @@ on join:
         sortearDiaria(player, "mago")
 
 # ============================================================================
-# 4. OUVINTES UNIVERSAIS (ALTA PERFORMANCE - O(1))
+# 4. OUVINTES UNIVERSAIS E MOTOR DE PROGRESSO 
+# (Igual ao original, mantido para funcionar perfeitamente)
 # ============================================================================
-
-# 4.1 OUVINTE DE QUEBRA DE BLOCOS (Minerador, Lenhador, Escavador, Fazendeiro)
 on mine:
-    # [ANTI-TRAPAÇA] Bloqueia o progresso se o bloco foi colocado por um jogador.
     if metadata "desertsky_placed" of event-block is true:
         stop
 
@@ -325,70 +351,47 @@ on mine:
             if {diaria_meta::%{_id_fazendeiro}%::alvo_tipos::*} contains event-block's type:
                 addProgressoDiaria(player, "fazendeiro", {_id_fazendeiro}, 1)
 
-# 4.3 OUVINTE DE PESCA (Pescador)
 on pick up:
-    # A sua alternativa segura (igual a que você usou na missão 17 do explorador)
     if player's tool is fishing rod:
         set {_uuid} to uuid of player
-        
-        # Verifica Pescador
         if {diaria::pescador::%{_uuid}%::status} is "pendente":
             set {_id_pescador} to {diaria::pescador::%{_uuid}%::tarefa}
             if {diaria_meta::%{_id_pescador}%::acao_requirida} is "pescar":
                 if {diaria_meta::%{_id_pescador}%::alvo_tipos::*} contains event-item's type:
-                    # Adiciona sempre +1 por pickup, evitando bugs se o jogador tentar agrupar itens no chão
                     addProgressoDiaria(player, "pescador", {_id_pescador}, 1)
 
-# 4.4 OUVINTE DE COLOCAÇÃO DE BLOCOS (Construtor + Anti-Trapaça)
 on place:
     set {_uuid} to uuid of player
-    
-    # Verifica Construtor
     if {diaria::construtor::%{_uuid}%::status} is "pendente":
         set {_id_construtor} to {diaria::construtor::%{_uuid}%::tarefa}
         if {diaria_meta::%{_id_construtor}%::acao_requirida} is "construir":
             if {diaria_meta::%{_id_construtor}%::alvo_tipos::*} contains event-block's type:
                 addProgressoDiaria(player, "construtor", {_id_construtor}, 1)
-                
-    # Anti-Trapaça global
     set metadata "desertsky_placed" of event-block to true
 
-# 4.5 OUVINTE DE CRIAÇÃO/CRAFTING (Bruxo)
 on craft:
     set {_uuid} to uuid of player
-    
-    # Verifica Bruxo
     if {diaria::bruxo::%{_uuid}%::status} is "pendente":
         set {_id_bruxo} to {diaria::bruxo::%{_uuid}%::tarefa}
         if {diaria_meta::%{_id_bruxo}%::acao_requirida} is "craftar":
             if {diaria_meta::%{_id_bruxo}%::alvo_tipos::*} contains event-item's type:
                 addProgressoDiaria(player, "bruxo", {_id_bruxo}, item amount of event-item)
 
-# 4.6 OUVINTE DE ENCANTAMENTO (Mago)
 on enchant:
     set {_uuid} to uuid of player
-    
-    # Verifica Mago
     if {diaria::mago::%{_uuid}%::status} is "pendente":
         set {_id_mago} to {diaria::mago::%{_uuid}%::tarefa}
         if {diaria_meta::%{_id_mago}%::acao_requirida} is "encantar":
             addProgressoDiaria(player, "mago", {_id_mago}, 1)
 
-# ============================================================================
-# 6. MOTOR DE PROGRESSO E CONCLUSÃO CENTRALIZADO
-# ============================================================================
 function addProgressoDiaria(p: player, job: text, tarefa_id: text, qtd: number):
     set {_uuid} to uuid of {_p}
-    
-    # Verificação de segurança tripla
     if {diaria::%{_job}%::%{_uuid}%::tarefa} is {_tarefa_id}:
         if {diaria::%{_job}%::%{_uuid}%::status} is "pendente":
 
             add {_qtd} to {diaria::%{_job}%::%{_uuid}%::progresso}
-
             set {_atual} to {diaria::%{_job}%::%{_uuid}%::progresso}
 
-            # ATENÇÃO: Agora puxamos a Meta do perfil PESSOAL do jogador, e não da pool!
             set {_meta} to {diaria::%{_job}%::%{_uuid}%::alvo} 
             set {_nome} to {diaria_meta::%{_tarefa_id}%::nome}
 
@@ -396,8 +399,6 @@ function addProgressoDiaria(p: player, job: text, tarefa_id: text, qtd: number):
 
             if {_atual} >= {_meta}:
                 set {diaria::%{_job}%::%{_uuid}%::status} to "concluida"
-
-                # ATENÇÃO: A recompensa escalável também vem do perfil PESSOAL do jogador!
                 set {_recompensa} to {diaria::%{_job}%::%{_uuid}%::recompensa}
 
                 execute console command "eco give %{_p}% %{_recompensa}%"
@@ -407,4 +408,3 @@ function addProgressoDiaria(p: player, job: text, tarefa_id: text, qtd: number):
                 send "&b&l[DIÁRIA CONCLUÍDA] &7A tarefa &f%{_nome}% &7foi finalizada!" to {_p}
                 send "&a&l+ $%{_recompensa}%" to {_p}
                 send "" to {_p}
-
