@@ -19,9 +19,26 @@ on load:
     send "&e[DesertSky-Jobs] &aMotor Semanal V5.6 carregado (Fast-Fail & JobsSK Integrado)!" to console
 
 # ========================================================================
+# MOTOR DE RESET SEMANAL (LAZY RESET COM API DO CORE)
+# ========================================================================
+on join:
+    wait 5 seconds
+    set {_uuid} to uuid of player
+    set {_semana_atual} to now formatted as "ww/yyyy"
+    
+    if {last_semanal_reset::%{_uuid}%} is not {_semana_atual}:
+        set {last_semanal_reset::%{_uuid}%} to {_semana_atual}
+        
+        play sound "entity.player.levelup" with volume 0.5 and pitch 0.8 to player
+        
+        # Uso direto da API nativa super-rápida construída no Core.sk
+        set {_ativos::*} to getJobsAtivos(player)
+        
+        loop {_ativos::*}:
+            sortearSemanal(player, loop-value)
+# ========================================================================
 # FUNÇÕES DE REGISTRO E COMPILAÇÃO (API PARA OS MÓDULOS)
 # ========================================================================
-
 function registrarMetaBase(id: text, acao: text, tipos_str: text, nome_curto: text, desc: text):
     set {meta_base::%{_id}%::acao} to {_acao}
     set {meta_base::%{_id}%::nome_curto} to {_nome_curto}
@@ -106,7 +123,6 @@ function sortearSemanal(p: player, job: text):
 # ========================================================================
 # CONSTRUTOR DE LORE DINÂMICA (Para a GUI) - V2 ENTREGA VISÍVEL
 # ========================================================================
-
 function formatarLoreSemanal(p: player, job: text) :: texts:
     set {_contrato_id} to {missao::semanal::%{_p}%::%{_job}%::id}
     set {_desc_base} to {semanal_meta::%{_contrato_id}%::desc}
@@ -167,7 +183,6 @@ function formatarLoreSemanal(p: player, job: text) :: texts:
 # ========================================================================
 # MOTOR DE PROGRESSO E CONCLUSÃO SEMANAL (AÇÃO E ACTION BAR)
 # ========================================================================
-
 function addProgressoSemanal(p: player, job: text, acao: text, tipo_alvo: text, qtd: number):
     if {missao::semanal::%{_p}%::%{_job}%::status} is "em_andamento":
         set {_index} to 1
@@ -262,6 +277,31 @@ function verificarConclusaoSemanal(p: player, job: text):
 
 
 
+
+
+
+function verificarEntregasSemanais(p: player):
+    set {_uuid} to uuid of {_p}
+    set {_ativos::*} to getJobsAtivos({_p}) # OTIMIZAÇÃO: Loopa só nas profissões ativas do jogador!
+    
+    loop {_ativos::*}:
+        set {_job} to loop-value
+        if {missao::semanal::%{_p}%::%{_job}%::status} is "aguardando_entrega":
+            set {_contrato_id} to {missao::semanal::%{_p}%::%{_job}%::id}
+            
+            if {missao::status::%{_contrato_id}%::%{_uuid}%} is "concluida":
+                set {missao::semanal::%{_p}%::%{_job}%::status} to "concluida"
+                
+                set {_money} to {missao::semanal::%{_p}%::%{_job}%::recompensa_dinheiro} ? 100
+                execute console command "eco give %{_p}% %{_money}%"
+                
+                execute console command "crate key give %{_p}% jobkey 1"
+                send "&a&l+ $%{_money}% &7(Pagamento do Sindicato)" to {_p}
+                send "&b&l+ 1x Job Key &7(Bônus de Contrato Semanal)" to {_p}
+
+# ========================================================================
+# IDENTIFICADOR DE QUANTIDADE DE ITENS AO INTERAGIR COM INVENTARIOS
+# ========================================================================
 function processarProgressoSnapshot(p: player, click: text, tipo: item type, qtd_evento: integer, job: text, acao: text, alvo_str: text):
     set {_processar} to false
     set {_forjado} to 0
@@ -361,7 +401,6 @@ on tool break:
         addProgressoSemanal(player, "lenhador", "quebrar_ferramenta", {_tipo}, 1)
 
 # 6. INVENTÁRIOS (Forja e Comércio)
-
 on inventory click:
   # 6.1 Minerador - Fundir
     if {missao::semanal::%player%::minerador::acao_ativa::fundir} is true:
@@ -395,23 +434,28 @@ on inventory click:
                 if event-item is not air:
                     addProgressoSemanal(player, "mago", "fundir_bigorna", "any", 1)
                     
-    # 6.4 Mago - Desencantar
+  # 6.4 Mago - Desencantar
     if {missao::semanal::%player%::mago::acao_ativa::desencantar} is true:
         if event-inventory's type is grindstone inventory:
             if index of event-slot is 2:
                 if event-item is not air:
                     addProgressoSemanal(player, "mago", "desencantar", "any", 1)
                     
-    # 6.5 Mago - Comércio de Livros
+  # 6.5 Mago - Comércio de Livros
     if {missao::semanal::%player%::mago::acao_ativa::comprar_aldeao} is true:
         if event-inventory's type is merchant inventory:
             if index of event-slot is 2:
                 if event-item is enchanted book:
                     addProgressoSemanal(player, "mago", "comprar_aldeao", "enchanted book", 1)
 
-# 7. ENCANTAMENTO CONSOLIDADO
+# 7. ENCANTAMENTAR
 on enchant:
-    if {missao::semanal::%player%::mago::acao_ativa::encantar} is true or {missao::semanal::%player%::mago::acao_ativa::encantar_nv30} is true:
+    if {missao::semanal::%player%::mago::acao_ativa::encantar} is true:
+        set {_ativo} to true
+    else if {missao::semanal::%player%::mago::acao_ativa::encantar_nv30} is true:
+        set {_ativo} to true
+        
+    if {_ativo} is true:
         set {_tipo} to "%type of event-item%"
         addProgressoSemanal(player, "mago", "encantar", {_tipo}, 1)
         addProgressoSemanal(player, "mago", "encantar", "any", 1) # Fallback seguro
@@ -425,7 +469,7 @@ on enchant:
         if {_niveis_gastos} is 3:
             addProgressoSemanal(player, "mago", "encantar_nv30", "any", 1)
 
-# 8. SISTEMA DE MINERAÇÃO CENTRALIZADO
+# 8. QUEBRAR BLOCOS / COLHER PLANTAÇÃO
 on mine:
     if metadata "desertsky_placed" of event-block is true:
         stop
@@ -481,12 +525,13 @@ on mine:
     if {missao::semanal::%player%::bruxo::acao_ativa::minerar} is true:
         addProgressoSemanal(player, "bruxo", "minerar", {_tipo}, 1)
 
+# 9. COLETAR FLUIDOS
 on bucket fill:
     if {missao::semanal::%player%::minerador::acao_ativa::coletar} is true:
         if event-block is lava:
             addProgressoSemanal(player, "minerador", "coletar", "lava bucket", 1)
 
-# [CORREÇÃO ANTI-EXPLOIT] O progresso de escovação só conta quando finalizado (100%)
+# 10. ESCOVAR AREIA E CASCALHO
 on right click on suspicious sand or suspicious gravel with brush:
     if {missao::semanal::%player%::escavador::acao_ativa::escovar} is true:
         set {_loc} to location of event-block
@@ -522,9 +567,7 @@ on right click on suspicious sand or suspicious gravel with brush:
         
         delete {brush_loop::%{_loc}%}
 
-# --------------------------------------------------------------------
-# EVENTOS DE PESCARIA E CONSUMO
-# --------------------------------------------------------------------
+# 11. PESCAR ITEM
 on fishing state change:
     if {missao::semanal::%player%::pescador::acao_ativa::pescar} is true:
         if "%fishing state%" is "fish caught":
@@ -538,14 +581,13 @@ on fishing state change:
                     
                 addProgressoSemanal(player, "pescador", "pescar", {_tipo}, 1)
 
+# 12. COMER / BEBER
 on consume:
     if {missao::semanal::%player%::pescador::acao_ativa::comer} is true:
         set {_tipo} to "%type of event-item%"
         addProgressoSemanal(player, "pescador", "comer", {_tipo}, 1)
 
-# --------------------------------------------------------------------
-# AÇÃO DE CRAFTAR ITENS
-# --------------------------------------------------------------------
+# 13. CRAFTAR ITENS
 on craft:
     set {_click} to "%click type%"
     set {_tipo} to type of event-item
@@ -553,21 +595,12 @@ on craft:
 
     processarProgressoSnapshot(player, {_click}, {_tipo}, {_qtd}, "minerador", "craftar", "%{_tipo}%")
 
-# on right click on grass block, dirt, podzol, coarse dirt or rooted dirt:
-#     set {_ferramenta} to "%type of player's tool%"
-#     if {_ferramenta} contains "shovel":
-#         set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-#         if {_jobs_low} contains "escavador":
-#             # O alvo rastreado será "dirt path" para combinar com a meta base
-#             addProgressoSemanal(player, "escavador", "achatar", "dirt path", 1)
-            
+#14. CRIAR CAMINHOS          
 on right click on grass block, dirt, podzol, coarse dirt or rooted dirt with wooden shovel, stone shovel, iron shovel, golden shovel, diamond shovel or netherite shovel:
     if {missao::semanal::%player%::escavador::acao_ativa::achatar} is true:
         addProgressoSemanal(player, "escavador", "achatar", "dirt path", 1)
 
-# [DEV NOTE]: Havia um bloco antigo "on craft oak planks" mandando progresso 
-# errôneo para "achatar dirt paths" com um argumento "job" nulo. Foi removido por segurança.
-
+#15. COLOCAR BLOCOS / PLANTAR
 on place:
     set metadata "desertsky_placed" of event-block to true
     set {_tipo} to "%type of event-block%"
@@ -584,65 +617,9 @@ on place:
     if {missao::semanal::%player%::fazendeiro::acao_ativa::plantar} is true:
         addProgressoSemanal(player, "fazendeiro", "plantar", {_tipo}, 1)
 
+# 16. MATAR
 on death:
     if attacker is a player:
         if {missao::semanal::%attacker%::bruxo::acao_ativa::matar} is true:
             set {_tipo} to "%type of victim%"
             addProgressoSemanal(attacker, "bruxo", "matar", {_tipo}, 1)
-
-# ========================================================================
-# 7. MOTOR DE RESET SEMANAL (LAZY RESET COM API DO CORE)
-# ========================================================================
-on join:
-    wait 5 seconds
-    set {_uuid} to uuid of player
-    set {_semana_atual} to now formatted as "ww/yyyy"
-    
-    if {last_semanal_reset::%{_uuid}%} is not {_semana_atual}:
-        set {last_semanal_reset::%{_uuid}%} to {_semana_atual}
-        
-        play sound "entity.player.levelup" with volume 0.5 and pitch 0.8 to player
-        
-        # Uso direto da API nativa super-rápida construída no Core.sk
-        set {_ativos::*} to getJobsAtivos(player)
-        
-        if {_ativos::*} contains "minerador":
-            sortearSemanal(player, "minerador")
-        if {_ativos::*} contains "lenhador":
-            sortearSemanal(player, "lenhador")
-        if {_ativos::*} contains "escavador":
-            sortearSemanal(player, "escavador")
-        if {_ativos::*} contains "fazendeiro":
-            sortearSemanal(player, "fazendeiro")
-        if {_ativos::*} contains "pescador":
-            sortearSemanal(player, "pescador")
-        if {_ativos::*} contains "construtor":
-            sortearSemanal(player, "construtor")
-        if {_ativos::*} contains "bruxo":
-            sortearSemanal(player, "bruxo")
-        if {_ativos::*} contains "mago":
-            sortearSemanal(player, "mago")
-
-# ========================================================================
-# 8. SINCRONIZADOR DE ENTREGAS (INTEGRAÇÃO COM MOTOR UNIVERSAL)
-# ========================================================================
-every 3 seconds:
-    loop all players:
-        set {_p} to loop-player
-        set {_uuid} to uuid of {_p}
-        set {_todos_jobs::*} to "minerador", "lenhador", "escavador", "fazendeiro", "pescador", "construtor", "bruxo" and "mago"
-        
-        loop {_todos_jobs::*}:
-            set {_job} to loop-value-2
-            if {missao::semanal::%{_p}%::%{_job}%::status} is "aguardando_entrega":
-                set {_contrato_id} to {missao::semanal::%{_p}%::%{_job}%::id}
-                
-                if {missao::status::%{_contrato_id}%::%{_uuid}%} is "concluida":
-                    set {missao::semanal::%{_p}%::%{_job}%::status} to "concluida"
-                    
-                    set {_money} to {missao::semanal::%{_p}%::%{_job}%::recompensa_dinheiro} ? 100
-                    execute console command "eco give %{_p}% %{_money}%"
-                    
-                    execute console command "crate key give %{_p}% jobkey 1"
-                    send "&a&l+ $%{_money}% &7(Pagamento do Sindicato)" to {_p}
-                    send "&b&l+ 1x Job Key &7(Bônus de Contrato Semanal)" to {_p}

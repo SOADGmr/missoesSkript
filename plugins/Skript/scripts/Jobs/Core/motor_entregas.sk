@@ -92,6 +92,7 @@ command /npc_entrega <integer>:
 
         # 4. CONCLUSÃO E PAGAMENTO DA MISSÃO
         set {missao::status::%{_missao_alvo}%::%{_uuid}%} to "concluida"
+        verificarEntregasSemanais(player)
         set {_recompensa} to {entrega_registry::%{_missao_alvo}%::recompensa}
         set {_msg} to {entrega_registry::%{_missao_alvo}%::mensagem}
         
