@@ -7,7 +7,7 @@ on load:
     # 1. LIMPEZA SEGURA GLOBAL (Impede missões duplicadas no /sk reload)
     delete {pool_semanal::minerador::*}
     
-    # Varre a memória e apaga os rastros antigos preventivamente (Aviso de loop-index corrigido)
+    # Varre a memória e apaga os rastros antigos preventivamente
     loop {semanal_meta::*}:
         if loop-index contains "semanal_minerador":
             delete {semanal_meta::%loop-index%::*}
@@ -43,17 +43,18 @@ on load:
 
 
 # ========================================================================
-# 3. CONTRATOS (MISSÕES COMPOSTAS)
-# ATENÇÃO: As sub-listas recebem delete explícito antes do add!
+# 3. CONTRATOS (MISSÕES COMPOSTAS COM FILTRO DE NÍVEL)
 # ========================================================================
     
-  # --- CONTRATO 1: Expansão da Mina Principal ---
+  # --- CONTRATO 1: Expansão da Mina Principal (Iniciantes: Nível 1 ao 20) ---
     delete {semanal_meta::semanal_minerador_expansao::*}
     delete {semanal_meta::semanal_minerador_expansao::metas_raw::*}
     delete {entrega_registry::semanal_minerador_expansao::*}
     delete {entrega_registry::semanal_minerador_expansao::requisitos::*}
     
     add "semanal_minerador_expansao" to {pool_semanal::minerador::*}
+    set {semanal_meta::semanal_minerador_expansao::nivel_min} to 1
+    set {semanal_meta::semanal_minerador_expansao::nivel_max} to 20
     set {semanal_meta::semanal_minerador_expansao::nome} to "&6ᴇxᴘᴀɴsᴀᴏ ᴅᴀ ᴍɪɴᴀ ᴘʀɪɴᴄɪᴘᴀʟ"
     set {semanal_meta::semanal_minerador_expansao::desc} to "&7ᴀ ᴠɪʟᴀ ᴘʀᴇᴄɪsᴀ ᴅᴇ ᴍᴀᴛᴇʀɪᴀɪs ᴘᴀʀᴀ|&7ᴇxᴘᴀɴᴅɪʀ ᴏ ᴛᴜɴᴇʟ sᴜʟ ᴅᴀ ᴍɪɴᴀ ᴄᴇɴᴛʀᴀʟ."
     
@@ -66,13 +67,15 @@ on load:
     addRequisitoEntrega("semanal_minerador_expansao", "stone,cobblestone", 64, "Pedras ou Pedregulhos")
     addRequisitoEntrega("semanal_minerador_expansao", "iron ingot", 32, "Lingotes de Ferro")
 
-  # --- CONTRATO 2: Febre do Ouro ---
+  # --- CONTRATO 2: Febre do Ouro (Iniciante/Médio: Nível 10 ao 30) ---
     delete {semanal_meta::semanal_minerador_febre_ouro::*}
     delete {semanal_meta::semanal_minerador_febre_ouro::metas_raw::*}
     delete {entrega_registry::semanal_minerador_febre_ouro::*}
     delete {entrega_registry::semanal_minerador_febre_ouro::requisitos::*}
     
     add "semanal_minerador_febre_ouro" to {pool_semanal::minerador::*}
+    set {semanal_meta::semanal_minerador_febre_ouro::nivel_min} to 10
+    set {semanal_meta::semanal_minerador_febre_ouro::nivel_max} to 30
     set {semanal_meta::semanal_minerador_febre_ouro::nome} to "&eғᴇʙʀᴇ ᴅᴏ ᴏᴜʀᴏ"
     set {semanal_meta::semanal_minerador_febre_ouro::desc} to "&7ᴀ ᴇᴄᴏɴᴏᴍɪᴀ ᴘʀᴇᴄɪsᴀ ᴅᴇ ɪɴᴊᴇçᴀᴏ ᴅᴇ ᴏᴜʀᴏ.|&7ᴛʀᴀɢᴀ ᴏ ᴍᴀxɪᴍᴏ ǫᴜᴇ ᴘᴜᴅᴇʀ ᴅᴀs ᴘʀᴏғᴜɴᴅᴇᴢᴀs."
     
@@ -83,13 +86,15 @@ on load:
     vincularEntrega("semanal_minerador_febre_ouro", 11, 0, "Este ouro fará a diferença nas reservas da cidade.")
     addRequisitoEntrega("semanal_minerador_febre_ouro", "gold ingot", 32, "Lingotes de Ouro")
 
-  # --- CONTRATO 3: Alicerces da Indústria ---
+  # --- CONTRATO 3: Alicerces da Indústria (Médio: Nível 20 ao 50) ---
     delete {semanal_meta::semanal_minerador_alicerces::*}
     delete {semanal_meta::semanal_minerador_alicerces::metas_raw::*}
     delete {entrega_registry::semanal_minerador_alicerces::*}
     delete {entrega_registry::semanal_minerador_alicerces::requisitos::*}
 
     add "semanal_minerador_alicerces" to {pool_semanal::minerador::*}
+    set {semanal_meta::semanal_minerador_alicerces::nivel_min} to 20
+    set {semanal_meta::semanal_minerador_alicerces::nivel_max} to 50
     set {semanal_meta::semanal_minerador_alicerces::nome} to "&8ᴀʟɪᴄᴇʀᴄᴇs ᴅᴀ ɪɴᴅᴜsᴛʀɪᴀ"
     set {semanal_meta::semanal_minerador_alicerces::desc} to "&7ᴀ ᴠɪʟᴀ ᴘʀᴇᴄɪsᴀ ᴅᴇ sᴜᴘʀɪᴍᴇɴᴛᴏs ᴘᴀʀᴀ ᴀs|&7ᴄᴀʟᴅᴇɪʀᴀs ᴇ ғɪᴀçᴏᴇs ᴅᴀ ᴄɪᴅᴀᴅᴇ."
     
@@ -104,13 +109,15 @@ on load:
     addRequisitoEntrega("semanal_minerador_alicerces", "iron ingot", 64, "Lingotes de Ferro")
     addRequisitoEntrega("semanal_minerador_alicerces", "cooper ingot", 64, "Lingotes de Cobre")
 
-  # --- CONTRATO 4: Mestre de Fundição ---
+  # --- CONTRATO 4: Mestre de Fundição (Médio/Avançado: Nível 30 ao 60) ---
     delete {semanal_meta::semanal_minerador_fundicao::*}
     delete {semanal_meta::semanal_minerador_fundicao::metas_raw::*}
     delete {entrega_registry::semanal_minerador_fundicao::*}
     delete {entrega_registry::semanal_minerador_fundicao::requisitos::*}
 
     add "semanal_minerador_fundicao" to {pool_semanal::minerador::*}
+    set {semanal_meta::semanal_minerador_fundicao::nivel_min} to 30
+    set {semanal_meta::semanal_minerador_fundicao::nivel_max} to 60
     set {semanal_meta::semanal_minerador_fundicao::nome} to "&cᴍᴇsᴛʀᴇ ᴅᴇ ғᴜɴᴅɪçᴀᴏ"
     set {semanal_meta::semanal_minerador_fundicao::desc} to "&7ᴛʀᴀɴsғᴏʀᴍᴇ ᴍɪɴᴇʀɪᴏ ʙʀᴜᴛᴏ ᴇᴍ ᴍᴇᴛᴀʟ ᴘᴜʀᴏ|&7ᴘᴀʀᴀ ᴀs ғᴏʀᴊᴀs ᴅᴀ ᴠɪʟᴀ."
     
@@ -123,13 +130,15 @@ on load:
     addRequisitoEntrega("semanal_minerador_fundicao", "iron ingot", 128, "Lingotes de Ferro")
     addRequisitoEntrega("semanal_minerador_fundicao", "copper ingot", 128, "Lingotes de Cobre")
 
-  # --- CONTRATO 5: Relíquias das Profundezas ---
+  # --- CONTRATO 5: Relíquias das Profundezas (Avançado: Nível 50 ao 100) ---
     delete {semanal_meta::semanal_minerador_reliquias::*}
     delete {semanal_meta::semanal_minerador_reliquias::metas_raw::*}
     delete {entrega_registry::semanal_minerador_reliquias::*}
     delete {entrega_registry::semanal_minerador_reliquias::requisitos::*}
 
     add "semanal_minerador_reliquias" to {pool_semanal::minerador::*}
+    set {semanal_meta::semanal_minerador_reliquias::nivel_min} to 50
+    set {semanal_meta::semanal_minerador_reliquias::nivel_max} to 100
     set {semanal_meta::semanal_minerador_reliquias::nome} to "&5ʀᴇʟɪǫᴜɪᴀs ᴅᴀs ᴘʀᴏғᴜɴᴅᴇᴢᴀs"
     set {semanal_meta::semanal_minerador_reliquias::desc} to "&7ᴜᴍᴀ ᴇxᴘᴇᴅɪçᴀᴏ ᴀʀǫᴜᴇᴏʟᴏɢɪᴄᴀ ʀᴇǫᴜᴇʀ ᴍɪɴᴇʀɪᴏs|&7ᴅᴇ ᴀʟᴛᴏ ᴠᴀʟᴏʀ ᴇ ᴅᴇᴛʀɪᴛᴏs ᴀɴᴛɪɢᴏs."
     
@@ -144,13 +153,15 @@ on load:
     addRequisitoEntrega("semanal_minerador_reliquias", "gold ingot", 32, "Lingote de Ouro")
     addRequisitoEntrega("semanal_minerador_reliquias", "netherite scrap", 4, "Fragmentos de Netherita")
 
-  # --- CONTRATO 6: Alquimia Metálica ---
+  # --- CONTRATO 6: Alquimia Metálica (Avançado: Nível 60 ao 100) ---
     delete {semanal_meta::semanal_minerador_alquimia::*}
     delete {semanal_meta::semanal_minerador_alquimia::metas_raw::*}
     delete {entrega_registry::semanal_minerador_alquimia::*}
     delete {entrega_registry::semanal_minerador_alquimia::requisitos::*}
 
     add "semanal_minerador_alquimia" to {pool_semanal::minerador::*}
+    set {semanal_meta::semanal_minerador_alquimia::nivel_min} to 60
+    set {semanal_meta::semanal_minerador_alquimia::nivel_max} to 100
     set {semanal_meta::semanal_minerador_alquimia::nome} to "&dᴀʟǫᴜɪᴍɪᴀ ᴍᴇᴛᴀʟɪᴄᴀ"
     set {semanal_meta::semanal_minerador_alquimia::desc} to "&7ᴀ ᴀʀᴛᴇ ᴅᴇ ʀᴇғɪɴᴀʀ ᴏs ᴍᴀᴛᴇʀɪᴀɪs ᴍᴀɪs|&7ɴᴏʙʀᴇs ᴄᴏɴʜᴇᴄɪᴅᴏs ᴘᴇʟᴏ ʜᴏᴍᴇᴍ."
     
@@ -163,30 +174,33 @@ on load:
     addRequisitoEntrega("semanal_minerador_alquimia", "gold ingot", 64, "Barras de Ouro")
     addRequisitoEntrega("semanal_minerador_alquimia", "netherite ingot", 4, "Barras de Netherite")
 
-  # --- CONTRATO 7: Corrida do Ouro Infernal ---
+  # --- CONTRATO 7: Corrida do Ouro Infernal (Avançado: Nível 70 ao 100) ---
     delete {semanal_meta::semanal_minerador_corrida_nether::*}
     delete {semanal_meta::semanal_minerador_corrida_nether::metas_raw::*}
     delete {entrega_registry::semanal_minerador_corrida_nether::*}
     delete {entrega_registry::semanal_minerador_corrida_nether::requisitos::*}
 
     add "semanal_minerador_corrida_nether" to {pool_semanal::minerador::*}
+    set {semanal_meta::semanal_minerador_corrida_nether::nivel_min} to 70
+    set {semanal_meta::semanal_minerador_corrida_nether::nivel_max} to 100
     set {semanal_meta::semanal_minerador_corrida_nether::nome} to "&4ᴄᴏʀʀɪᴅᴀ ᴅᴏ ᴏᴜʀᴏ ɪɴғᴇʀɴᴀʟ"
     set {semanal_meta::semanal_minerador_corrida_nether::desc} to "&7ᴏ ɴᴇᴛʜᴇʀ ᴛʀᴀɴsʙᴏʀᴅᴀ ᴏᴜʀᴏ, ᴇ ɴᴏs ǫᴜᴇʀᴇᴍᴏs|&7ᴄᴀᴅᴀ ɢʀᴀᴍᴀ ᴅᴇʟᴇ."
     
-    # Modificado: Meta de craft removida, aumentada a coleta
     addMetaSemanal("semanal_minerador_corrida_nether", "minerador_minerar_ouro_nether", 128, 256)
     addMetaSemanal("semanal_minerador_corrida_nether", "minerador_fundir_ouro", 64, 64)
     
     vincularEntrega("semanal_minerador_corrida_nether", 11, 0, "Você sobreviveu ao calor insuportável e trouxe lucros!")
     addRequisitoEntrega("semanal_minerador_corrida_nether", "gold ingot", 64, "Barras de Ouro")
 
-  # --- CONTRATO 8: Exaustão do Minerador ---
+  # --- CONTRATO 8: Exaustão do Minerador (Veterano: Nível 80 ao 100) ---
     delete {semanal_meta::semanal_minerador_exaustao::*}
     delete {semanal_meta::semanal_minerador_exaustao::metas_raw::*}
     delete {entrega_registry::semanal_minerador_exaustao::*}
     delete {entrega_registry::semanal_minerador_exaustao::requisitos::*}
 
     add "semanal_minerador_exaustao" to {pool_semanal::minerador::*}
+    set {semanal_meta::semanal_minerador_exaustao::nivel_min} to 80
+    set {semanal_meta::semanal_minerador_exaustao::nivel_max} to 100
     set {semanal_meta::semanal_minerador_exaustao::nome} to "&7ᴇxᴀᴜsᴛᴀᴏ ᴅᴏ ᴍɪɴᴇʀᴀᴅᴏʀ"
     set {semanal_meta::semanal_minerador_exaustao::desc} to "&7ᴘʀᴏᴠᴇ sᴜᴀ ʀᴇsɪsᴛᴇɴᴄɪᴀ ʟᴇᴠᴀɴᴅᴏ sᴜᴀ ᴘɪᴄᴀʀᴇᴛᴀ|&7ᴀᴏ ʟɪᴍɪᴛᴇ ᴍᴀxɪᴍᴏ ᴅᴇ ᴜsᴏ."
     
@@ -197,13 +211,15 @@ on load:
     addMetaSemanal("semanal_minerador_exaustao", "minerador_minerar_carvao", 64, 128)
     addMetaSemanal("semanal_minerador_exaustao", "minerador_minerar_ouro", 256, 384)
 
-  # --- CONTRATO 9: O Legado de Netherite ---
+  # --- CONTRATO 9: O Legado de Netherite (Mestre: Nível 90 ao 100) ---
     delete {semanal_meta::semanal_minerador_legado_netherite::*}
     delete {semanal_meta::semanal_minerador_legado_netherite::metas_raw::*}
     delete {entrega_registry::semanal_minerador_legado_netherite::*}
     delete {entrega_registry::semanal_minerador_legado_netherite::requisitos::*}
 
     add "semanal_minerador_legado_netherite" to {pool_semanal::minerador::*}
+    set {semanal_meta::semanal_minerador_legado_netherite::nivel_min} to 90
+    set {semanal_meta::semanal_minerador_legado_netherite::nivel_max} to 100
     set {semanal_meta::semanal_minerador_legado_netherite::nome} to "&8ᴏ ʟᴇɢᴀᴅᴏ ᴅᴇ ɴᴇᴛʜᴇʀɪᴛᴇ"
     set {semanal_meta::semanal_minerador_legado_netherite::desc} to "&7ғᴏʀᴊᴇ ᴀ ғᴇʀʀᴀᴍᴇɴᴛᴀ ʟᴇɴᴅᴀʀɪᴀ ǫᴜᴇ ᴅᴇғɪɴᴇ|&7ᴜᴍ ᴍᴇsᴛʀᴇ ᴍɪɴᴇʀᴀᴅᴏʀ."
     
@@ -213,8 +229,7 @@ on load:
     addMetaSemanal("semanal_minerador_legado_netherite", "minerador_fundir_netherite", 12, 12)
     addMetaSemanal("semanal_minerador_legado_netherite", "minerador_forjar_picareta_netherite", 1, 1)
     
-    
     vincularEntrega("semanal_minerador_legado_netherite", 11, 0, "O legado da nossa guilda está seguro na tua forja.")
     addRequisitoEntrega("semanal_minerador_legado_netherite", "netherite pickaxe", 1, "Picareta de Netherite")
     
-    send "&e[DesertSky-Jobs] &aMódulo Semanal carregado: &fMinerador (9 Missões - Atualizado p/ V5.1)" to console
+    send "&e[DesertSky-Jobs] &aMódulo Semanal carregado: &fMinerador (9 Missões - Com Níveis!)" to console
