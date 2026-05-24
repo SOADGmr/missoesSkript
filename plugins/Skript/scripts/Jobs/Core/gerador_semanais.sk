@@ -1,22 +1,22 @@
 # ========================================================================
-# MOTOR DE MISSÕES SEMANAIS - DESERTSKY (V5.5 - FISHING TAGS INFALÍVEL)
+# MOTOR DE MISSÕES SEMANAIS - DESERTSKY (V5.6 - SUPER OTIMIZADO)
 # Arquivo: gerador_semanais.sk
-# Função: Lógica central, eventos, action bar e sincronização.
+# Função: Lógica central, eventos, action bar e sincronização (Fast-Fail).
 # ========================================================================
 
 on load:
     # Apenas registra os NPCs de entrega. 
     # As missões e limpeza de variáveis agora são geridas pelos módulos de cada job.
-    registrarNPC(11, "Almoxarife")
-    registrarNPC(21, "Almoxarife")
-    registrarNPC(31, "Almoxarife")
-    registrarNPC(41, "Almoxarife")
-    registrarNPC(51, "Almoxarife")
-    registrarNPC(61, "Almoxarife")
-    registrarNPC(71, "Almoxarife")
-    registrarNPC(81, "Almoxarife")
+    registrarNPC(11, "Almoxarife") # Minerador
+    registrarNPC(21, "Almoxarife") # Lenhador
+    registrarNPC(31, "Almoxarife") # Escavador
+    registrarNPC(41, "Almoxarife") # Fazendeiro
+    registrarNPC(51, "Almoxarife") # Pescador
+    registrarNPC(61, "Almoxarife") # Construtor
+    registrarNPC(71, "Almoxarife") # Bruxo
+    registrarNPC(81, "Almoxarife") # Mago
     
-    send "&e[DesertSky-Jobs] &aMotor Semanal V5.5 carregado (Tag de Pesca Infalível)!" to console
+    send "&e[DesertSky-Jobs] &aMotor Semanal V5.6 carregado (Fast-Fail & JobsSK Integrado)!" to console
 
 # ========================================================================
 # FUNÇÕES DE REGISTRO E COMPILAÇÃO (API PARA OS MÓDULOS)
@@ -45,8 +45,9 @@ function sortearSemanal(p: player, job: text):
     set {missao::semanal::%{_p}%::%{_job}%::id} to {_contrato_id}
     set {missao::semanal::%{_p}%::%{_job}%::status} to "em_andamento"
 
-    # --- NOVA LIMPEZA PROFUNDA (Apaga as metas da semana anterior) ---
+    # --- NOVA LIMPEZA PROFUNDA (Apaga as metas e ações da semana anterior) ---
     delete {missao::semanal::%{_p}%::%{_job}%::meta::*}
+    delete {missao::semanal::%{_p}%::%{_job}%::acao_ativa::*} # Desliga os Listeners Antigos
     loop 20 times:
         delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::id}
         delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::alvo}
@@ -80,6 +81,10 @@ function sortearSemanal(p: player, job: text):
         set {_min} to {_parts::2} parsed as number
         set {_max} to {_parts::3} parsed as number
         
+        # OTIMIZAÇÃO: Ativa apenas os Listeners necessários para esta missão
+        set {_acao_necessaria} to {meta_base::%{_meta_id}%::acao}
+        set {missao::semanal::%{_p}%::%{_job}%::acao_ativa::%{_acao_necessaria}%} to true
+        
         set {_alvo_sorteado} to a random integer between {_min} and {_max}
         
         set {missao::semanal::%{_p}%::%{_job}%::meta::%{_meta_index}%::id} to {_meta_id}
@@ -89,10 +94,14 @@ function sortearSemanal(p: player, job: text):
         add 1 to {_meta_index}
 
     send "" to {_p}
-    send "&6&l[CONTRATO SEMANAL] &7Novo contrato de %{_job}% disponível!" to {_p}
-    send "&7Missão: &f%{semanal_meta::%{_contrato_id}%::nome}%" to {_p}
-    send "&7Abra a &eCentral de Contratos &7para ver os objetivos." to {_p}
+    send "&7--------------------------------------------------" to {_p}
+    send "&7ɴᴏᴠᴏ &6&lᴄᴏɴᴛʀᴀᴛᴏ sᴇᴍᴀɴᴀʟ &7ᴅᴇ %formatarNomeJob({_job})% &7ᴅɪsᴘᴏɴɪᴠᴇʟ!" to {_p}
     send "" to {_p}
+    send "&7ᴍɪssᴀᴏ: &f%{semanal_meta::%{_contrato_id}%::nome}%" to {_p}
+    send "&7ᴀʙʀᴀ ᴀ &eᴄᴇɴᴛʀᴀʟ ᴅᴇ ᴄᴏɴᴛʀᴀᴛᴏs &7ᴘᴀʀᴀ ᴠᴇʀ ᴏs ᴏʙᴊᴇᴛɪᴠᴏs." to {_p}
+    send "&7--------------------------------------------------" to {_p}
+    send "" to {_p}
+
 
 # ========================================================================
 # CONSTRUTOR DE LORE DINÂMICA (Para a GUI) - V2 ENTREGA VISÍVEL
@@ -104,7 +113,7 @@ function formatarLoreSemanal(p: player, job: text) :: texts:
     
     set {_lore::*} to {_desc_base} split at "|"
     add "" to {_lore::*}
-    add "&f&lObjetivos:" to {_lore::*}
+    add "&f&lᴏʙᴊᴇᴛɪᴠᴏs:" to {_lore::*}
 
     set {_index} to 1
     while {missao::semanal::%{_p}%::%{_job}%::meta::%{_index}%::id} is set:
@@ -125,7 +134,7 @@ function formatarLoreSemanal(p: player, job: text) :: texts:
     # --- NOVO SISTEMA VISUAL DE ENTREGAS ---
     if {entrega_registry::%{_contrato_id}%::npc} is set:
         add "" to {_lore::*}
-        add "&f&lEntregas Exigidas:" to {_lore::*}
+        add "&f&lᴇɴᴛʀᴇɢᴀs ᴇxɪɢɪᴅᴀs:" to {_lore::*}
         
         loop {entrega_registry::%{_contrato_id}%::requisitos::*}:
             set {_req_parts::*} to loop-value split at "|"
@@ -143,15 +152,15 @@ function formatarLoreSemanal(p: player, job: text) :: texts:
             set {_npc_id} to {entrega_registry::%{_contrato_id}%::npc}
             set {_npc_nome} to {npc_nome::%{_npc_id}%} ? "NPC"
             add "" to {_lore::*}
-            add "&e➡ Leve os materiais para &f%{_npc_nome}% &e(NPC %{_npc_id}%)" to {_lore::*}
+            add "&e➡ ʟᴇᴠᴇ ᴏs ᴍᴀᴛᴇʀɪᴀɪs ᴘᴀʀᴀ ᴏ &f%{_npc_nome}% ɴᴀ ᴠɪʟᴀ ᴅᴏs %formatarNomeJob({_job})%s" to {_lore::*}
         else if {missao::semanal::%{_p}%::%{_job}%::status} is "em_andamento":
             add "" to {_lore::*}
-            add "&7➡ &oConclua a coleta para liberar a entrega." to {_lore::*}
+            add "&7➡ &oᴄᴏɴᴄʟᴜᴀ ᴀ ᴄᴏʟᴇᴛᴀ ᴘᴀʀᴀ ʟɪʙᴇʀᴀʀ ᴀ ᴇɴᴛʀᴇɢᴀ." to {_lore::*}
             
     add "" to {_lore::*}
     
     set {_money} to {missao::semanal::%{_p}%::%{_job}%::recompensa_dinheiro} ? 100
-    add "&eRecompensa: &a$%{_money}% &e+ &b1x Job Key" to {_lore::*}
+    add "&eʀᴇᴄᴏᴍᴘᴇɴsᴀ: &a$%{_money}% &e+ &b1x ᴊᴏʙ ᴋᴇʏ" to {_lore::*}
     
     return {_lore::*}
 
@@ -220,6 +229,9 @@ function verificarConclusaoSemanal(p: player, job: text):
     if {_todas_concluidas} is true:
         set {_contrato_id} to {missao::semanal::%{_p}%::%{_job}%::id}
         
+        # OTIMIZAÇÃO: Desliga os listeners de ações imediatamente após concluir o contrato.
+        delete {missao::semanal::%{_p}%::%{_job}%::acao_ativa::*}
+        
         if {entrega_registry::%{_contrato_id}%::npc} is set:
             set {missao::semanal::%{_p}%::%{_job}%::status} to "aguardando_entrega"
             set {missao::status::%{_contrato_id}%::%uuid of {_p}%} to "aguardando_entrega"
@@ -248,43 +260,80 @@ function verificarConclusaoSemanal(p: player, job: text):
             send "&b&l+ 1x Job Key" to {_p}
             send "" to {_p}
 
+
+
+function processarProgressoSnapshot(p: player, click: text, tipo: item type, qtd_evento: integer, job: text, acao: text, alvo_str: text):
+    set {_processar} to false
+    set {_forjado} to 0
+    
+    # CATEGORIA A: Clique Normal ou Drop (Vai direto)
+    if {_click} is "left mouse button", "drop key" or "drop key with control":
+        set {_forjado} to {_qtd_evento}
+        set {_processar} to true
+        
+    # CATEGORIA B: Clique Direito (Leva sempre exatamente a metade, arredondada para cima)
+    # Não precisa de 'wait', poupando processamento!
+    else if {_click} is "right mouse button":
+        set {_forjado} to {_qtd_evento} / 2
+        set {_forjado} to rounded up {_forjado}
+        set {_processar} to true
+        
+    # CATEGORIA C: Shift e Atalhos Numéricos (Aguardar a transferência)
+    else if {_click} is "left mouse button with shift", "right mouse button with shift" or "number key":
+        set {_antes} to amount of {_tipo} in {_p}'s inventory
+        
+        wait 1 tick # O tick mágico
+        
+        set {_depois} to amount of {_tipo} in {_p}'s inventory
+        set {_forjado} to {_depois} - {_antes}
+        set {_processar} to true
+        
+    # DISTRIBUIÇÃO DE PROGRESSO
+    if {_processar} is true:
+        if {_forjado} > 0:
+            
+            # ---------------------------------------------------------
+            # AQUI VOCÊ CHAMA AS SUAS FUNÇÕES OFICIAIS DE PROGRESSO!
+            # Como teste, estou dando apenas um broadcast, mas no seu
+            # servidor final, você ativará as linhas abaixo:
+            # ---------------------------------------------------------
+            
+            addProgressoSemanal({_p}, {_job}, {_acao}, {_alvo_str}, {_forjado})
+            # addProgressoDiaria({_p}, {_job}, {_acao}, {_alvo_str}, {_forjado})
+
+            broadcast ""
+            broadcast "&a&l[PROGRESSO REGISTRADO] &f%{_p}%"
+            broadcast "&7Job: &e%{_job}% &8| &7Ação: &e%{_acao}%"
+            broadcast "&7Quantidade processada: &a&l%{_forjado}% &fx &b%{_tipo}%"
+            broadcast ""
+
 # ========================================================================
-# EVENTOS DISPARADORES PARA A MISSÃO SEMANAL (TODOS OS JOBS)
+# EVENTOS DISPARADORES PARA A MISSÃO SEMANAL (SUPER OTIMIZADOS O(1))
 # ========================================================================
 
 # 1. ARAR O SOLO
-on right click on dirt or grass block:
-    set {_ferramenta} to "%type of player's tool%"
-    if {_ferramenta} contains "hoe":
-        set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-        if {_jobs_low} contains "fazendeiro":
-            # Passa o nome exato do bloco alvo (dirt ou grass block)
-            set {_tipo} to "%type of event-block%"
-            addProgressoSemanal(player, "fazendeiro", "arar", {_tipo}, 1)
+on right click on dirt or grass block with wooden hoe, stone hoe, iron hoe, golden hoe, diamond hoe or netherite hoe:
+    if {missao::semanal::%player%::fazendeiro::acao_ativa::arar} is true:
+        set {_tipo} to "%type of event-block%"
+        addProgressoSemanal(player, "fazendeiro", "arar", {_tipo}, 1)
 
 # 2. PROCRIAR ANIMAIS
 on breeding:
-    # Em Skript, o jogador que alimentou é retornado como 'player' ou 'breeder'
     if breeder is set:
-        set {_tipo} to "%type of event-entity%"
-        set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from breeder in lowercase
-        if {_jobs_low} contains "fazendeiro":
+        if {missao::semanal::%breeder%::fazendeiro::acao_ativa::procriar} is true:
+            set {_tipo} to "%type of event-entity%"
             addProgressoSemanal(breeder, "fazendeiro", "procriar", {_tipo}, 1)
 
 # 3. TOSQUIAR OVELHAS
-on right click on sheep:
-    if player's tool is shears:
+on right click on sheep with shears:
+    if {missao::semanal::%player%::fazendeiro::acao_ativa::tosar} is true:
         if target entity is not sheared:
             set {_tipo} to "sheep"
-            set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-            if {_jobs_low} contains "fazendeiro":
-                addProgressoSemanal(player, "fazendeiro", "tosar", {_tipo}, 1)
+            addProgressoSemanal(player, "fazendeiro", "tosar", {_tipo}, 1)
 
 # 4. COLETAS ESPECIAIS (Sweet Berries, Glow Berries e Mel)
-on right click:
-    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-    if {_jobs_low} contains "fazendeiro":
-        
+on right click on sweet berry bush, cave vines, cave vines plant, bee nest or beehive:
+    if {missao::semanal::%player%::fazendeiro::acao_ativa::coletar} is true:
         # 4.1 Coleta de Frutas Vermelhas (Sweet Berries)
         if event-block is sweet berry bush:
             if "%block data of event-block%" contains "age=3":
@@ -301,97 +350,103 @@ on right click:
                 if player's tool is glass bottle:
                     addProgressoSemanal(player, "fazendeiro", "coletar", "honey bottle", 1)
 
+# 5. QUEBRA DE FERRAMENTAS
 on tool break:
-    set {_tipo} to "%type of event-item%"
-    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-    if {_jobs_low} contains "minerador":
+    if {missao::semanal::%player%::minerador::acao_ativa::quebrar_ferramenta} is true:
+        set {_tipo} to "%type of event-item%"
         addProgressoSemanal(player, "minerador", "quebrar_ferramenta", {_tipo}, 1)
-    if {_jobs_low} contains "lenhador":
-        broadcast "Quebrou o %{_tipo}%"
+        
+    if {missao::semanal::%player%::lenhador::acao_ativa::quebrar_ferramenta} is true:
+        set {_tipo} to "%type of event-item%"
         addProgressoSemanal(player, "lenhador", "quebrar_ferramenta", {_tipo}, 1)
 
+# 6. INVENTÁRIOS (Forja e Comércio)
+
 on inventory click:
-    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-    
-    # 8.1 - Fornalhas (Fundir)
-    if event-inventory's type is furnace inventory or blast furnace inventory:
-        if index of event-slot is 2: # Slot de Saída (Onde fica o item pronto)
-            if event-item is not air:
-                set {_tipo} to "%type of event-item%"
-                set {_qtd} to item amount of event-item
-                if {_jobs_low} contains "minerador":
-                    addProgressoSemanal(player, "minerador", "fundir", {_tipo}, {_qtd})
+  # 6.1 Minerador - Fundir
+    if {missao::semanal::%player%::minerador::acao_ativa::fundir} is true:
+        if event-inventory's type is furnace inventory or blast furnace inventory:
+            if index of event-slot is 2: # Slot de Saída
+                if event-item is not air:
+
+                    set {_click} to "%click type%"
+                    set {_tipo} to type of event-item
+                    broadcast {_tipo}
+                    set {_qtd} to item amount of event-item
+        
+                    processarProgressoSnapshot(player, {_click}, {_tipo}, {_qtd}, "minerador", "fundir", "%{_tipo}%")
                     
-    # 8.2 - Mesa de Ferraria (Forjar/Upgrade Netherite)
-    else if event-inventory's type is smithing inventory:
-        if index of event-slot is 3: # Slot de Saída da Mesa de Ferraria
-            if event-item is not air:
-                set {_tipo} to "%type of event-item%"
-                set {_qtd} to item amount of event-item
-                if {_jobs_low} contains "minerador":
-                    addProgressoSemanal(player, "minerador", "forjar", {_tipo}, {_qtd})
+  # 6.2 Minerador - Forjar
+    if {missao::semanal::%player%::minerador::acao_ativa::forjar} is true:
+        if event-inventory's type is smithing inventory:
+            if index of event-slot is 3: # Slot de Saída da Mesa de Ferraria
+                if event-item is not air:
+
+                    set {_click} to "%click type%"
+                    set {_tipo} to type of event-item
+                    set {_qtd} to item amount of event-item
+        
+                    processarProgressoSnapshot(player, {_click}, {_tipo}, {_qtd}, "minerador", "forjar", "%{_tipo}%")
                     
-    if {_jobs_low} contains "mago":
-        # Fusão na Bigorna (Slot de Saída = 2)
+  # 6.3 Mago - Bigorna
+    if {missao::semanal::%player%::mago::acao_ativa::fundir_bigorna} is true:
         if event-inventory's type is anvil inventory:
             if index of event-slot is 2:
                 if event-item is not air:
                     addProgressoSemanal(player, "mago", "fundir_bigorna", "any", 1)
                     
-        # Desencantar no Rebolo (Slot de Saída = 2)
-        else if event-inventory's type is grindstone inventory:
+    # 6.4 Mago - Desencantar
+    if {missao::semanal::%player%::mago::acao_ativa::desencantar} is true:
+        if event-inventory's type is grindstone inventory:
             if index of event-slot is 2:
                 if event-item is not air:
                     addProgressoSemanal(player, "mago", "desencantar", "any", 1)
                     
-        # Comércio com Bibliotecários (Slot de Saída = 2)
-        else if event-inventory's type is merchant inventory:
+    # 6.5 Mago - Comércio de Livros
+    if {missao::semanal::%player%::mago::acao_ativa::comprar_aldeao} is true:
+        if event-inventory's type is merchant inventory:
             if index of event-slot is 2:
                 if event-item is enchanted book:
                     addProgressoSemanal(player, "mago", "comprar_aldeao", "enchanted book", 1)
 
-# Encantamento (Mesa de Nível 30 e outros itens)
+# 7. ENCANTAMENTO CONSOLIDADO
 on enchant:
-    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-    if {_jobs_low} contains "mago":
-        broadcast type of event-item
+    if {missao::semanal::%player%::mago::acao_ativa::encantar} is true or {missao::semanal::%player%::mago::acao_ativa::encantar_nv30} is true:
         set {_tipo} to "%type of event-item%"
         addProgressoSemanal(player, "mago", "encantar", {_tipo}, 1)
+        addProgressoSemanal(player, "mago", "encantar", "any", 1) # Fallback seguro
         
-        # ======================================================================
         # O PULO DO GATO: Detecção Infalível de Nível 30 (Tier 3)
-        # ======================================================================
-        # Guardamos o nível do jogador no exato milissegundo do evento.
         set {_xp_antes} to player's level
-        
-        # Esperamos 1 tick (fração de segundo) para o Minecraft cobrar o custo.
         wait 1 tick
-        
-        # Verificamos como ficou a barra de XP dele após o encantamento.
         set {_xp_depois} to player's level
-        
-        # A diferença será sempre 1, 2 ou 3 níveis gastos.
         set {_niveis_gastos} to {_xp_antes} - {_xp_depois}
         
-        # Se ele gastou exatamente 3 níveis, foi 100% de certeza um encanto Tier 3!
         if {_niveis_gastos} is 3:
             addProgressoSemanal(player, "mago", "encantar_nv30", "any", 1)
 
+# 8. SISTEMA DE MINERAÇÃO CENTRALIZADO
 on mine:
+    if metadata "desertsky_placed" of event-block is true:
+        stop
+        
     set {_tipo} to "%type of event-block%"
-    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-    # 1. FAZENDEIRO (Permite blocos plantados, mas exige estágio máximo)
-        # Eventos do Construtor
-    if {_jobs_low} contains "construtor":
-        addProgressoSemanal(player, "construtor", "construir", {_tipo}, -1)
-    if {_jobs_low} contains "lenhador":
-        addProgressoSemanal(player, "lenhador", "plantar", {_tipo}, -1)
 
-    if {_jobs_low} contains "fazendeiro" or "bruxo":
+    # Construtor (Desconstruir)
+    if {missao::semanal::%player%::construtor::acao_ativa::construir} is true:
+        addProgressoSemanal(player, "construtor", "construir", {_tipo}, -1)
+        
+    # Lenhador (Plantar & Minerar)
+    if {missao::semanal::%player%::lenhador::acao_ativa::plantar} is true:
+        addProgressoSemanal(player, "lenhador", "plantar", {_tipo}, -1)
+    if {missao::semanal::%player%::lenhador::acao_ativa::minerar} is true:
+        addProgressoSemanal(player, "lenhador", "minerar", {_tipo}, 1)
+
+    # Fazendeiro (Verificação Especial de Crescimento)
+    if {missao::semanal::%player%::fazendeiro::acao_ativa::minerar} is true:
         set {_valido} to true
         set {_data} to "%block data of event-block%"
         
-        # Validação de Crescimento
         if {_tipo} contains "wheat":
             if {_data} does not contain "age=7":
                 set {_valido} to false
@@ -413,48 +468,39 @@ on mine:
                 
         if {_valido} is true:
             addProgressoSemanal(player, "fazendeiro", "minerar", {_tipo}, 1)
-    if metadata "desertsky_placed" of event-block is true:
-        stop
-    if {_jobs_low} contains "minerador":
+            
+    # Outros Jobs Normais
+    if {missao::semanal::%player%::minerador::acao_ativa::minerar} is true:
         addProgressoSemanal(player, "minerador", "minerar", {_tipo}, 1)
-    if {_jobs_low} contains "minerador":
         if {_tipo} is "sugar cane", "pumpkin" or "melon":
             addProgressoSemanal(player, "minerador", "minerar", {_tipo}, 1)
-    if {_jobs_low} contains "lenhador":
-        addProgressoSemanal(player, "lenhador", "minerar", {_tipo}, 1)
-    if {_jobs_low} contains "escavador":
+            
+    if {missao::semanal::%player%::escavador::acao_ativa::minerar} is true:
         addProgressoSemanal(player, "escavador", "minerar", {_tipo}, 1)
-    if {_jobs_low} contains "bruxo":
+        
+    if {missao::semanal::%player%::bruxo::acao_ativa::minerar} is true:
         addProgressoSemanal(player, "bruxo", "minerar", {_tipo}, 1)
 
 on bucket fill:
-    if event-block is lava:
-        set {_tipo} to "lava bucket"
-        set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-        if {_jobs_low} contains "minerador":
-            addProgressoSemanal(player, "minerador", "coletar", {_tipo}, 1)
-
-
+    if {missao::semanal::%player%::minerador::acao_ativa::coletar} is true:
+        if event-block is lava:
+            addProgressoSemanal(player, "minerador", "coletar", "lava bucket", 1)
 
 # [CORREÇÃO ANTI-EXPLOIT] O progresso de escovação só conta quando finalizado (100%)
-on right click on suspicious sand or suspicious gravel:
-    if player's tool is brush:
+on right click on suspicious sand or suspicious gravel with brush:
+    if {missao::semanal::%player%::escavador::acao_ativa::escovar} is true:
         set {_loc} to location of event-block
         
-        # Se já estamos a vigiar este bloco, ignoramos cliques adicionais para não duplicar eventos
         if {brush_loop::%{_loc}%} is set:
             stop
         set {brush_loop::%{_loc}%} to true
         
         set {_p} to player
         set {_tipo_original} to type of event-block
-        
-        # O Segredo da UX Perfeita: Um loop "fantasma" que vigia o bloco de forma assíncrona
-        # Ele fica em stand-by até o bloco deixar de ser "suspeito" (Escovação concluída ou abortada)
+            
         while block at {_loc} is suspicious sand or suspicious gravel:
             wait 5 ticks
             
-            # Se o jogador desconectar ou for para longe, cancelamos a vigia para poupar memória
             if {_p} is offline:
                 delete {brush_loop::%{_loc}%}
                 stop
@@ -465,127 +511,87 @@ on right click on suspicious sand or suspicious gravel:
                 delete {brush_loop::%{_loc}%}
                 stop
                 
-        # O loop quebrou. O que aconteceu com o bloco no fim?
         if block at {_loc} is sand or gravel:
-            # O bloco foi finalizado com sucesso! (Sem precisar de um segundo clique)
-            set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from {_p} in lowercase
-            
-            if {_jobs_low} contains "escavador":
+            # Revalida apenas por precaução após o loop de escovação
+            if {missao::semanal::%{_p}%::escavador::acao_ativa::escovar} is true:
                 set {_nome_tipo} to "suspicious sand"
                 if {_tipo_original} is suspicious gravel:
                     set {_nome_tipo} to "suspicious gravel"
                     
                 addProgressoSemanal({_p}, "escavador", "escovar", {_nome_tipo}, 1)
         
-        # Liberta a memória do bloco sempre, não importa o que aconteceu
         delete {brush_loop::%{_loc}%}
 
 # --------------------------------------------------------------------
-# EVENTO DE PESCARIA (100% NATIVO BASEADO NA DOC OFICIAL)
+# EVENTOS DE PESCARIA E CONSUMO
 # --------------------------------------------------------------------
 on fishing state change:
-    if "%fishing state%" is "fish caught":
-        # Guarda a entidade numa variável para não bugar o leitor de texto do Skript
-        set {_ent} to fishing  caught entity
-        
-        if {_ent} is set:
-            # Lê o item exato que foi puxado da água
-            set {_item} to item of {_ent}
-            set {_tipo} to "%type of {_item}%"
-            
-            # Fallback de Segurança: usa a própria entidade guardada se o tipo não carregar
-            if {_tipo} is "<none>":
-                set {_tipo} to "%{_ent}%"
+    if {missao::semanal::%player%::pescador::acao_ativa::pescar} is true:
+        if "%fishing state%" is "fish caught":
+            set {_ent} to fishing caught entity
+            if {_ent} is set:
+                set {_item} to item of {_ent}
+                set {_tipo} to "%type of {_item}%"
                 
-            set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-            if {_jobs_low} contains "pescador":
+                if {_tipo} is "<none>":
+                    set {_tipo} to "%{_ent}%"
+                    
                 addProgressoSemanal(player, "pescador", "pescar", {_tipo}, 1)
 
-# --------------------------------------------------------------------
-# EVENTO PARA A TAREFA DE COMER O PEIXE
-# --------------------------------------------------------------------
 on consume:
-    set {_tipo} to "%type of event-item%"
-    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-    if {_jobs_low} contains "pescador":
+    if {missao::semanal::%player%::pescador::acao_ativa::comer} is true:
+        set {_tipo} to "%type of event-item%"
         addProgressoSemanal(player, "pescador", "comer", {_tipo}, 1)
 
 # --------------------------------------------------------------------
-# AÇÃO DE "ACHATAR" CAMINHOS (Escavador: Pá na relva)
+# AÇÃO DE CRAFTAR ITENS
 # --------------------------------------------------------------------
-    
-on craft oak planks:
+on craft:
     set {_click} to "%click type%"
-    
-    # ---------------------------------------------------------
-    # CATEGORIA A: Clique Normal ou Drop (Vai para a mão ou chão)
-    # ---------------------------------------------------------
-    if {_click} is "left mouse button", "right mouse button", "drop key" or "drop key with control":
-        set {_fabricado} to item amount of event-item
-        set {_tipo_clique} to "Direto (Cursor/Chão)"
-        
-    # ---------------------------------------------------------
-    # CATEGORIA B: Shift ou Atalho Numérico (Vai direto para o inventário)
-    # ---------------------------------------------------------
-    else if {_click} is "left mouse button with shift", "wight mouse button with shift" or "number key":
-        set {_antes} to amount of oak planks in player's inventory
-        
-        # Aguarda a transferência física ocorrer
-        wait 1 tick 
-        
-        set {_depois} to amount of oak planks in player's inventory
-        set {_fabricado} to {_depois} - {_antes}
-        
-        # Se a diferença for 0 (inventário cheio ou slot numérico ocupado,
-        # o item não foi fabricado. Paramos o código.
-        if {_fabricado} <= 0:
-            stop
+    set {_tipo} to type of event-item
+    set {_qtd} to item amount of event-item
 
-    addProgressoSemanal(player, job, "achatar", "dirt path", 1)
+    processarProgressoSnapshot(player, {_click}, {_tipo}, {_qtd}, "minerador", "craftar", "%{_tipo}%")
 
-on right click on grass block, dirt, podzol, coarse dirt or rooted dirt:
-    set {_ferramenta} to "%type of player's tool%"
-    if {_ferramenta} contains "shovel":
-        set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-        if {_jobs_low} contains "escavador":
-            # O alvo rastreado será "dirt path" para combinar com a meta base
-            addProgressoSemanal(player, "escavador", "achatar", "dirt path", 1)
+# on right click on grass block, dirt, podzol, coarse dirt or rooted dirt:
+#     set {_ferramenta} to "%type of player's tool%"
+#     if {_ferramenta} contains "shovel":
+#         set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
+#         if {_jobs_low} contains "escavador":
+#             # O alvo rastreado será "dirt path" para combinar com a meta base
+#             addProgressoSemanal(player, "escavador", "achatar", "dirt path", 1)
+            
+on right click on grass block, dirt, podzol, coarse dirt or rooted dirt with wooden shovel, stone shovel, iron shovel, golden shovel, diamond shovel or netherite shovel:
+    if {missao::semanal::%player%::escavador::acao_ativa::achatar} is true:
+        addProgressoSemanal(player, "escavador", "achatar", "dirt path", 1)
+
+# [DEV NOTE]: Havia um bloco antigo "on craft oak planks" mandando progresso 
+# errôneo para "achatar dirt paths" com um argumento "job" nulo. Foi removido por segurança.
 
 on place:
     set metadata "desertsky_placed" of event-block to true
     set {_tipo} to "%type of event-block%"
-    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
     
-    # Eventos do Construtor
-    if {_jobs_low} contains "construtor":
+    if {missao::semanal::%player%::construtor::acao_ativa::construir} is true:
         addProgressoSemanal(player, "construtor", "construir", {_tipo}, 1)
         
-    # Eventos do Lenhador (Plantar saplings e colocar cercas)
-    if {_jobs_low} contains "lenhador":
+    if {missao::semanal::%player%::lenhador::acao_ativa::construir} is true:
         addProgressoSemanal(player, "lenhador", "construir", {_tipo}, 1)
+        
+    if {missao::semanal::%player%::lenhador::acao_ativa::plantar} is true:
         addProgressoSemanal(player, "lenhador", "plantar", {_tipo}, 1)
 
-    # Eventos do Fazendeiro (Plantar sementes e fungos)
-    if {_jobs_low} contains "fazendeiro":
+    if {missao::semanal::%player%::fazendeiro::acao_ativa::plantar} is true:
         addProgressoSemanal(player, "fazendeiro", "plantar", {_tipo}, 1)
 
-
-on enchant:
-    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from player in lowercase
-    if {_jobs_low} contains "mago":
-        addProgressoSemanal(player, "mago", "encantar", "any", 1)
-
 on death:
-    attacker is a player
-    set {_tipo} to "%type of victim%"
-    set {_jobs_low} to placeholder "%%jobsr_user_jobs%%" from attacker in lowercase
-    
-    # Eventos do Bruxo (Para as caças semanais místicas)
-    if {_jobs_low} contains "bruxo":
-        addProgressoSemanal(attacker, "bruxo", "matar", {_tipo}, 1)
+    if attacker is a player:
+        if {missao::semanal::%attacker%::bruxo::acao_ativa::matar} is true:
+            set {_tipo} to "%type of victim%"
+            addProgressoSemanal(attacker, "bruxo", "matar", {_tipo}, 1)
 
 # ========================================================================
-# 7. MOTOR DE RESET SEMANAL (LAZY RESET)
+# 7. MOTOR DE RESET SEMANAL (LAZY RESET COM API DO CORE)
 # ========================================================================
 on join:
     wait 5 seconds
@@ -597,24 +603,24 @@ on join:
         
         play sound "entity.player.levelup" with volume 0.5 and pitch 0.8 to player
         
-        set {_jobs} to placeholder "%%jobsr_user_jobs%%" from player
-        set {_jobs_low} to {_jobs} in lowercase
+        # Uso direto da API nativa super-rápida construída no Core.sk
+        set {_ativos::*} to getJobsAtivos(player)
         
-        if {_jobs_low} contains "minerador":
+        if {_ativos::*} contains "minerador":
             sortearSemanal(player, "minerador")
-        if {_jobs_low} contains "lenhador":
+        if {_ativos::*} contains "lenhador":
             sortearSemanal(player, "lenhador")
-        if {_jobs_low} contains "escavador":
+        if {_ativos::*} contains "escavador":
             sortearSemanal(player, "escavador")
-        if {_jobs_low} contains "fazendeiro":
+        if {_ativos::*} contains "fazendeiro":
             sortearSemanal(player, "fazendeiro")
-        if {_jobs_low} contains "pescador":
+        if {_ativos::*} contains "pescador":
             sortearSemanal(player, "pescador")
-        if {_jobs_low} contains "construtor":
+        if {_ativos::*} contains "construtor":
             sortearSemanal(player, "construtor")
-        if {_jobs_low} contains "bruxo":
+        if {_ativos::*} contains "bruxo":
             sortearSemanal(player, "bruxo")
-        if {_jobs_low} contains "mago":
+        if {_ativos::*} contains "mago":
             sortearSemanal(player, "mago")
 
 # ========================================================================

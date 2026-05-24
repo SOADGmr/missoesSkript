@@ -205,3 +205,102 @@ command /jobadmin [<text>] [<offline player>] [<text>] [<integer>]:
 on inventory click:
     if name of event-inventory contains "&8&lInspect:":
         cancel event
+
+# ========================================================================
+# COMANDOS CONSOLE-BRIDGE E ADMIN FERRAMENTAS AVANÇADAS
+# ========================================================================
+
+# Comando de correção de bugs
+command /fix_minhas_semanais:
+    permission: desertsky.admin
+    trigger:
+        delete {missao::semanal::%player%::minerador::meta::*}
+        loop 50 times:
+            delete {missao::semanal::%player%::minerador::meta::%loop-number%::id}
+            delete {missao::semanal::%player%::minerador::meta::%loop-number%::alvo}
+            delete {missao::semanal::%player%::minerador::meta::%loop-number%::progresso}
+        send "&a[!] Metas fantasmas apagadas do teu perfil com sucesso!" to player
+        send "&a[!] Use &f/forca_semanal minerador &aagora para gerar uma missão limpa." to player
+
+command /forca_diaria <text> <offline player>:
+    permission: desertsky.admin
+    trigger:
+        set {_job} to arg 1 in lowercase
+        if arg 2 is not set:
+            send "&c[!] Especifique um jogador."
+            stop
+        set {_player} to arg 2
+        
+        # [JobsSK] Verificação SEGURA E EXATA usando Loop de Lista
+        set {_jobs_ativos::*} to jobs of {_player}
+        set {_tem_job} to false
+        loop {_jobs_ativos::*}:
+            if "%loop-value%" in lowercase is {_job}:
+                set {_tem_job} to true
+                stop loop
+        
+        if {_tem_job} is false:
+            send "&c[!] Erro: O jogador '%{_player}%' não possui a profissão '%{_job}%'." to player
+            stop
+            
+        if arg 1 is "Explorador":
+            send "&c[!] Erro: A profissão 'Explorador' nao contém missões semanais." to player
+            stop
+
+        # Força o reset para permitir novo sorteio
+        set {diaria::%{_job}%::%uuid of player%::data} to "force_reset"
+        sortearDiaria(arg 2, arg 1)
+        send "&a[!] Sorteio diário forçado para a profissão: %{_job}% de %{_player}%" to player
+
+command /forca_semanal <text> <offline player>:
+    permission: desertsky.admin
+    trigger:
+        if arg 2 is not set:
+            send "&c[!] Especifique um jogador."
+            stop
+        set {_job} to arg 1 in lowercase
+        set {_player} to arg 2
+        
+        # [JobsSK] Verificação SEGURA E EXATA usando Loop de Lista
+        set {_jobs_ativos::*} to jobs of {_player}
+        set {_tem_job} to false
+        loop {_jobs_ativos::*}:
+            if "%loop-value%" in lowercase is {_job}:
+                set {_tem_job} to true
+                stop loop
+        
+        if {_tem_job} is false:
+            send "&c[!] Erro: O jogador '%{_player}%' não possui a profissão '%{_job}%'." to player
+            stop
+            
+        if arg 1 is "Explorador":
+            send "&c[!] Erro: A profissão 'Explorador' nao contém missões semanais." to player
+            stop
+
+        send "&a[!] Sorteio semanal forçado para a profissão: %{_job}% de %{_player}%" to player
+        sortearSemanal(arg 2, arg 1)
+
+command /reset_semanal_global:
+    permission: desertsky.admin
+    trigger:
+        loop all players:
+            delete {last_semanal_reset::%uuid of loop-player%}
+        send "&a[!] Reset de semana forçado para todos os jogadores." to player
+        send "&7Para verem o efeito, eles precisam relogar no servidor." to player
+        
+command /completar_coleta_semanal <text>:
+    permission: desertsky.admin
+    trigger:
+        set {_job} to arg 1 in lowercase
+        
+        if {missao::semanal::%player%::%{_job}%::status} is "em_andamento":
+            set {_index} to 1
+            while {missao::semanal::%player%::%{_job}%::meta::%{_index}%::id} is set:
+                set {_alvo} to {missao::semanal::%player%::%{_job}%::meta::%{_index}%::alvo}
+                set {missao::semanal::%player%::%{_job}%::meta::%{_index}%::progresso} to {_alvo}
+                add 1 to {_index}
+            
+            verificarConclusaoSemanal(player, {_job})
+            send "&a[Debug] &fA fase de coleta de %{_job}% foi preenchida artificialmente." to player
+        else:
+            send "&c[!] Você não tem uma missão semanal de %{_job}% na fase de coleta." to player
