@@ -16,160 +16,78 @@ on load:
 # ============================================================================
 function sortearDiaria(p: player, job: text):
     set {_uuid} to uuid of {_p}
-    set {_hoje} to {last_reset::%{_uuid}%}
+
+  # --- NOVO SISTEMA DE FILTRO DE NÍVEL (LAZY FILTERING) ---
+    set {_lvl} to getNivelJob({_p}, {_job})
+    delete {_pool_valido::*}
     
-    # Só sorteia se a data salva na diária for diferente de hoje
-    if {diaria::%{_job}%::%{_uuid}%::data} is not {_hoje}:
+    loop {pool::%{_job}%::*}:
+        set {_id_missao} to loop-value
+        set {_n_min} to {diaria_meta::%{_id_missao}%::nivel_min} ? 1
+        set {_n_max} to {diaria_meta::%{_id_missao}%::nivel_max} ? 100
         
-        # --- NOVO SISTEMA DE FILTRO DE NÍVEL (LAZY FILTERING) ---
-        set {_lvl} to getNivelJob({_p}, {_job})
-        delete {_pool_valido::*}
-        
-        loop {pool::%{_job}%::*}:
-            set {_id_missao} to loop-value
+        if {_lvl} is between {_n_min} and {_n_max}:
+            add {_id_missao} to {_pool_valido::*}
             
-            # Se a missão não tiver nível configurado, assume que é para todos (1 a 100)
-            set {_n_min} to {diaria_meta::%{_id_missao}%::nivel_min} ? 1
-            set {_n_max} to {diaria_meta::%{_id_missao}%::nivel_max} ? 100
-            
-            if {_lvl} is between {_n_min} and {_n_max}:
-                add {_id_missao} to {_pool_valido::*}
-                
-        # Fallback de segurança caso o jogador não se encaixe em NENHUMA missão
-        if size of {_pool_valido::*} is 0:
-            send "&c[Sindicato] Não há contratos diários de %{_job}% adequados para o teu nível atual (%{_lvl}%)." to {_p}
-            stop
-
-        # Sorteia uma ID apenas do pool filtrado para o nível do jogador
-        set {_tarefa} to a random element out of {_pool_valido::*}
-        # -----------------------------------------------------------------
-
-        # Gera o alvo numérico randômico entre o Mínimo e Máximo
-        set {_min} to {diaria_meta::%{_tarefa}%::alvo_min}
-        set {_max} to {diaria_meta::%{_tarefa}%::alvo_max}
-        set {_alvo_sorteado} to a random integer between {_min} and {_max}
-
-        # --- FÓRMULA DE PAGAMENTO (BASEADA NO NÍVEL DA PROFISSÃO E TIER) ---
-        if {_lvl} < 100:
-            set {_percent_semanal2} to 0.25*0.30 # 7,5%
-            set {_ajuste2} to 0.3375
-            set {_percent_semanal3} to 0.35*0.30 # 10,5%
-            set {_ajuste3} to 0.4725
-        else:
-            set {_percent_semanal2} to 0.35*0.50 # 17,5%
-            set {_ajuste2} to 0.7875
-            set {_percent_semanal3} to 0.45*0.50 # 22,5%
-            set {_ajuste3} to 1.0125
-        
-        if {_job} is "bruxo" or "mago":
-            set {_money} to (({salario}*{_percent_semanal3})/20) + ({_ajuste3}*{_lvl})
-        else:
-            set {_money} to (({salario}*{_percent_semanal2})/20) + ({_ajuste2}*{_lvl})
-        # -----------------------------------------------------------------
-
-        # Gera a descrição dinâmica (Substitui o @alvo@ na frase)
-        set {_desc_dinamica} to {diaria_meta::%{_tarefa}%::descricao}
-        replace all "@alvo@" with "%{_alvo_sorteado}%" in {_desc_dinamica}
-
-        # Salva TUDO no banco de dados PESSOAL do jogador
-        set {diaria::%{_job}%::%{_uuid}%::tarefa} to {_tarefa}
-        set {diaria::%{_job}%::%{_uuid}%::progresso} to 0
-        set {diaria::%{_job}%::%{_uuid}%::status} to "pendente"
-        set {diaria::%{_job}%::%{_uuid}%::data} to {_hoje}
-        set {diaria::%{_job}%::%{_uuid}%::alvo} to {_alvo_sorteado}
-        set {diaria::%{_job}%::%{_uuid}%::recompensa} to {_money}
-        set {diaria::%{_job}%::%{_uuid}%::descricao} to {_desc_dinamica}
-
-        set {_nome_tarefa} to {diaria_meta::%{_tarefa}%::nome}
-
-        send "" to {_p}
-        send "&b&l[NOVA DIÁRIA] &7Novo contrato de &f%{_job}%&7 adequado ao teu nível!" to {_p}
-        send "&7Objetivo: &f%{_nome_tarefa}% &8(&e0/%{_alvo_sorteado}%&8)" to {_p}
-        send "&7Detalhes: &f%{_desc_dinamica}%" to {_p}
-        send "&7Recompensa: &a$%{_money}%" to {_p}
-        send "" to {_p}
-        play sound "entity.experience_orb.pickup" to {_p}
-
-
-# ============================================================================
-# 3. GATILHO DE LOGIN (LAZY RESET PARA DIÁRIAS)
-# ============================================================================
-on join:
-    wait 5 seconds
-    set {_uuid} to uuid of player
-    
-    play sound "entity.player.levelup" with volume 0.5 and pitch 0.8 to player
-
-    set {_ativos::*} to getJobsAtivos(player)
-    loop {_ativos::*}:
-        sortearSemanal(player, loop-value)
-
-# ============================================================================
-# 4. OUVINTES UNIVERSAIS E MOTOR DE PROGRESSO 
-# (Igual ao original, mantido para funcionar perfeitamente)
-# ============================================================================
-on mine:
-    if metadata "desertsky_placed" of event-block is true:
+    if size of {_pool_valido::*} is 0:
+        send "&c[Sindicato] Não há contratos diários de %{_job}% adequados para o teu nível atual (%{_lvl}%)." to {_p}
         stop
 
-    set {_uuid} to uuid of player
+    # Sorteia uma ID apenas do pool filtrado para o nível do jogador
+    set {_contrato_id} to a random element out of {_pool_valido::*}
+    # -----------------------------------------------------------------
 
-    if {diaria::minerador::%{_uuid}%::status} is "pendente":
-        set {_id_minerador} to {diaria::minerador::%{_uuid}%::tarefa}
-        if {diaria_meta::%{_id_minerador}%::acao_requirida} is "minerar":
-            if {diaria_meta::%{_id_minerador}%::alvo_tipos::*} contains event-block's type:
-                addProgressoDiaria(player, "minerador", {_id_minerador}, 1)
+  # --- FÓRMULA DE PAGAMENTO DIÁRIO ---
+    if {_lvl} < 100:
+        set {_percent_semanal2} to 0.25*0.30 # 7,5%
+        set {_ajuste2} to 0.3375
+        set {_percent_semanal3} to 0.35*0.30 # 10,5%
+        set {_ajuste3} to 0.4725
+    else:
+        set {_percent_semanal2} to 0.35*0.50 # 17,5%
+        set {_ajuste2} to 0.7875
+        set {_percent_semanal3} to 0.45*0.50 # 22,5%
+        set {_ajuste3} to 1.0125
+    
+    if {_job} is "bruxo" or "mago":
+        set {_money} to (({salario}*{_percent_semanal3})/20) + ({_ajuste3}*{_lvl})
+    else:
+        set {_money} to (({salario}*{_percent_semanal2})/20) + ({_ajuste2}*{_lvl})
 
-    if {diaria::lenhador::%{_uuid}%::status} is "pendente":
-        set {_id_lenhador} to {diaria::lenhador::%{_uuid}%::tarefa}
-        if {diaria_meta::%{_id_lenhador}%::acao_requirida} is "minerar":
-            if {diaria_meta::%{_id_lenhador}%::alvo_tipos::*} contains event-block's type:
-                addProgressoDiaria(player, "lenhador", {_id_lenhador}, 1)
+    set {diaria::%{_job}%::%{_uuid}%::recompensa} to {_money}
 
-    if {diaria::escavador::%{_uuid}%::status} is "pendente":
-        set {_id_escavador} to {diaria::escavador::%{_uuid}%::tarefa}
-        if {diaria_meta::%{_id_escavador}%::acao_requirida} is "minerar":
-            if {diaria_meta::%{_id_escavador}%::alvo_tipos::*} contains event-block's type:
-                addProgressoDiaria(player, "escavador", {_id_escavador}, 1)
+  # --- LIMPEZA ---
+    delete {diaria::%{_job}%::%{_uuid}%::acao_ativa::*} 
+    
+  # Gera o alvo numérico randômico entre o Mínimo e Máximo
+    set {_min} to {diaria_meta::%{_contrato_id}%::alvo_min}
+    set {_max} to {diaria_meta::%{_contrato_id}%::alvo_max}
 
-    if {diaria::fazendeiro::%{_uuid}%::status} is "pendente":
-        set {_id_fazendeiro} to {diaria::fazendeiro::%{_uuid}%::tarefa}
-        if {diaria_meta::%{_id_fazendeiro}%::acao_requirida} is "minerar":
-            if {diaria_meta::%{_id_fazendeiro}%::alvo_tipos::*} contains event-block's type:
-                addProgressoDiaria(player, "fazendeiro", {_id_fazendeiro}, 1)
+    set {_acao_necessaria} to {diaria_meta::%{_contrato_id}%::acao_requirida}
+    set {diaria::%{_job}%::%{_uuid}%::acao_ativa::%{_acao_necessaria}%} to true
+    
+    set {_alvo_sorteado} to a random integer between {_min} and {_max}
 
-on pick up:
-    if player's tool is fishing rod:
-        set {_uuid} to uuid of player
-        if {diaria::pescador::%{_uuid}%::status} is "pendente":
-            set {_id_pescador} to {diaria::pescador::%{_uuid}%::tarefa}
-            if {diaria_meta::%{_id_pescador}%::acao_requirida} is "pescar":
-                if {diaria_meta::%{_id_pescador}%::alvo_tipos::*} contains event-item's type:
-                    addProgressoDiaria(player, "pescador", {_id_pescador}, 1)
-
-on place:
-    set {_uuid} to uuid of player
-    if {diaria::construtor::%{_uuid}%::status} is "pendente":
-        set {_id_construtor} to {diaria::construtor::%{_uuid}%::tarefa}
-        if {diaria_meta::%{_id_construtor}%::acao_requirida} is "construir":
-            if {diaria_meta::%{_id_construtor}%::alvo_tipos::*} contains event-block's type:
-                addProgressoDiaria(player, "construtor", {_id_construtor}, 1)
-    set metadata "desertsky_placed" of event-block to true
-
-on craft:
-    set {_uuid} to uuid of player
-    if {diaria::bruxo::%{_uuid}%::status} is "pendente":
-        set {_id_bruxo} to {diaria::bruxo::%{_uuid}%::tarefa}
-        if {diaria_meta::%{_id_bruxo}%::acao_requirida} is "craftar":
-            if {diaria_meta::%{_id_bruxo}%::alvo_tipos::*} contains event-item's type:
-                addProgressoDiaria(player, "bruxo", {_id_bruxo}, item amount of event-item)
-
-on enchant:
-    set {_uuid} to uuid of player
-    if {diaria::mago::%{_uuid}%::status} is "pendente":
-        set {_id_mago} to {diaria::mago::%{_uuid}%::tarefa}
-        if {diaria_meta::%{_id_mago}%::acao_requirida} is "encantar":
-            addProgressoDiaria(player, "mago", {_id_mago}, 1)
+    set {_desc_dinamica} to {diaria_meta::%{_contrato_id}%::descricao}
+    replace all "@alvo@" with "%{_alvo_sorteado}%" in {_desc_dinamica}
+    set {_nome_tarefa} to {diaria_meta::%{_contrato_id}%::nome}
+  # --- SALVA DADOS DA MISSÃO NO BANCO DE DADOS DO JOGADOR ---
+    set {diaria::%{_job}%::%{_uuid}%::tarefa} to {_contrato_id}
+    set {diaria::%{_job}%::%{_uuid}%::progresso} to 0
+    set {diaria::%{_job}%::%{_uuid}%::status} to "pendente"
+    set {diaria::%{_job}%::%{_uuid}%::data} to {_hoje}
+    set {diaria::%{_job}%::%{_uuid}%::alvo} to {_alvo_sorteado}
+    set {diaria::%{_job}%::%{_uuid}%::descricao} to {_desc_dinamica}
+    
+  # --- MENSAGEM DE RECEBIMENTO DO CONTRATO ---
+    send "" to {_p}
+    send "&7--------------------------------------------------" to {_p}
+    send "&7ɴᴏᴠᴏ &b&lᴄᴏɴᴛʀᴀᴛᴏ ᴅɪᴀʀɪᴏ &7ᴅᴇ %formatarNomeJob({_job})% &7ᴅɪsᴘᴏɴɪᴠᴇʟ!" to {_p}
+    send "&7ᴏʙᴊᴇᴛɪᴠᴏ: &f%{_nome_tarefa}% &8(&e0/%{_alvo_sorteado}%&8)" to {_p}
+    send "&7ᴅᴇᴛᴀʟʜᴇs: &f%{_desc_dinamica}%" to {_p}
+    send "&7ʀᴇᴄᴏᴍᴘᴇɴsᴀ: &a$%{_money}%" to {_p}
+    send "&7--------------------------------------------------" to {_p}
+    send "" to {_p}
 
 function addProgressoDiaria(p: player, job: text, tarefa_id: text, qtd: number):
     set {_uuid} to uuid of {_p}
@@ -195,3 +113,88 @@ function addProgressoDiaria(p: player, job: text, tarefa_id: text, qtd: number):
                 send "&b&l[DIÁRIA CONCLUÍDA] &7A tarefa &f%{_nome}% &7foi finalizada!" to {_p}
                 send "&a&l+ $%{_recompensa}%" to {_p}
                 send "" to {_p}
+# ============================================================================
+# 3. GATILHO DE LOGIN (LAZY RESET PARA DIÁRIAS)
+# ============================================================================
+on join:
+    wait 5 seconds
+    set {_uuid} to uuid of player
+    set {_hoje} to now formatted as "dd/MM/yyyy"
+    
+    # Só sorteia se a data salva na diária for diferente de hoje
+    if {diaria::%{_job}%::%{_uuid}%::data} is not {_hoje}:
+        set {last_reset::%{_uuid}%} to {_hoje}
+        play sound "entity.player.levelup" with volume 0.5 and pitch 0.8 to player
+
+        set {_ativos::*} to getJobsAtivos(player)
+        loop {_ativos::*}:
+            sortearDiaria(player, loop-value)
+
+# ============================================================================
+# 4. OUVINTES UNIVERSAIS E MOTOR DE PROGRESSO 
+# (Igual ao original, mantido para funcionar perfeitamente)
+# ============================================================================
+on mine:
+    if metadata "desertsky_placed" of event-block is true:
+        stop
+
+    set {_uuid} to uuid of player
+
+    if {diaria::minerador::%{_uuid}%::acao_ativa::minerar} is true:
+        set {_id_minerador} to {diaria::minerador::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_minerador}%::alvo_tipos::*} contains event-block's type:
+            addProgressoDiaria(player, "minerador", {_id_minerador}, 1)
+
+    if {diaria::lenhador::%{_uuid}%::acao_ativa::minerar} is true:
+        set {_id_lenhador} to {diaria::lenhador::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_lenhador}%::alvo_tipos::*} contains event-block's type:
+            addProgressoDiaria(player, "lenhador", {_id_lenhador}, 1)
+
+    if {diaria::escavador::%{_uuid}%::acao_ativa::minerar} is true:
+        set {_id_escavador} to {diaria::escavador::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_escavador}%::alvo_tipos::*} contains event-block's type:
+            addProgressoDiaria(player, "escavador", {_id_escavador}, 1)
+
+    if {diaria::fazendeiro::%{_uuid}%::acao_ativa::minerar} is true:
+        set {_id_fazendeiro} to {diaria::fazendeiro::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_fazendeiro}%::alvo_tipos::*} contains event-block's type:
+            addProgressoDiaria(player, "fazendeiro", {_id_fazendeiro}, 1)
+
+on fishing state change:
+    set {_uuid} to uuid of player
+    if {diaria::pescador::%{_uuid}%::acao_ativa::pescar} is true:
+        if "%fishing state%" is "fish caught":
+            set {_ent} to fishing caught entity
+            if {_ent} is set:
+                set {_item} to item of {_ent}
+                set {_tipo} to type of {_item}
+                if {_tipo} is "<none>":
+                    set {_tipo} to "%{_ent}%"
+                set {_id_pescador} to {diaria::pescador::%{_uuid}%::tarefa}
+                if {diaria_meta::%{_id_pescador}%::alvo_tipos::*} contains {_tipo}:
+                    broadcast "ok"
+                    addProgressoDiaria(player, "pescador", {_id_pescador}, 1)
+
+on place:
+    set {_uuid} to uuid of player
+    if {diaria::construtor::%{_uuid}%::status} is "pendente":
+        set {_id_construtor} to {diaria::construtor::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_construtor}%::acao_requirida} is "construir":
+            if {diaria_meta::%{_id_construtor}%::alvo_tipos::*} contains event-block's type:
+                addProgressoDiaria(player, "construtor", {_id_construtor}, 1)
+    set metadata "desertsky_placed" of event-block to true
+
+on craft:
+    set {_uuid} to uuid of player
+    if {diaria::bruxo::%{_uuid}%::status} is "pendente":
+        set {_id_bruxo} to {diaria::bruxo::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_bruxo}%::acao_requirida} is "craftar":
+            if {diaria_meta::%{_id_bruxo}%::alvo_tipos::*} contains event-item's type:
+                addProgressoDiaria(player, "bruxo", {_id_bruxo}, item amount of event-item)
+
+on enchant:
+    set {_uuid} to uuid of player
+    if {diaria::mago::%{_uuid}%::status} is "pendente":
+        set {_id_mago} to {diaria::mago::%{_uuid}%::tarefa}
+        if {diaria_meta::%{_id_mago}%::acao_requirida} is "encantar":
+            addProgressoDiaria(player, "mago", {_id_mago}, 1)

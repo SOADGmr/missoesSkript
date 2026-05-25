@@ -49,13 +49,6 @@ function getStatusMissao(p: player, id: integer) :: text:
         return "disponivel"
     return {_status}
 
-# --- 3. SISTEMA DE LAZY RESET (ANTI-LAG) ---
-on join:
-    set {_hoje} to now formatted as "dd/MM/yyyy"
-    set {_uuid} to uuid of player
-    if {last_reset::%{_uuid}%} is not {_hoje}:
-        set {last_reset::%{_uuid}%} to {_hoje}
-        send "&6&l[DIÁRIO] &7Verifique seus contratos, parece ter chegado novidade." to player
 
 # --- 4. HIGIENE E PREVENÇÃO DE MEMORY LEAKS ---
 on quit:

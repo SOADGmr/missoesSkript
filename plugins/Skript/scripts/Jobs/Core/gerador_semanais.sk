@@ -51,7 +51,7 @@ function sortearSemanal(p: player, job: text):
     if {_tamanho} is 0:
         stop
 
-    # --- NOVO SISTEMA DE FILTRO DE NÍVEL (LAZY FILTERING) ---
+  # --- NOVO SISTEMA DE FILTRO DE NÍVEL (LAZY FILTERING) ---
     set {_lvl} to getNivelJob({_p}, {_job})
     delete {_pool_valido::*}
     
@@ -70,19 +70,8 @@ function sortearSemanal(p: player, job: text):
     # Sorteia apenas entre as missões válidas para o nível do jogador
     set {_contrato_id} to a random element out of {_pool_valido::*}
     # -----------------------------------------------------------------
-
-    set {missao::semanal::%{_p}%::%{_job}%::id} to {_contrato_id}
-    set {missao::semanal::%{_p}%::%{_job}%::status} to "em_andamento"
-
-    # LIMPEZA PROFUNDA
-    delete {missao::semanal::%{_p}%::%{_job}%::meta::*}
-    delete {missao::semanal::%{_p}%::%{_job}%::acao_ativa::*}
-    loop 20 times:
-        delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::id}
-        delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::alvo}
-        delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::progresso}
-
-    # FÓRMULA DE PAGAMENTO SEMANAL
+    
+  # --- FÓRMULA DE PAGAMENTO SEMANAL ---
     if {_lvl} < 100:
         set {_percent_semanal2} to 0.25*0.30
         set {_ajuste2} to 1.6875
@@ -100,7 +89,19 @@ function sortearSemanal(p: player, job: text):
         set {_money} to (({salario}*{_percent_semanal2})/4) + ({_ajuste2}*{_lvl})
         
     set {missao::semanal::%{_p}%::%{_job}%::recompensa_dinheiro} to {_money}
+  # --- SALVA DADOS DA MISSÃO NO BANCO DE DADOS DO JOGADOR ---
+    set {missao::semanal::%{_p}%::%{_job}%::id} to {_contrato_id}
+    set {missao::semanal::%{_p}%::%{_job}%::status} to "em_andamento"
 
+  # --- LIMPEZA PROFUNDA ---
+    delete {missao::semanal::%{_p}%::%{_job}%::meta::*}
+    delete {missao::semanal::%{_p}%::%{_job}%::acao_ativa::*}
+
+    loop 20 times:
+        delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::id}
+        delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::alvo}
+        delete {missao::semanal::%{_p}%::%{_job}%::meta::%loop-number%::progresso}
+  # ---
     set {_meta_index} to 1
     loop {semanal_meta::%{_contrato_id}%::metas_raw::*}:
         set {_parts::*} to loop-value split at "|"
@@ -119,6 +120,7 @@ function sortearSemanal(p: player, job: text):
         
         add 1 to {_meta_index}
 
+  # --- MENSAGEM DE RECEBIMENTO DO CONTRATO ---
     send "" to {_p}
     send "&7--------------------------------------------------" to {_p}
     send "&7ɴᴏᴠᴏ &6&lᴄᴏɴᴛʀᴀᴛᴏ sᴇᴍᴀɴᴀʟ &7ᴅᴇ %formatarNomeJob({_job})% &7ᴅɪsᴘᴏɴɪᴠᴇʟ!" to {_p}
@@ -128,7 +130,6 @@ function sortearSemanal(p: player, job: text):
     send "&7--------------------------------------------------" to {_p}
     send "" to {_p}
 
-# (O resto do arquivo como formatarLore, listeners e verificadores continuam iguais)
 function formatarLoreSemanal(p: player, job: text) :: texts:
     set {_contrato_id} to {missao::semanal::%{_p}%::%{_job}%::id}
     set {_desc_base} to {semanal_meta::%{_contrato_id}%::desc}
@@ -286,7 +287,9 @@ function processarProgressoSnapshot(p: player, click: text, tipo: item type, qtd
     if {_processar} is true:
         if {_forjado} > 0:
             addProgressoSemanal({_p}, {_job}, {_acao}, {_alvo_str}, {_forjado})
-
+# ========================================================================
+# OUVINTES UNIVERSAIS E MOTOR DE PROGRESSO 
+# ========================================================================
 on right click on dirt or grass block with wooden hoe, stone hoe, iron hoe, golden hoe, diamond hoe or netherite hoe:
     if {missao::semanal::%player%::fazendeiro::acao_ativa::arar} is true:
         addProgressoSemanal(player, "fazendeiro", "arar", "%type of event-block%", 1)
