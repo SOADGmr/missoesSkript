@@ -270,6 +270,8 @@ function verificarEntregasSemanais(p: player):
 function processarProgressoSnapshot(p: player, click: text, tipo: item type, qtd_evento: integer, job: text, acao: text, alvo_str: text):
     set {_processar} to false
     set {_forjado} to 0
+    set {_id_missao} to {diaria::%{_job}%::%uuid of {_p}%::tarefa}
+
     if {_click} is "left mouse button", "drop key" or "drop key with control":
         set {_forjado} to {_qtd_evento}
         set {_processar} to true
@@ -287,6 +289,9 @@ function processarProgressoSnapshot(p: player, click: text, tipo: item type, qtd
     if {_processar} is true:
         if {_forjado} > 0:
             addProgressoSemanal({_p}, {_job}, {_acao}, {_alvo_str}, {_forjado})
+            if {diaria_meta::%{_id_missao}%::alvo_tipos::*} contains {_tipo}:
+                addProgressoDiaria({_p}, {_job}, {_id_missao}, {_forjado})
+                broadcast {_p}, {_job}, {_id_missao}, {_forjado}
 # ========================================================================
 # OUVINTES UNIVERSAIS E MOTOR DE PROGRESSO 
 # ========================================================================
@@ -463,7 +468,8 @@ on consume:
         addProgressoSemanal(player, "pescador", "comer", "%type of event-item%", 1)
 
 on craft:
-    processarProgressoSnapshot(player, "%click type%", type of event-item, item amount of event-item, "minerador", "craftar", "%type of event-item%")
+    if {missao::semanal::%player%::job::acao_ativa::craftar} is true:
+        processarProgressoSnapshot(player, "%click type%", type of event-item, item amount of event-item, "job", "craftar", "%type of event-item%")
 
 on right click on grass block, dirt, podzol, coarse dirt or rooted dirt with wooden shovel, stone shovel, iron shovel, golden shovel, diamond shovel or netherite shovel:
     if {missao::semanal::%player%::escavador::acao_ativa::achatar} is true:

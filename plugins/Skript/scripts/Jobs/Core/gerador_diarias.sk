@@ -184,13 +184,16 @@ on place:
                 addProgressoDiaria(player, "construtor", {_id_construtor}, 1)
     set metadata "desertsky_placed" of event-block to true
 
-on craft:
-    set {_uuid} to uuid of player
-    if {diaria::bruxo::%{_uuid}%::status} is "pendente":
-        set {_id_bruxo} to {diaria::bruxo::%{_uuid}%::tarefa}
-        if {diaria_meta::%{_id_bruxo}%::acao_requirida} is "craftar":
-            if {diaria_meta::%{_id_bruxo}%::alvo_tipos::*} contains event-item's type:
-                addProgressoDiaria(player, "bruxo", {_id_bruxo}, item amount of event-item)
+on craft:    
+    if {diaria::minerador::%uuid of player%::acao_ativa::craftar} is true:
+        broadcast "OK... foi identificado um craft e você tem uma missão ativa"
+        processarProgressoSnapshot(player, "%click type%", type of event-item, item amount of event-item, "minerador", "craftar", "%type of event-item%")
+    # set {_uuid} to uuid of player
+    # if {diaria::bruxo::%{_uuid}%::status} is "pendente":
+    #     set {_id_bruxo} to {diaria::bruxo::%{_uuid}%::tarefa}
+    #     if {diaria_meta::%{_id_bruxo}%::acao_requirida} is "craftar":
+    #         if {diaria_meta::%{_id_bruxo}%::alvo_tipos::*} contains event-item's type:
+    #             addProgressoDiaria(player, "bruxo", {_id_bruxo}, item amount of event-item)
 
 on enchant:
     set {_uuid} to uuid of player
